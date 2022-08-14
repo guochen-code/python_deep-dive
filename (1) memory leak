@@ -1,0 +1,14 @@
+Memory leak occurs when programmers create a memory in heap and forget to delete it. 
+
+The consequences of memory leak is that it reduces the performance of the computer by reducing the amount of available memory. 
+Eventually, in the worst case, too much of the available memory may become allocated and all or part of the system or device stops working correctly, 
+the application fails, or the system slows down vastly .
+
+problem: memory leak
+cause: circular reference
+background: reference counting never be 0 - so memory manager is unable to delete
+action: garbage collector, periodically run to delete circular references.
+downside: need computing resources
+action: can be turned off (be careful) / can be controlled programmatically use gc module
+(if < python 3.4, a problem in gc, if one object has destructor, e.g. __del__(). python >=3.4 fine)
+
