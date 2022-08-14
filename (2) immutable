@@ -1,0 +1,26 @@
+In python, everything is object
+
+----- mutable: an object whose internal state can be changed
+----- immutable: an object whose internal state cannot be changed
+
+(1) immutable:
+numbers(int,float,booleans,etc)
+strings
+tuples
+frozen sets
+user defined classes
+
+(2) mutable:
+lists
+sets
+dictionaries
+user defined classes
+
+**************************************************************************************************************
+immutable != content can not be changed
+
+example:
+t=([1,2],[3,4])
+t is immutable, but elements in t are lists that are mutable, so
+t[1].append(5)
+t=([1,2,5],[3,4])
