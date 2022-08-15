@@ -1,0 +1,28 @@
+import sys
+sys.getsizeof(int())
+|
+24 # 24 bytes overhead because object itself requires some memory to get created and stored
+
+sys.getsizeof(1)
+|
+28 # 4 bytes to store 1
+
+sys.getsizeof(2**1000)
+|
+160 # 160 -24 = number of bytes, (160-24)*8 = number of bits
+
+******python: don't need to worry about fixed data type, fixed number of bits
+you can use arbitray large integer numbers in python, it will handle it seamlessly for us. But as the numbers get bigger, require more memory for storage 
+and the operation will get slower as well
+
+8 bits: [-128,127]
+2^7-1=127 
+******(8 bits, largest 11111111 == 255 == 2^8-1)
+(if we need to handle negative integers. 1 bit is reserved to represent the sign of the number, leaving us only 7 bits for number itself)
+and 
+******(since 0 does not require a sign, we can squeeze out an extra number
+
+16 bits: [-32,768,32,767]
+32 bits: [-2,147,483,648,2,147,483,647]
+if we had an unsigned integer type, using 32 bits our range would be:
+[0,2^32]
