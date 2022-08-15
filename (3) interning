@@ -16,4 +16,25 @@ print(platform.python_implementation())
 
 I get CPython, but other possible values might be PyPy, IronPython, Jython, etc.
 
-*** [-5,256] they are singleton collection.
+****** [-5,256] they are singleton collection.
+
+string interning
+why:
+it's all about (speed and possibly memory) optimization
+
+python, both internally, and in the code you writem deals with lots and lots of dictionary type lookups, on string keys, which means a lot f string equality testing.
+example:
+a='some_long_string'
+b='some_long_string'
+using a == bm we need to compare the two strings character by character.
+but if we know that 'some_long_string' has been interned, then a and b are the same string if they both point to the same memory address.
+in which we can use a is b instead - which compares two integers (many address).
+this is much faster than the character by character comparison
+
+****** Not all strings are automatically interned by python.
+But you can force strings to be interned by using the sys.intern() method. Basically make this string a singleton.
+
+don't use until you need to
+when should you do this:
+- dealing with a large number of strings that could have high repetition e.g. tokenizing a large corpus of text (NLP)
+- lots of string comparisons
