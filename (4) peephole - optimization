@@ -1,0 +1,30 @@
+optimization that can occur at compile time
+
+I - constant expression
+(1) numeric calculation 
+example:
+24*60, python will actually precalculate 24*60 -> 1440. use this to compile the code. constant expression, safe to do, no change
+(2) short sequences length < 20
+example:
+(1,2)*5
+'abc'*3
+'hello'+'world'
+but not 'the quick brown fox'*10 (more than 20 characters)
+
+trade-off between storage and computation.
+
+*****************************************************************************************************************************************************************
+II - membership tests: mutables are replaced by immutables
+
+when membership tests such as:
+ if e in [1,2,3]:
+ are encountered, the [1,2,3] constant, is replaced by its immutable counterpart
+ (1,2,3) tuple
+ 
+ list -> tuples
+ sets -> frozensets
+ 
+ set membership is much faster than list or tuple membership (sets are basically like dictionaries)
+ so, instead of writting:
+ if e in [1,2,3]: or if e in (1,2,3):
+ write if e in {1,2,3}
