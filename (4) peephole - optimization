@@ -24,7 +24,7 @@ when membership tests such as:
  list -> tuples
  sets -> frozensets
  
- set membership is much faster than list or tuple membership (sets are basically like dictionaries)
+ set membership is much faster than list or tuple membership (sets are basically like dictionaries) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  so, instead of writting:
  if e in [1,2,3]: or if e in (1,2,3):
  write if e in {1,2,3}
