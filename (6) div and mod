@@ -1,0 +1,13 @@
+135//4 -> 33
+135%4 ->3
+
+-135//4 -> -34
+-135%4 -> 1 *******************
+
+****** a/b is in fact:
+a = b * (1//b) + a%b
+
+be careful, a//b, is not the integer portion of a/b, it is the floor of a/b
+for a>0 and b>0, these are indeed the same thing
+but beware when dealing with negative numbers!!!
+
