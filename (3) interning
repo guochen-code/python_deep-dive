@@ -18,8 +18,10 @@ I get CPython, but other possible values might be PyPy, IronPython, Jython, etc.
 
 ****** [-5,256] they are singleton collection.
 
-string interning
-why:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+string interning (identifier(_this_is_identifier): automatically interned)
+
+why string interning:
 it's all about (speed and possibly memory) optimization
 
 python, both internally, and in the code you writem deals with lots and lots of dictionary type lookups, on string keys, which means a lot f string equality testing.
@@ -38,3 +40,15 @@ don't use until you need to
 when should you do this:
 - dealing with a large number of strings that could have high repetition e.g. tokenizing a large corpus of text (NLP)
 - lots of string comparisons
+
+example:
+a = 'hello world'
+b = 'hello world'
+
+a==b: compare character by character
+a is b: compare address numbers (much faster)
+
+if you loading a 10 million strings and do millions of comparisons, worth interning
+if you loading a 10 million strings, but only do one time comparison, no point to do interning
+
+$$$$$$ you can simulate == vs is using interning to compare the execution time difference.
