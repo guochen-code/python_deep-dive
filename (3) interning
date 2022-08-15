@@ -1,0 +1,19 @@
+interning: reusing objects on-demand
+
+at startup (when your program starts running.In the case of something like Jupyter, that's when the kernel for the notebook starts up.), 
+python(cpython), pre-loads (caches) a global list of integers in the range [-5,256]
+any time an integer is referenced in that range, python will use the cached version of that object
+
+optimization strategy - small integers show up often
+
+example:
+when we write a = 10, python just has to point to the existing reference for 10
+when we write a = 257, python does not use that global list and a new object is created every time
+
+check which python you use:
+import platform
+print(platform.python_implementation())
+
+I get CPython, but other possible values might be PyPy, IronPython, Jython, etc.
+
+*** [-5,256] they are singleton collection.
