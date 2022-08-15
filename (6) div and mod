@@ -11,3 +11,19 @@ be careful, a//b, is not the integer portion of a/b, it is the floor of a/b
 for a>0 and b>0, these are indeed the same thing
 but beware when dealing with negative numbers!!!
 
+**************************************** floats have limited precision in python *************************************
+math.floor(-3.0000000000001) # 12 0s
+|
+-4
+
+math.floor(-3.0000000000000001) # 15 0s
+|
+-3
+this 1 gets dropped because of limited precision
+
+
+
+print(a/b)
+print(a//b)
+print(math.floor(a/b))
+print(math.truc(a/b)) ***
