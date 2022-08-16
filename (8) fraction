@@ -1,0 +1,32 @@
+any finite number can be written as fraction
+
+float objects have finite precision -> any float object can be written as fraction !!!
+
+import math
+x=Fraction(math.pi)
+
+even though pi is iirational number, internally represented as float
+
+example:
+1/8 has an exact float representation
+3/10 does not have exact float representation
+
+Fraction(0.125) -> Fraction(1,8)
+Fraction(0.3) -> Fraction(540xxxxxxxxxxxx,180xxxxxxxxxxxxxx)
+format(0.3,'.25f')
+
+constraining the denominator
+given a Fraction object, we can find an approximate equivalent fraction with a constrained denominator
+using the limit_denominator(max_denominator=1000000) instance method
+i.e. finds the closet rational (which could be precisely equal) with denominator that does not exceed max_denominator
+
+automatically reduced:
+Fraction(8,16) -> Fraction(1/2)
+
+negative sign:
+Fraction(1,-4) -> Fraction(-1,4)
+
+x=Fraction(a,b)
+x.numerator=a
+x.denominator=b
+
