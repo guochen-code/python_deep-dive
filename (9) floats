@@ -1,0 +1,8 @@
+floats - internal representation
+
+a = 0.1 + 0.1 + 0.1
+b = 0.3
+a == b -> False
+
+format(a,'.25f')
+format(b,'.25f')
