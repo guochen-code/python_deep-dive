@@ -6,3 +6,11 @@ a == b -> False
 
 format(a,'.25f')
 format(b,'.25f')
+
+some decimal numbers(with a finite representation) cannot be represented with a finite binary representation.
+this can lead to some "weirdness" and bugs in our code (but not a python bug!)
+
+floats - equality testing
+(1) not use a ==b, use math.isclose(a,b,rel_tol=1e-5,abs_tol=1e-5)
+(2) or use fraction if you want number to be exact
+
