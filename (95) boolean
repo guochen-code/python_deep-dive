@@ -1,0 +1,18 @@
+Boolbean is subclass of int, can be interpreteed as integers 1 and 0
+True and False are singleton objects, use either is or == to compare Boolean expression
+
+!!! True and 1 are not the same object: id(True) != id(1)
+!!! False and 0 are not the same object: id(False) != id(0)
+True is 1 -> False
+True == 1 -> True
+
+Booleans as integers can leand to "strange" behavior you may not expect
+True + True + True -> 3
+(True + True + True) % 2 -> 1
+-True -> -1
+100*False -> 0
+
+Boolean constructor bool(x) returns Truen when x is True and False when x is False
+
+*** for integers, bool(x) always return True if x is not 0
+
