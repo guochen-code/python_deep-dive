@@ -15,5 +15,12 @@ floats - equality testing
 (2) or use fraction if you want number to be exact
 (3) use decimals
 
+#what is isclose():
+isclose(a,b,rel_tolerance,abs_tolerance)
+use both relative tolerance and absolute tolerance
+small numbers (close to 0): absolute tolerance
+big numbers: relative tolerance
+rounding is only using absolute tolerance, therefore cannot handle big numbers sometimes
+
 
 
