@@ -16,6 +16,12 @@ floats - equality testing
 (3) use decimals
 
 #what is isclose():
+The math.isclose() method checks whether two values are close to each other, or not. Returns True if the values are close, otherwise False.
+
+This method uses a relative or absolute tolerance, to see if the values are close.
+
+Tip: It uses the following formula to compare the values: abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 isclose(a,b,rel_tolerance,abs_tolerance)
 use both relative tolerance and absolute tolerance
 small numbers (close to 0): absolute tolerance
