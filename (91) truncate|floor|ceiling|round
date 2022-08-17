@@ -33,3 +33,11 @@ if you insist on rounding away from 0, have to implement your own:
 ** we can use math.copysign()
 ** copysign(x,y) returns the magnitude (absolute value) of x but with the sign of y
 ** sign(x) = copysign(1,x)
+
+################################################
+def _round(x):
+    from math import copysign
+    return int(x + 0.5 * copysign(1, x))
+################################################
+    
+# 
