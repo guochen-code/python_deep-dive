@@ -1,0 +1,11 @@
+working with global and local contexts
+
+global
+decimal.getcontext().rounding=decimal.ROUND_HALF_UP
+// decimal operations performed here will use the current default context
+
+local
+with decimal.localcontext() as ctx:
+  ctx.prec=2
+  ctx.rounding=decimal.ROUND_HALF_UP
+//decimal operations performed here will use the ctx context
