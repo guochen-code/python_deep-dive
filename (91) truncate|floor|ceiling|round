@@ -14,6 +14,9 @@ math.ceil()
 # rounding
 round(x,n=0)
 
+round(1.25,1) -> 1.2
+round(1.35,1) -> 1.4
+why??????????????????????????
 banker's rounding:
 to avoid your rounding error accumulating too much, not always away from zero, should be less biased - banker's rounding -
 ******rounding to the even least significant digit******
@@ -21,3 +24,12 @@ example:
 0.5, 1.5, 2.5 - average: 1.5
 standard rounding: 1, 2, 3 - average: 2
 banker's rounding: 0, 2, 2 - average: 1.3333.... closer to 1.5
+
+if you insist on rounding away from 0, have to implement your own:
+(1) int(x+0.5) for x >= 0 and int(x-0.5) for x < 0
+(2) sign(x) * int(abs(x)+0.5)
+(3) (2) == int(x + 0.5*sign(x))
+** python does not have a sign function!
+** we can use math.copysign()
+** copysign(x,y) returns the magnitude (absolute value) of x but with the sign of y
+** sign(x) = copysign(1,x)
