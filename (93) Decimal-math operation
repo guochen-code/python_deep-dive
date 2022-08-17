@@ -1,0 +1,28 @@
+use the math functions in the Decimal class.
+You can use math module, but it will lose the precision mechanism that made us use Decimal in the first place!!!
+
+example:
+a=Decimal('0.1')
+a.sqrt() == math.sqrt(a) -> False
+# behind the scene: if use math module, it convert Decimal to float and run the opration. Not Decimal anymore!
+
+example: (x=0.01 as well, no exact representation with float)
+x=2
+x_dec=Decimal(2)
+
+<1> root_float=math.sqrt(x)
+<2> root_mix=math.sqrt(x_dec)
+<3> root_dec=x_dec.sqrt()
+# first two will be the same and different from the 3rd one
+roo_float*root_float, '1.27f'
+root_mix*root_mix, '1.27f'
+root_dec*root_dec
+# the 3rd one will be closed to 2 compared to the others !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+*********************** however ***********************
+*** Decimal(2) = Decimal('2'), integer is ok
+*** Decimal(0.01) != Decimal('0.01'), float is not ok !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*** DO NOT forget to use ''
+
+
+
