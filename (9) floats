@@ -21,6 +21,9 @@ use both relative tolerance and absolute tolerance
 small numbers (close to 0): absolute tolerance
 big numbers: relative tolerance
 rounding is only using absolute tolerance, therefore cannot handle big numbers sometimes
-
+# what is relative tolerance:
+rel_tol = value	Optional. The relative tolerance. It is the maximum allowed difference between value a and b. Default value is 1e-09
+# what is absolute tolerance:
+abs_tol = value	Optional. The minimum absolute tolerance. It is used to compare values near 0. The value must be at least 0
 
 
