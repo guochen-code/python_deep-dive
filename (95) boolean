@@ -16,3 +16,17 @@ Boolean constructor bool(x) returns Truen when x is True and False when x is Fal
 
 *** for integers, bool(x) always return True if x is not 0
 
+****** Every objecthas a True truth valuem except:
+1. None
+2. Flase
+3. 0 in any numeric type(e.g.0,0.0,0+0j,.....)
+4. empty sequences (e.g. list, tuple, string....)
+5. empty mapping types (e.g. dictionary, set, ....)
+6. custom classes that implement a __bool__ or __len__ method that returns False or 0
+
+example: integers
+def __bool__(self):
+  return self != 0
+
+when we call bool(100), python actually executes 100.__bool__() and therefore returns the result of 100 != 0 which is True
+when we call bool(0), python actually executes 0.__bool__() and therefore returns the result of 0 != 0 which is False
