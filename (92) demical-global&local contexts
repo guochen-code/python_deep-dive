@@ -21,3 +21,14 @@ ROUND_HALF_EVEN:
 round(x,1) -> 1.2
 round(y,1) -> 1.4
 
+
+context precision and the constructor
+context precision affects mathmatical operations
+cotext precision does not affect the constructor
+
+decimal.getcontext().prec = 2
+
+a=Decimal('0.12345) a -> 0.12345
+b=Decimal('0.12345) b -> 0.12345
+c=a+b               a+b =0.2469  c -> 0.25
+
