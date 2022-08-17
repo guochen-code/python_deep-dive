@@ -1,1 +1,23 @@
+# truncation: retain integer portion of the number. math.trunc() = int()
+math.trunc(10.4) -> 10
+math.trunc(10.9) -> 10
+int(10.4) ->10
+int(10.9) ->10
+int(-10.4) ->-10
 
+# floor
+a//b == floor(a/b)
+
+#ceiling
+math.ceil()
+
+# rounding
+round(x,n=0)
+
+banker's rounding:
+to avoid your rounding error accumulating too much, not always away from zero, should be less biased - banker's rounding -
+******rounding to the even least significant digit******
+example:
+0.5, 1.5, 2.5 - average: 1.5
+standard rounding: 1, 2, 3 - average: 2
+banker's rounding: 0, 2, 2 - average: 1.3333.... closer to 1.5
