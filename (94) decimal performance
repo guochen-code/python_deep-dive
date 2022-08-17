@@ -1,0 +1,34 @@
+some drawbacks to the Decimal class vs the float class
+- not as easy to code: construction via strings or tuples
+- not all mathmatical functions that exist in the math module have a Decimal counterpart
+- more memory overhead create Decimal
+- performance: much slower than floats (relatively)
+
+****** memory:
+a=3.1415
+b=Decimal('3.1415')
+sys.getsizeof(a) -> 24
+sys.getsizeof(b) - 104
+
+****** performance:
+def run_float(n=1):
+  for i in range(n):
+    a=3.1415
+    
+def run_decimal(n=1):
+  for i in range(n):
+    a=Decimal('3.1415')
+    
+n = 10000000
+start=time.perf_counter()
+run_float(n)
+end=time.perf_counter()
+end - start -> 0.3308
+
+start=time.perf_counter()
+run_decimal(n)
+end=time.perf_counter()
+end - start -> 2.8759
+
+
+Takeaway: you don't use Decimal just because you feel that  you want extra precision. you ONLY use Decimal if you have to have the level of precision.
