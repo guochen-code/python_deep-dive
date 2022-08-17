@@ -1,3 +1,6 @@
+use string or tuple constructor, not use float. because it will be float, make no sense to use decimal anymore
+************************************************************************************************************************************************
+
 working with global and local contexts
 
 global
@@ -23,8 +26,8 @@ round(y,1) -> 1.4
 
 
 context precision and the constructor
-context precision affects mathmatical operations
-cotext precision does not affect the constructor
+****context precision affects mathmatical operations****
+****cotext precision does not affect the constructor****
 
 decimal.getcontext().prec = 2
 
