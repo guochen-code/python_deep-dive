@@ -1,0 +1,43 @@
+we can unpack any iterable part
+********************************************************************************************************************************************
+( ) does not create tuple, "," create tuple
+
+(1) is integer 1
+(1,) is tuple
+
+# create empty tuple
+a = ()
+a =, syntax error
+
+unpacking packed values
+a, b, c = [1, 2, 3]
+a,b,c = 'XYZ'
+
+simple application of unpacking
+swapping values of two variables
+
+"traditional approach"
+tmp = a
+a = b
+b = tmp
+
+using unpacking
+a,b = b,a
+# this works because in python, the entire RHS is evaluated first and completely, then assignments are made to the LHS.
+# memory references to a and b are created first before assignment
+# nice side effect of unpacking in python
+
+
+unpacking Sets and Dictionaries
+*** dictionaries and sets are unordered types.
+you can iterate but no guarantee the order of the results
+
+*** sets are dictionaries have only keys but no values
+
+
+The use case for *
+l = [1,2,3,4,5,6]
+
+a,b=l[0],l[1:]
+a,*b=l
+
