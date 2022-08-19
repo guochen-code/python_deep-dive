@@ -1,0 +1,24 @@
+def func1(a,b,c)"
+  # code
+
+l = [10,20,30]
+
+this will not work func1(l)
+
+but we can unpack the list first and then pass it to the function
+func1(*l) -> a=10, b=20, c=30
+
+how boolean and work: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+def avg(*args):
+  count=len(args)
+  total=sum(args)
+  return count and total/count *********************************
+
+def avg(*args):
+  count=len(args)
+  total=sum(args)
+  if count == 0:
+    return 0
+  else:
+    return total/count
+    
