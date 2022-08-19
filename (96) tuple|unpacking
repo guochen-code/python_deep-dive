@@ -41,3 +41,36 @@ l = [1,2,3,4,5,6]
 a,b=l[0],l[1:]
 a,*b=l
 
+use ** to unpack key-value pair, ** cannot be used on LHS, ** only works for dictionaries.
+example:
+d1={'p':1,'y':2}
+d2={'t':3,'h':4}
+d3={'h':5,'o':6,'n':7}
+d={**d1,**d2,**d3} -> {'p':1,'y':2, 't':3, 'h':5,'o':6,'n':7} # note the key 'h' is in both d2 and d3
+note that the value of 'h' in d3 "overwrite" the first value of 'h' in d2
+application example:
+default and user configuration setting. the same key, user setting overwrite default setting
+
+example:
+d1={'a':1,'b':2}
+{'a':10,'c':3,**d1} -> {'a':1, 'b':2, 'c':3}
+{**d1,'a':10,'c':3} -> {'a':10, 'b':2, 'c':3}
+
+nested unpacking
+a,b,(c,d) = [1,2,[3,4]]
+a,*b,(c,d,e)=[1,2,3,'XYZ']
+
+example: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+a,*b,(c,*d)=[1,2,3,'python'] -> a=1, b=[2,3], c='p', d=['y', 't','h','o','n']
+
+example: !!!!!!!!!!!!!!
+s1={1,2,3}
+s2={3,4,5}
+s1+s2 -> error
+{*s1,*s2} -> ok
+s1.union(s2) -> ok
+
+
+
+
+
