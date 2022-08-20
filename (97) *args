@@ -21,4 +21,24 @@ def avg(*args):
     return 0
   else:
     return total/count
-    
+
+************************************************************************************************************************************************************************
+func1(a,b,*arg,d): ############### *arg is optional
+  print(a,b,arg,d) -> ok
+
+func1(1,2,3,4,5) -> error
+func1(1,2,3,4,d=5) -> ok
+
+if you want no positional arguments
+example:
+def func1(*,a): ################ * means the end of positional argument. after that, everything is keyword argument.
+  # code
+  
+func1(1,2,a=3) -> error, no positional arguments allowed
+func1(a=3) -> ok
+
+if want 2 positional arguments:
+def func1(a,b,*,c):
+  # code
+
+
