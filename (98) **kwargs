@@ -12,3 +12,12 @@ def func(a,b,*,**kwargs):  -----> error, * function = **kwargs function
   
 def func(a,b,*,d,**kwargs): -----> ok
   # code
+  
+  
+********************************** put it together *************************
+a, b, c=10    *args/*   kw1, kw2=100    **kwargs
+
+typical use case:
+keyword-only arguments are used to modify the default behaviour of a function, such as the print() function in python ************************************
+
+
