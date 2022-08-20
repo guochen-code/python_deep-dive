@@ -20,4 +20,7 @@ a, b, c=10    *args/*   kw1, kw2=100    **kwargs
 typical use case:
 keyword-only arguments are used to modify the default behaviour of a function, such as the print() function in python ************************************
 
+def time_it(fn,*arg,**kwargs):
+  fn(arg,kwarge) -----------------> error, need to unpack the arguments
+  fn(*args,**kwargs) -------------> * unpack tunple, ** unpack dictionary
 
