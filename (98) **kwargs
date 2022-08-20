@@ -6,3 +6,9 @@ the parameter name kwargs is arbitrary- ** is the real performer here
 
 **kwargs can be specified even if the positional arguments have not been exhausted (unlike keyword-only arguments)
 no parameters can come after **kwargs
+
+def func(a,b,*,**kwargs):  -----> error, * function = **kwargs function
+  # code
+  
+def func(a,b,*,d,**kwargs): -----> ok
+  # code
