@@ -1,0 +1,17 @@
+in general, always beware of using a mutable object (or a callable) for an argument default
+
+example:
+
+def log(msg,*,dt=datetime.utcnow()):
+  print('{0}:{1}'.format(dt,msg)
+  
+log('message 1') -> 2017-08-21 20:54 37.706994: message 1
+a few minutes later:
+log('message 2') -> 2017-08-21 20:54 37.706994: message 2
+
+solution:
+from datetime import datetime
+
+def log(msg,*,dt=None):
+  dt = dt or datetime.utcnow()      ---------------> eqquivalent to: if not dt: dt = dattime.utcnow()
+  print('{0}:{1}'.format(dt,msg)
