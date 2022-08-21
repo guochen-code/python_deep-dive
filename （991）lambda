@@ -1,0 +1,39 @@
+lambda expressions are simply another way to create functions --- anonymous functions
+
+******************************************************************************************
+lambda [parameter list]: expression # parameter list is optional # return a function
+******************************************************************************************
+
+example:
+lambda x : x**2
+lambda x,y : x+y
+lambda : 'hello' # no parameter
+lambda s : s[::-1].upper()
+
+type(lambda x : x**2) -> function
+
+application:
+(1) assign a lambda to a variable name
+my_func=lambda x : x**2
+type(my_func) -> function
+my_func(3) ->9
+
+identical to:
+def my_func(x):
+  return x**2
+  
+(2) pass as an argument to another function
+def apply_func(x,fn):
+  return fn(x)
+apply_func(3,lambda x:x**2) -> 9
+
+limitations:
+- the body of a lambda is limited to a signle expression
+- no assignments lambda x:x=5 -> error / lambda x: x=x+5
+- no annotations: lambda x:int:x**2
+- single logical line of code -> line continuation is ok, but still just one expression
+  lambda x: x*\
+            math.sin(x)
+            
+ 
+
