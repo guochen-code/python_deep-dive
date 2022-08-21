@@ -15,5 +15,41 @@ solution:
 from datetime import datetime
 
 def log(msg,*,dt=None):
-  dt = dt or datetime.utcnow()      ---------------> eqquivalent to: if not dt: dt = dattime.utcnow()
+  dt = dt or datetime.utcnow()      ---------------> equivalent to: if not dt: dt = dattime.utcnow() # if not dt == if dt is False !!!!!!!!!!!!!!!!!!
   print('{0}:{1}'.format(dt,msg)
+  
+********* opposite problem
+example:
+my_list=[1,2,3] # expect not to be changed passed to function
+
+def func(a=my_list):
+  print(a)
+
+func() -> [1,2,3]
+my_list.append(4)
+func() -> [1,2,3,4] # we didnot expect the list passed to the function to be changed
+
+solution:
+my_list=(1,2,3) # use tuple
+
+
+****************************************************************************************************************************************************
+Beware 2 !!! always point to the default mutable list even if you want to have different lists
+****************************************************************************************************************************************************
+example:
+def add_item(name,quantiy,unit,grocery_list=[]):
+  grocery_list.append("{0} ({1} {2})".format(name,quantity,unit))
+  return grocery_list
+
+store1=add_item()
+add_item()
+print(store1)
+store2=add_item()
+store 1 is store 2 ---> True # not what we want!!!!!!!!!!!!!!!!!
+
+solution:
+def add_item(name,quantiy,unit,grocery_list=None):
+  if not grocery_list:
+    grocery_list=[]
+  grocery_list.append("{0} ({1} {2})".format(name,quantity,unit))
+  return grocery_list
