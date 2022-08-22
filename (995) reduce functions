@@ -65,6 +65,8 @@ reduce(lambda a,b: a*b, range(1,n+1)) -> n! # use built-in recursive == reduce f
 
 the reducer initializer 
 ****** overwrite using first element as initializer ******
+****** avoid runtime error if empty list ******
+
 the reduce function has a third (optional) parameter: initializer (default to None)
 if it is specified, it is essentially like adding it to the front of the iterable.
 it is often used to provide some kind of default in case the iterable is empty.
