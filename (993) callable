@@ -1,0 +1,11 @@
+any object that can be called using the () operator
+
+callables always return a value
+
+to see if an object is callable, we can use the built-in function: callable
+
+example:
+callable(print) -> True
+callable('abc'.upper)-> True # string
+callable(str.upper)->True # class
+callable(callable) -> True
