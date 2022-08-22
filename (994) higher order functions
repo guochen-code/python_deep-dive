@@ -8,7 +8,9 @@ example:
 results=map(lambda x,y: x+y, l1, l2, l3) -> no error
 for x in results:
   print(x) -> error 2 positional arguments but 3 were given
-
+(4) reusability:
+- map, filter. generator cannot be reused. 
+- range. can be reused. i.e. range(10).
 *************************************************************************** map *****************************************************************************
 map(func,*iterables)
 # *iterables: a variable number of iterables, i.e. l1 and l2
