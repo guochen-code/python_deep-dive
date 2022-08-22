@@ -1,4 +1,8 @@
 higher order function: take function as parameter and/or return function as return value
+by default, return generator.
+what is generator:
+(1) not calculated! it will only be calculated when you need them!
+(2) faster code
 
 *************************************************************************** map *****************************************************************************
 map(func,*iterables)
