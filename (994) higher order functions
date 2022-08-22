@@ -1,6 +1,6 @@
 higher order function: take function as parameter and/or return function as return value
 
-************************* map ***************************
+*************************************************************************** map *****************************************************************************
 map(func,*iterables)
 # *iterables: a variable number of iterables, i.e. l1 and l2
 
@@ -11,15 +11,51 @@ l2=[10,20,30,40,50]
 def add(x,y):
   return x+y
 
-list(map(add,l1,l2)) ->[11,22,33] # return iterable so use list to display # only match with shorter list so return 3 numbers
+list(map(add,l1,l2)) ->[11,22,33] # return iterable so use list to display # only match with the shortest list so return 3 numbers !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 list(lambda x,y: x+y, l1,l2) -> [11,22,33]
 
-************************* filter ***************************
+*************************************************************************** filter *****************************************************************************
 filter(func,iterable) # only take single iterable # retain or throw out the elements of that iterable
 # iterable: a single iterable, i.e. l1
 # again return iterator
-# if the function is None, it simply returns the elements of iterable that are truthy.
+# if the function is None, it simply returns the elements of iterable that are truthy. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+example:
+l=[0,1,2,3,4]
+list(filter(None,l)) -> [1,2,3,4] # because 0 is falsy.
+
+example:
+def is_even(n):
+  return n%2==0
+list(filter(is_even,l)) -> [0,2,4]
+
+or:
+list(filter(lambda n: n%2==0,l)) -> [0,2,4]
+
+*************************************************************************** zip *****************************************************************************
+not higher order function, but useful with higher order functions
+
+zip(*iterables) # take multiple iterables and return on iterable !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+example:
+l1=[1,2,3,4]
+l2=[10,20,30,40,50,60]
+zip(l1,l2) -> (1,10),(2,20),(3,30),(4,40) # only match with the shortest list !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+example:
+l1=[1,2,3]
+l2=[10,20,30,40]
+l3='python' # string is iterable
+list(zip(l1,l2,l3)) -> [(1,10,'p'),(2,20,'y'),(3,30,'t')]
+
+******************************************************************************************************************************************************
+(1) list comprehension altenative to map
+
+
+
+
+
 
 
 
