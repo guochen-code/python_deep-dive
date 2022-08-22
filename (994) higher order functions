@@ -1,0 +1,27 @@
+higher order function: take function as parameter and/or return function as return value
+
+************************* map ***************************
+map(func,*iterables)
+# *iterables: a variable number of iterables, i.e. l1 and l2
+
+example:
+l1=[1,2,3]
+l2=[10,20,30,40,50]
+
+def add(x,y):
+  return x+y
+
+list(map(add,l1,l2)) ->[11,22,33] # return iterable so use list to display # only match with shorter list so return 3 numbers
+
+list(lambda x,y: x+y, l1,l2) -> [11,22,33]
+
+************************* filter ***************************
+filter(func,iterable) # only take single iterable # retain or throw out the elements of that iterable
+# iterable: a single iterable, i.e. l1
+# again return iterator
+# if the function is None, it simply returns the elements of iterable that are truthy.
+
+
+
+
+
