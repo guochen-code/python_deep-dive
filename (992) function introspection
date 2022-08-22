@@ -1,0 +1,35 @@
+dir(): show all function attributes
+__name__: name of function
+__defaults__: tuple containing positional parameter defaults
+__kwdefaults__: dictionary containing keyword-only parameter defualts
+
+example:
+def my_func(a,b=2,c=3,*,kw1,kw2=2):
+  pass
+my_func.__defaults__ -> (2,3) ##### have to start from right to left if you want to match
+my_func.__kwdefaults__ -> {'kw2':2} #### same as above
+
+__code__: return code object
+this object has various properties, include:
+example:
+def my_func(a,b=1,*args,**kwargs):
+  i=10
+  b=min(i,b)
+  return a*b
+(1) co_varnames: parameter and local variables  
+my_func.__code__.co_varnames -> ('a','b','args','kwargs','i')
+# parameter names first, followed by local variable names
+(2) co_argcount: number of parameters
+my_func.__code__.co_argcount -> 2
+!!!!!!!!!!!!!!!!! does not count *args and **kwargs!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+********* the inspect Module ********
+import inspect
+inspect.getsource(my_func) -> a string containing our entire def statement, nclduing annotation, docstrings, etc
+
+inspect.getmodule(my_func) -> <module '__main__'>
+inspect.getmodule(print) -> <module 'builtins' (built-in)>
+inspect.getmodule(math.sin) -> <module 'math' (built-in)>
+
+inspect.getcomments(my_func) -> '#TODO: ......'
+# many IDE's support the TODO comment to flag functions and other callables
