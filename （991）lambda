@@ -35,5 +35,13 @@ limitations:
   lambda x: x*\
             math.sin(x)
             
+            
+f = lambda x, *args, y, **kwargs: (x,*args,y,kwargs)
+f(1,'a','b',y=100,a=10,b=20)
+
+******
+def (*args,**kwargs,fn): ----> error, fn can't be after **kwargs
+def (fn, *args,**kwargs): ---> ok
+            
  
 
