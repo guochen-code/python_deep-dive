@@ -50,14 +50,35 @@ l3='python' # string is iterable
 list(zip(l1,l2,l3)) -> [(1,10,'p'),(2,20,'y'),(3,30,'t')]
 
 ******************************************************************************************************************************************************
-(1) list comprehension altenative to map
+(1) list comprehension altenative to map (list comprehension: [<expression> for <varname> in <iterable>])
 
+example:
+- can use map
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+- use for loop:
+result=[]
+for x in l:
+  result.append(x**2)
+- list comprehension
+[x**2 for x in l]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+example:
+l1=[1,2,3]
+l2=[10,20,30]
 
+list(map(lambdax,y:x+y,l1,l2)) -> [11,22,33]
+is equal to
+[x+y for x,y in zip(l1,l2)]
 
+(2) list comprehension altenative to filter
+example:
+[x for x in l if x%2==0] (list comprehension: [<expression> for <varname> in <iterable> if <expression>])
 
+(3) combine map and filter
+example:
+l=range(10)
+list(filter(lambda y:y<25,map(lambda x:x**2,l))) -> [0,1,4,9,16]
 
-
-
-
-
+use a list comprehension is much clearer:
+[x**2 for x in range(10) if x*82 <25]
