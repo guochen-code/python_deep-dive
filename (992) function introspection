@@ -1,4 +1,5 @@
-dir(): show all function attributes
+dir(my_func): show all function attributes
+
 __name__: name of function
 __defaults__: tuple containing positional parameter defaults
 __kwdefaults__: dictionary containing keyword-only parameter defualts
@@ -20,8 +21,12 @@ def my_func(a,b=1,*args,**kwargs):
 my_func.__code__.co_varnames -> ('a','b','args','kwargs','i')
 # parameter names first, followed by local variable names
 (2) co_argcount: number of parameters
-my_func.__code__.co_argcount -> 2
+my_func.__code__.co_argcount -> 2 # only count positional arguments!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!! does not count *args and **kwargs!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+dir(my_func.__code__) # show all properties
+
+************************************************************************************************************************************************************
 
 ********* the inspect Module ********
 import inspect
@@ -30,6 +35,26 @@ inspect.getsource(my_func) -> a string containing our entire def statement, ncld
 inspect.getmodule(my_func) -> <module '__main__'>
 inspect.getmodule(print) -> <module 'builtins' (built-in)>
 inspect.getmodule(math.sin) -> <module 'math' (built-in)>
-
+************************************************************************************************************************************************************
 inspect.getcomments(my_func) -> '#TODO: ......'
 # many IDE's support the TODO comment to flag functions and other callables
+# when you write code and want to come back later. add TODO comment. need to be right before the function.
+************************************************************************************************************************************************************
+example:
+class MyClass:
+  def f(self):
+    pass
+isfunction(MyClass.f) -> True # not bound to MyClass yet
+my_obj=MyClass()
+isfunction(my_obj.f) -> False
+ismethod(my_obj.f) -> True
+************************************************************************************************************************************************************
+inspect.signature(my_func) -> signanture object
+dir(inspect.signature(my_func)) -> show all attributes of the signature object
+
+example:
+help(divmod) -> show
+divmod(x=3,y=3) -> error: divmod() takes no keyword arguments
+
+for param in inspect.signature(divmod).parameters.values():
+  print(param.kind) ---> Positional_only
