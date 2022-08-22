@@ -1,0 +1,89 @@
+
+
+*************************************************************************************************************************************************************
+example:
+def _reduce(fn,sequence):
+  result=sequence[0]
+  for x in sequence[1:]:
+    result=fn(result,x)
+  return result
+
+_reduce(lambda a,b: a if a>b else b, l) -> max
+_reduce(lambda a,b: a if a<b else b, l) -> min
+
+example:
+def _reduce(fn,sequence):
+  result=sequence[0]
+  for x in sequence[1:]:
+    result=fn(result,x)
+  return result
+
+add = lambda a,b: a+b
+_reduce(add, l) -> adding all the elements in a list
+
+python implements a reduce function that will handle any iterable, but works similarly to what we just saw
+
+from functools import reduce
+l=[5,8,6,10,9]
+reduce(lambda a,: a if a>b else b,l) -> max -> 10
+reduce(lambda a,: a if a<b else b,l) -> min -> 5
+
+reduce works on any iterable (if use own _reduce, it will fail)
+example:
+reduce(lambda a,b: a if a<b else b,{10,5,2,4}) -> 2
+reduce(lambda a,b: a if a<b else b,'python') -> h
+reduce(lambda a,b: a + ' ' + b,('python','is','awesome!')) -> 'python is awesome'
+
+built-in reducing functions
+python provides several common reducing functions:
+- min()
+- max()
+- sum()
+- any() -> return true if any element in l is truthy, false otherwise
+- all() -> return true if every element in l is truthy, false otherwise
+
+EXAMPLE:
+# use reduce to reproduce any:
+l=[0,'',None,100]
+reduce(lambda a,b: bool(a) or bool(b),l)
+# here we just repeatedly apply the or operator to the truth values of each element
+
+example:
+calculate the product of all elements in an iterable
+l= [1,3,5,6] -> 1*3*5*6
+reduce(lambda a,b: a*b,l)
+# process
+res = 1
+res = res*3 = 3
+res = res*5 = 3*5 = 15
+res = res*6 = 15 *6 = 90
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+special case:
+reduce(lambda a,b: a*b, range(1,n+1)) -> n! # use built-in recursive == reduce function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+the reducer initializer 
+****** overwrite using first element as initializer ******
+the reduce function has a third (optional) parameter: initializer (default to None)
+if it is specified, it is essentially like adding it to the front of the iterable.
+it is often used to provide some kind of default in case the iterable is empty.
+
+example:
+l=[]
+reduce(lambda x,y: x+y,l) -> exception # cannot do because empty
+
+l=[]
+reduce(lambda x,y: x+y,l,1) -> 1 # because initializer is 1
+
+l=[1,2,3]
+reduce(lambda x,y: x+y,l,1) -> 1 # put initializer 1 in front of everything -> 7 (1+1+2+3)
+
+l=[1,2,3]
+reduce(lambda x,y: x+y,l,100) -> 1 # put initializer 1 in front of everything -> 106 (100+1+2+3)
+
+'''
+to do a summation of a list, use initializer == 0
+in case of product, use initializer == 1
+'''
+
