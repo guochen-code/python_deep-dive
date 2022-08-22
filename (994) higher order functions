@@ -1,8 +1,13 @@
 higher order function: take function as parameter and/or return function as return value
 by default, return generator.
 what is generator:
-(1) not calculated! it will only be calculated when you need them!
+(1) not calculated right away! it will only be calculated when you request the item from that new iterable!
 (2) faster code
+(3) but error will not show until you request:
+example:
+results=map(lambda x,y: x+y, l1, l2, l3) -> no error
+for x in results:
+  print(x) -> error 2 positional arguments but 3 were given
 
 *************************************************************************** map *****************************************************************************
 map(func,*iterables)
