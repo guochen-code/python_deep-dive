@@ -44,4 +44,34 @@ def (*args,**kwargs,fn): ----> error, fn can't be after **kwargs
 def (fn, *args,**kwargs): ---> ok
             
  
+************** application: lambda and sorted ******************
+l=['c','B','D','a']
+sorted(l) -> ['B','D','a','c']
+ortd('a') -> 97
+ord('A') -> 65
+sorted(l,key=lambda s: s.upper()) -> ['a','B','c','D']
+
+another example:
+sort according to value of a dictionary, not key:
+d = {'abc':200, 'def':300, 'ghi':100}
+sorted(d,key=lambda e:d[e]) -> ['ghi','abc','def']
+sorted(d) -> ['abc','def', 'ghi']
+
+another exampl:
+def dist_sq(x)
+  return (x.real)**2+(x.img)**2
+l = [3+3j,1-1j,0,3+0j]
+
+sorted(l,key=dist_sq) -> [0,(1-1j),(3+0j),(3+3j)] ***************************
+# apply function dist_sq on each element of list l **************************!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+or use lambda:
+sorted(l,key=lambda x:(x.real)**2+(x.img)**2)
+
+another example:
+************ in python, if equal, return ordering like in the original list *******
+l = ['Cleese','Idle','Palin','Chapman','Gilliam','Jones']
+# sort by the last letter:
+sorted(l,key=lambda s:s[-1]) -> ['Cleese','Idle','Gilliam','Palin','Chapman','Jones'] ###### in python, if equal, return ordering like in the original list, therefore Cleese before Idle
+
 
