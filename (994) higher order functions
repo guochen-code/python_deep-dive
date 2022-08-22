@@ -93,3 +93,9 @@ list(filter(lambda y:y<25,map(lambda x:x**2,l))) -> [0,1,4,9,16]
 
 use a list comprehension is much clearer:
 [x**2 for x in range(10) if x*82 <25]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+in some cases, you don't want all calculation done at once. slow. you want defered calculations.
+(x**2 for x in range(1000000000) if x*82 <25) # if print, will see it's a generator. only calculated when the element is requested.
+but note generator is not reusable.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
