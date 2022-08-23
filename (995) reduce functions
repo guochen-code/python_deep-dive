@@ -1,4 +1,6 @@
-
+there are functions that recombine an iterable recursively, ending up with a single return value
+also called accumulators, aggregators, or folding functions.
+example: finding the max value in an iterable.
 
 *************************************************************************************************************************************************************
 example:
