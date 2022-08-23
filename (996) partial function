@@ -25,7 +25,7 @@ def my_func(a,b,*args,k1,k2,**kwargs):
 def f(b,*args,k2,**kwargs):
   return my_func(10,b,*args,k1='a',k2=k2,**kwargs)
 
-f=partial(my_func,10,k1='a')
+f=partial(my_func,10,k1='a') # k1 has to be the same name that matches k1 in the my_func
 
 Beware!!!
 you can use variables when creating partials, but there arises a similar issue to argument default values
@@ -38,7 +38,41 @@ a=10
 f=partial(my_func,a)
 f(20,30) -> 10, 20, 30
 
-a=100
+a=100 ############ id(a=100) != id(a=10) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 f(20,30) -> 10, 20, 30 # a now points to a different memory address, but the partial still points to the original object (10) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if a is mutable (e.g. a list), then it's contents can be changed. ==== list.append()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+f=partial(my_func,10,20)
+f(30) -> 10, 20, 30
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+********************************************************** application ********************************************************************
+# sort according to distance to origin
+origin=(0,0)
+l=[(1,1),(0,2),(-3,2),(0,0),(10,10)]
+dist2 = lambda a,b: (a[0]-b[0])**2 + (a[1]-b[1])**2 
+
+sorted(l, key=dist2(element,origin)) -> error # key needs to be a function that takes a single parameter which is each element of the list 
+# does not know what the element is, not working!!!!
+
+need other function
+sorted(l,key=dist_from_origin(e)) # dist_from_origin should take single parameter 
+
+since we have dist2, why not use it. use partial !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+f=partial(dist2,origin)
+
+now we can do:
+sorted(l,key=f)
+
+or 
+f=lambda x:dist2(origin,x)
+sorted(l,key=f)
+
+or
+sorted(l,key=lambda x:dist2(origin,x))
+
+or
+sorted(l,key=partial(dist2,origin))
+
