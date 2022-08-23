@@ -1,0 +1,58 @@
+sequence/mapping operators
+
+concat(s1,s2)
+contains(s,val)
+countOf(s,val)
+getitem(s,i)
+setitem(s,i,val)
+delitem(s,i)
+
+**************************************************************************** Item Getters ****************************************************************************
+the itemgetter function returns a callable
+
+getitem(s,i) take two parameters and return a value: s[i]
+
+itemgetter(i) returns a callable (function) which takes one parameter: a sequence object
+example:
+f=itemgetter(1)
+s=[1,2,3]
+f(s) -> 2
+
+we can pass more than one index to itemgetter:
+example:
+f=itemgetter(1,2)
+s=[1,2,3]
+f(s) -> (2,3)
+
+************************************************************************** Attribute Getters **************************************************************************
+the attrgetter function is similar to itemgetter, but is used to retrieve object attributes
+it returns a callable takes the object as an argument
+example:
+my_obj.a->10
+my_obj.b->20
+my_obj.c->30
+
+f=attrgetter('a')
+f(my_obj) -> 10
+
+f=attrgetter('a','c') -> (10, 30)
+
+also can call directly:
+attrgetter('a','c')(my_obj) -> (10,30)
+
+calling another callable
+example:
+consider the str class that provides the upper() method:
+s='python' 
+s.upper() -> PYTHON
+
+f=attrgetter('upper')
+f(s) -> returns the upper method of s
+it is a callable, and can be called using ()
+
+f(s)() -> PYTHON
+or
+attrgetter('upper')(s)()
+
+or we can use the slightly simpler methodcaller function (methodcaller wrap up above for us)
+methodcaller('upper')('python') -> PYTHON
