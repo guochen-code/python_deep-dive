@@ -40,6 +40,10 @@ f(s) -> (2,3)
 ************************************************************************** Attribute Getters **************************************************************************
 the attrgetter function is similar to itemgetter, but is used to retrieve object attributes *** and method ***
 it returns a callable takes the object as an argument
+
+operator.methodcaller(<method_name>,<method_parameter>).(obj) # methodcaller can take method arguments !!!!!!!!!!!!!!!!!!!
+operator.methodcaller('test',100).(obj)
+
 example:
 my_obj.a->10
 my_obj.b->20
