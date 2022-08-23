@@ -1,4 +1,17 @@
-sequence/mapping operators
+why use operator module
+
+previously:
+from functools import reduce
+reduce(lambda x,y: x*y,[1,2,3,4]) -> 24
+now:
+reduce(operator.mul,[1,2,3,4])
+
+********************************************************************************************************************************************************
+operator.lt(10,3) # less than
+operator.is_('abc','abc') -> true # because of python interning
+operator.truth([]) -> false
+
+# sequence/mapping operators
 
 concat(s1,s2)
 contains(s,val)
