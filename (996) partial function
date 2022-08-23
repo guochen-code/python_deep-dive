@@ -1,3 +1,5 @@
+higher order function, because take function as a parameter.
+
 reducing function arguments
 
 def my_func(a,b,c):
