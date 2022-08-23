@@ -38,7 +38,7 @@ s=[1,2,3]
 f(s) -> (2,3)
 
 ************************************************************************** Attribute Getters **************************************************************************
-the attrgetter function is similar to itemgetter, but is used to retrieve object attributes
+the attrgetter function is similar to itemgetter, but is used to retrieve object attributes *** and method ***
 it returns a callable takes the object as an argument
 example:
 my_obj.a->10
@@ -69,3 +69,41 @@ attrgetter('upper')(s)()
 
 or we can use the slightly simpler methodcaller function (methodcaller wrap up above for us)
 methodcaller('upper')('python') -> PYTHON
+
+**************************************************************************** application ****************************************************************************
+you have an attribute b in your class
+you need to call different attribute, so you use variable - my_var
+example:
+this time you need to call attribute b through my_var
+my_var = 'b'
+obj.my_var -> not working, error. obj has no attribute 'my_var'
+
+to make it work:
+operator.attrgetter(my_var) #it's ok because attribute getter wants a string, my_var is a string
+operator.attrgetter(my_var)(obj) -> 20
+
+beware:
+my_var='b'
+prop_b=operator.attrgetter(my_var)
+prop_b(obj) ->20
+my_var='c'
+prop_b(obj) ->20 # still 20 !!!!!!!!!!!!!!!!!!!!!!
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#input String
+var ='b'
+str = "c." + var
+ 
+#apply exec() method
+exec("{} = {}".format(str,c.b))
+ 
+#print string
+print("output :", c.my_var) 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+another example:
+# sort complex number according to its real number
+l=[5-10j,3+3j,2-100j]
+sorted(l,key=operator.attrgetter('real'))
+
+sorted(l,key=lambdax:x.real)
