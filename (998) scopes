@@ -1,4 +1,9 @@
 built-in scope -> module/global scope -> local scope (inside function)
+
+global and local scoping
+when python encounters a function definition at compile-time. It will scan for any labels(variables) that have values assigne to them (anywhere in the function)
+if the label has not been specified as gloabl, then it will be local
+variables that are referenced but not assigned a value anywhere in the function will not be local, and python will, at run-time, look for them in enclosing scopes.
 ********************************************************************************************************************************************
 module1.py
 print(True) -> True
@@ -14,4 +19,22 @@ s=print('world') -> hello world!
 # python finds print in the module scope. so it uses it! overwrite built-in print function.
 ********************************************************************************************************************************************
 varibale defined inside of a fuction are not created until the function is called
+
+example:
+a=0
+def my_func():
+  a=100
+  print(a)
+my_func() -> 100 # need to call function to activate all these things
+!!!!!!!!!!!!!!!!!!!!!!  after the function run, the local scope is cleaned up and gone !!!!!!!!!!!!!!!!!!!!! so
+print(a) -> 0
+
+
+example: # change global variable from local scope
+a=0
+def my_func():
+  global= a
+  a=100
+my_func() # need to call function to activate all these things
+print(a) -> 100
 
