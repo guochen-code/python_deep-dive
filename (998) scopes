@@ -38,3 +38,15 @@ def my_func():
 my_func() # need to call function to activate all these things
 print(a) -> 100
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tricky ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a =10
+def func4():
+  print(a) -> when we call func4(), print(a) results in a run-time error
+  a=100
+
+assignment at compile time -> a local
+
+at compile time, python see an assignment. at the time the function runs, a exists, in the name space, hasn't been assigned value though.
+we assign value in the second line of code.
+we try to refer it before we assign a value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
