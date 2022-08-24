@@ -51,3 +51,88 @@ at compile time, python see an assignment. at the time the function runs, a exis
 we assign value in the second line of code.
 we try to refer it before we assign a value
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+************************************************************************** nonlocal scope ******************************************************************
+Nonlocal scope
+example:
+def outer_func():
+  x='hello'
+  def inner_func():
+    x='python'
+  inner_func()
+  print(x)
+
+outer_func() -> hello
+# when inner_func is compiled, python sees an assignment to x
+so it determines that x is a local variable to inner_func
+the variable x in inner_func masks the variable x in outer_func
+after function run, its local scope is cleaned up and gone
+
+*** nonlocal keyword ***
+example:
+def outer_func():
+  x='hello'
+  def inner_func():
+    nonlocal x
+    x='python'
+  inner_func()
+  print(x)
+
+outer_func() -> python
+
+**** when python is told that a variable is nonlocal, it will look for it in the enclosing local scopes chain until it first encounters the specified variable name
+Beware: it will only look in local scopes, it will not look in the global scope ****
+
+example:
+def outer():
+  x='hello'
+  
+  def inner1():
+    x='python'
+    def inner 2():
+      nonlocal x
+      x = 'monty'
+    print('inner(before)',x) -> python
+    inner2()
+    
+example:
+def outer():
+  x='hello'
+  
+  def inner1():
+    nonlocal x
+    x='python'
+    def inner 2():
+      nonlocal x
+      x = 'monty'
+    print('inner(before)',x) -> python
+    inner2()
+    print('inner(after)',x) -> monty
+  
+  inner1()
+  print('outer',x) -> monty
+outer()
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! example:
+x=100
+def outer():
+  x='python'
+  
+  def inner1():
+    nonlocal x
+    x='monty'
+    def inner 2():
+      global x
+      x = 'hello'
+    print('inner(before)',x) -> monty
+    inner2()
+    print('inner(after)',x) -> monty
+  
+  inner1()
+  print('outer',x) -> monty
+outer()
+print(x) -> hello
+
+
+
