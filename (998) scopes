@@ -17,6 +17,7 @@ module3.py
 print=lambda x:'hello{0}!'.format(x)
 s=print('world') -> hello world!
 # python finds print in the module scope. so it uses it! overwrite built-in print function.
+del print # run del to delete, so can use built-in again !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ********************************************************************************************************************************************
 varibale defined inside of a fuction are not created until the function is called
 
