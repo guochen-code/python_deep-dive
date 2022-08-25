@@ -1,3 +1,4 @@
+******************************************************************* relative path: *******************************************************************************
 in __init__.py file:
 
 use relative path, so you don't need to change a lot of code if your package name needs to be changed
@@ -11,7 +12,7 @@ from .json import *
 
 .. goes back to 1 up level
 ... goes back to 2 up levels
-*****************************************************************************************************************************************************************
+******************************************************************* __all__ & def _func(): ***********************************************************************
 problem:
 say there are a lot of functions defined in boolean.py: is_boolean(), boolean_helper_1, and boolean_helper_2.
 what if you only want to import is_boolean(), not all the others
@@ -29,11 +30,11 @@ another solution: use __all__
 in date.py file, write:
 __all__ = ['is_date'] # will keep this function.
 
-*****************************************************************************************************************************************************************
+********************************************************************** __all__ change 2 places************************************************************************
 problem: after above, in the name space we have boolean and is_boolean, it is redundant.
 
 solution:
-in __init__.py
+in __init__.py:
 
 in addition to below:
 from .boolean import *
@@ -42,15 +43,14 @@ from .json import *
 after these, we add
 __all__ =['is_boolean', 'is_json'] # we just keep these in the list!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-*****************************************************************************************************************************************************************
+******************************************************************** __all__ change 1 place ***************************************************************************
 problem: after above, we need to change two places for __all__. one is in boolean.py, the other is in __init__py.
-
 solution:
-in __init__.py, use
-
+in __init__.py, use:
 __all__ = boolean.__all__ + date.__all__ + json.__all__ instead of __all__ =['is_boolean', 'is_json',.........] (use a list). This way we import all 
 and we only need to chnage in the boolean.py file if we need to make any change!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-*****************************************************************************************************************************************************************
+
+********************************************************************* __all__ trick ***********************************************************************************
 monior trick after above: if this list is too long, want to break it to multiple lines
 __all__ = (boolean.__all__ + 
             date.__all__ + 
