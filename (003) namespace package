@@ -1,0 +1,46 @@
+Implicit namespace packages
+
+namespace packages are package-like
+  directories
+    may contain modules
+    may contain nested regular packages
+    may contain nested namespace packages
+    but cannot contain __init__.py
+
+these directories are implicitly made into these special types of packages
+
+
+regular vs namespace package:
+regular package                                                                  namespace package
+type -> module                                                                   type -> module
+__init__.py -> yes                                                               __init__.py -> no
+__file__ => package __init__                                                     __file__ -> not set
+paths -> breaks if parent directories hcange and absolute import are used *      paths -> dynamic path computation so ok if parent directories change
+single package lives in single directory                                         single package can live in multiple(non-nested) directories/parts of the namespace may be a zip file
+
+
+example:
+
+app/
+  utils/
+    validators/
+      boolean.py
+  common/
+    __init__.py
+    validators/
+      boolean.py
+      
+                            namespace package                                                          regular package
+type                             module                                                                 module
+__name__                         utils                                                                  common
+__repr__()                <module utils (namespace)>                                                    <module common from '../app/common'>
+__path__                  _Namespace(['../app/utils'])                                                  ['../app/common']
+__file__                  not set                                                                        ../app/common/__init__.py
+__package__               utils                                                                         common
+-> validators             utils.validators                                                              common.validators
+
+
+In summary:
+the only difference is that you can't manipulate and flatten your name space the way that you do that with regular packages
+you have to live with whatever structure you give to the namespace package
+but if you want, you can spread namespace packages over different parts of your desk, even into zip files.
