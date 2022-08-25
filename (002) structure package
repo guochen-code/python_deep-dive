@@ -1,0 +1,42 @@
+in __init__.py file:
+
+use relative path, so you don't need to change a lot of code if your package name needs to be changed
+
+example
+# __init__.py
+
+from .boolean import *
+from .date import *
+from .json import *
+
+.. goes back to 1 up level
+... goes back to 2 up levels
+*****************************************************************************************************************************************************************
+problem:
+say there are a lot of functions defined in boolean.py: is_boolean(), boolean_helper_1, and boolean_helper_2.
+what if you only want to import is_boolean(), not all the others
+
+solution:
+def _boolean_helper_1():
+  pass
+
+def _boolean_helper_2():
+  pass
+  
+if it sees an underscore in front of a function, it is not going to put it into the namespace with the import * being called !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+another solution: use __all__
+in date.py file, write:
+__all__ = ['is_date'] # will keep this function.
+
+*****************************************************************************************************************************************************************
+after above, in the name space we have boolean and is_boolean, it is redundant.
+
+in __init__.py
+
+in addition to below:
+from .boolean import *
+from .date import *
+from .json import *
+after these, we add
+__all__ =['is_boolean', 'is_json'] # we just keep these in the list!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
