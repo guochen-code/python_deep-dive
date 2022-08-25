@@ -58,7 +58,7 @@ add_1(10) ->11
 add_2(10) ->12
 add_2(10) ->13
 
-But suppose we doing it this way:
+But suppose we doing it this way: (above is repetitive, as develop, we want to avoid this, so we do below, but not working!)
 adders=[]
 for n in range(1,4):
   adders.append(lambda x:x+n)
