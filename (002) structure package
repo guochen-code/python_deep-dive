@@ -30,8 +30,9 @@ in date.py file, write:
 __all__ = ['is_date'] # will keep this function.
 
 *****************************************************************************************************************************************************************
-after above, in the name space we have boolean and is_boolean, it is redundant.
+problem: after above, in the name space we have boolean and is_boolean, it is redundant.
 
+solution:
 in __init__.py
 
 in addition to below:
