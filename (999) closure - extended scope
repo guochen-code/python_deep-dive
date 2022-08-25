@@ -77,3 +77,15 @@ adders[2](10) -> 13
 remember python does not "evaluate" the free variable n until the adders[i] function is called
 since all three functions in adders are bound to the same n
 by the time we call adders[0], the value of n is 3 (the last iteration of the loop set n to 3)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+what if in this way: (n still changes over loop) # that is a bug you can every easily introduced to your code !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+def create_adders():
+  adders=[]
+  for n in range(1,4):
+    adders.append(lambda x:x+n)
+  return adders
+!!!!!!!!!!! now it is a closure !!!!!!!!!!!!!
+adders[0].__closure__ -> have sth now!
+adders[0](10) -> 13
