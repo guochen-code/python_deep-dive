@@ -89,3 +89,19 @@ def create_adders():
 !!!!!!!!!!! now it is a closure !!!!!!!!!!!!!
 adders[0].__closure__ -> have sth now!
 adders[0](10) -> 13
+
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+solution: 
+take action immediately when the function is created
+
+def create_adders():
+  adders=[]
+  for n in range(1,4):
+    adders.append(lambda x, y=n:x+y)
+  return adders
+why this works:
+use a default y = n
+default value is evaluated at creation time
+so when lambda is created, the default value is used! this time is one
+next iteration default value =2
+in this case we did not create closure, just create function.
