@@ -1,0 +1,103 @@
+file based packages:
+
+package is simply a module that can contain other modules or packages
+on a file system we thereore have to use directories for packages
+the directory name becomes the package name
+
+if the package is a directoy, a directory can contain code or files (normal file in the file system)
+so where does the code go for the package (since it is a module)
+it goes inside the direcory, in a special file that called -> __init__.py
+
+so when we have a package, actually we can have a directory and this file, together it becomes a module, the module code is in the init file, 
+and package name is the directory.
+****************************************************************************************************************************************************************
+example:
+app/
+    module.py
+    pack1/
+        __init__.py
+        module1a.py
+        module1b.py
+        pack1_1/
+            __init__.py
+            module1_1a.py
+            module1_1b.py
+            
+module.__file__ -> ../app/module.py
+module.__path__ -> not set
+module.__package__ ->''
+
+pack1.__file__ -> ../app/pack1/__init__.py
+pack1.__path__ -> ../app/pack1
+pack1.__package__ -> pack1
+
+pack1.module1a.__file__ -> ../app/pack1/module1a.py
+pack1.module1a..__path__ -> not set
+pack1.module1a..__package__ -> pack1
+            
+pack1.pack1_1__file__ -> ../app/pack1/pack1_1/__init__.py
+pack1.pack1_1.__path__ -> ../app/pack1/pack1_1
+pack1.pack1_1.__package__ -> pack1.pack1_1           
+
+pack1.pack1_1.module1_1a.__file__ -> ../app/pack1/pack1_1/.module1_1a.py
+pack1.pack1_1.module1_1a.__path__ -> not set
+pack1.pack1_1.module1_1a.__package__ -> pack1.pack1_1    
+
+****************************************************************************************************************************************************************
+what gets loaded during the import phase?
+
+example:
+import pack1.pack1_1.module1_1a
+
+at the very least: (why say at least because modules can import other modules, for example, pack1.__init__.py could import other modules/packages)
+pack1 is imported and added to sys.modules
+pack1_1 is imported and added to sys.modules
+module1_1a is imported and added to sys.modules
+
+
+****************************************************************************************************************************************************************
+why package?
+developer vs user perspective
+
+for developers, decompose, smaller and smaller, easy to test, debug
+for users, easy to import and use
+
+example:
+mylib/
+    __init__.py
+    submod1.py ----------------------------> function to be exported to user lives here
+    submod2.py
+    subpack1
+        __init__.py
+        pack1mod1.py
+        pack1mod2.py ----------------------> class to be exported to users lives here
+
+for users, they have to write:
+from mylib.submod1 import my_func
+from mylib.subpack1.pack1mod2 import MyClass
+
+not user friendly, users want to do:
+from mylib import my_func, MyClass
+or
+import mylib
+or mylib.my_func() mylib.MyClass()
+
+solution:
+we can use package __init__.py code to export (expose) just what's needed by our users
+
+mylib/
+    __init__.py  ----------------------------> from mylib.sumod1 import my_func; from mylib.subpack1.pack1mod2 import MyClass
+    submod1.py                                 by doing above, users can uses it this way:
+    submod2.py                                            import mylib
+    subpack1                                              mylib.my_func()
+        __init__.py                                       mylib.MyClass()
+        pack1mod1.py
+        pack1mod2.py 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+in summary, why packages?
+ability to break code up into smaller chunks, makes our code: easier to write, test, debug, read, understand, document
+just like books are broken down into chapters, sections, paragraphs etc.
+
+but they can still be 'stitched' together. hides inner implementation from users.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
