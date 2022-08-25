@@ -41,3 +41,17 @@ from .date import *
 from .json import *
 after these, we add
 __all__ =['is_boolean', 'is_json'] # we just keep these in the list!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+*****************************************************************************************************************************************************************
+problem: after above, we need to change two places for __all__. one is in boolean.py, the other is in __init__py.
+
+solution:
+in __init__.py, use
+
+__all__ = boolean.__all__ + date.__all__ + json.__all__ instead of __all__ =['is_boolean', 'is_json',.........] (use a list). This way we import all 
+and we only need to chnage in the boolean.py file if we need to make any change!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*****************************************************************************************************************************************************************
+monior trick after above: if this list is too long, want to break it to multiple lines
+__all__ = (boolean.__all__ + 
+            date.__all__ + 
+            json.__all__)
