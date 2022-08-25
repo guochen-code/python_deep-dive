@@ -1,6 +1,28 @@
 closure means extended scope
 func.__closure__
 func.__code__.co_freevars
+
+example:
+nested closures
+
+def incrementer(n):
+  def inner(start):
+    current = start
+    def inc()"
+      nonlocal current
+      current+=n
+      return current
+    return inc
+  return inner
+  
+(inner)
+fn = incrementer(2) -> fn.__code__.co_freevars -> 'n' n=2
+(inc)
+inc_2 = fn(100) -> inc_2.__code__.co_freevars -> 'current', 'n' current =100, n=2
+(calls inc)
+inc_2() -> 102 (current=102,n=2)
+inc_2() -> 104 (current=104,n=2)
+
 ********************************************************************************************************************************************************************
 shared extended scopes (shared free variable)
 
