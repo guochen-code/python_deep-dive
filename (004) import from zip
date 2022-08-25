@@ -1,0 +1,11 @@
+open python console:
+import sys
+sys.path -> give some paths
+sys.path.append('/./common.zip') 
+import common -> working
+import common.validators -> working
+
+so same idea, in main.py
+import sys
+sys.path.append('/./common.zip') 
+then every works fine.
