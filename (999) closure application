@@ -1,3 +1,5 @@
+sometimes if you want to write a class but only one method is going to be called. it is sometimes easier to write closure.
+****************************************************************************************************************************************************************
 problem:
 def averager():
     total=0
