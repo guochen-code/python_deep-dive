@@ -1,0 +1,39 @@
+problem:
+def averager():
+    total=0
+    count=0
+    def add(number):
+        total = total + number
+        count = count + 1
+        return total/count
+    return add
+    
+fn=averager()
+fn(10) -> error UnboundLocalError: local variable 'total' referenced before assignment # it is an assignment here. so total is local variable.
+
+that's not what we want, we want the total to be kept around
+solution:
+def averager():
+    total=0
+    count=0
+    def add(number):
+        nonlocal total
+        nonlocal count
+        total = total + number
+        count = count + 1
+        return total/count
+    return add
+
+another example:
+
+class Timer:
+  def __init__(self):
+    self.start = perf_counter()
+  def __call__(self):
+    return perf_counter() - self.start
+
+def timer():
+  start = perf_counter()
+  def poll():
+    return perf_counter() - start
+  return poll
