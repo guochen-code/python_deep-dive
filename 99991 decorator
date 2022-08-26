@@ -1,0 +1,76 @@
+def outer(fn):
+  code
+  def inner(*args,**kwargs):
+    code
+    return fn(*args,**kwargs)
+  return inner  ----------------------- return inner means call inner 
+
+def add(a,b=0):
+  return a+b
+  
+add = counter(add) 
+# the reason we call it the same name is because at the end of the day, the closure function inner is going to execute the fn for us and return the value
+so we still get the value back as if we had called the origianl add function, but the closure is doing something extra. in this case, it is maintaining the count 
+and printing out some information about how many times the function has been called
+
+*** In summary ***
+we essentially modified our add function by wrapping it inside another function that added some functionality to it
+we also say that we decorated our function add with the function counter.
+
+in general, a decorator function:
+- takes a function as an argument
+- returns a closure (at least fn is refered by inner func)
+- the closure usually accepts any combination of parameters
+- runs some code in the inner function (closure)
+- the closure function calls the original function using the arguments passed to the closure
+- returns whatever is returned by that function call
+
+in general, if func is a decorator function, we decorate another function my_func using:
+my_func = func(my_func)
+this is so common that python provides a convenient way of writing that:
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+@counter
+def add(a,b):
+  return a + b
+is the same as writing:
+def add(a,b):
+  return a + b
+add = counter(add)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+introspecting decorated functions
+add.__name__ -> inner # not mult # mult's name changed when we decorated it, they are not the same function after all.
+                      # because counter(outer) function return inner, so it is inner now.
+                      
+ ********* ***************************************************************************************************     *********         
+ problem above: all point to inner, not good for debugging, because you don't know which is the original function
+ solution:
+ try to fix this problem at least for the docstring and function name as follows:
+ def counter(fn):
+  code
+  def inner(*args,**kwargs):
+    code
+    return fn(*args,**kwargs)
+  inner.__name__=fn.__name__ ##########################
+  inner.__doc__=fn.__doc__   ##########################
+  return inner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+python built in:
+from functools import wraps
+in factm the wraps function is itself a decorator
+but it needs to know what was our 'original' function - in this case fn
+ def counter(fn):
+  code
+  def inner(*args,**kwargs):
+    code
+    return fn(*args,**kwargs)
+  inner = wraps(fn)(inner)  ##########################
+  return inner
+is the same as writting:
+ def counter(fn):
+  code
+  @wraps(fn)
+  def inner(*args,**kwargs):
+    code
+    return fn(*args,**kwargs)
+  return inner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
