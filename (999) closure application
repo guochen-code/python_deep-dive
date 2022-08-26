@@ -39,3 +39,61 @@ def timer():
   def poll():
     return perf_counter() - start
   return poll
+************************************************************* part II *********************************************************************************************
+def counter(initial_value=0):
+    def inc(increment=1):
+        nonlocal initial_value
+        initial_value+=increment
+        return initial_value
+    return inc
+
+counter1=counter()
+counter1() -> 1
+counter1() -> 2
+
+***************************************
+def counter(fn):
+    cnt=0
+    def inner(*args,**kwargs): # kind of replace fn, not call fn directly. in addition to call fn, it also keeps track that how many times it's been called.
+        nonlocal cnt
+        cnt+=1
+        print('{} has been called {} times'.format(fn.__name__,cnt))
+        return fn(*args,**kwargs) # use inner function to call fn
+    return inner
+    
+def add(a,b):
+    return a+b
+def mult(a,b):
+    return a*b
+
+counter_add=counter(add) -> closure include: fn and cnt
+******************************************
+global variable, a dictionary, to record the count
+
+counters=dict()
+
+def counter(fn):
+    cnt=0
+    def inner(*args,**kwargs): 
+        nonlocal cnt
+        cnt+=1
+        counter[fn.__name__] = cnt             # only changed compare to above
+        return fn(*args,**kwargs) 
+    return inner
+
+counted_add=counter(add)
+counted_mult=counter(mult)
+******************************************
+
+def counter(fn,counter): # only changed compare to above
+    cnt=0
+    def inner(*args,**kwargs): 
+        nonlocal cnt
+        cnt+=1
+        counter[fn.__name__] = cnt             
+        return fn(*args,**kwargs) 
+    return inner
+
+c=dict()
+counted_add=counter(add,c)
+counted_mult=counter(mult,c)
