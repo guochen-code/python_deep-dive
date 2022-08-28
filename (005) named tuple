@@ -81,3 +81,6 @@ solution:
 Person=namedtuple('Person','name age _ssn', rename=True) -> ok
 Person._fiels -> ('name', 'age', '_2')
 ******************************************************************************************************************************************************
+print(Person._source)
+Person._asdict()
+
