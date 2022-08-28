@@ -1,0 +1,83 @@
+*************************************************************** class vs named tuple ***************************************************************
+if you found yourself doing:
+class Point3D:
+  def __init__(self,x,y,z):
+    self.x=x
+    self.y=y
+    self.z=z
+    
+ There may be a better way. But if you want mutability, that's out.
+ 
+ from collections import namedtuple
+ Point2D = namedtuple('Point2D',['x','y'])
+ pt1=Point2D(10,20)  # create an instance
+ pt1 -> Point2D(x=10,y=20) # named tuple does this for us. nice print.
+ 
+ if we run:
+ pt3d_1=Point3D(10,20,30)
+ pt3d_1 -> <__main__.Point3D at 0x2232ac13c88> # not nice print.                              # problem 1
+ 
+we can also do:
+Point2D = namedtuple('Point2D',('x','y'))             | Point2D = namedtuple('Point2D','x y z      a b') # it is ok and space does not matter
+pt2=Point2D(10,20)  
+pt2 -> Point2D(x=10,y=20) # same representation like above.
+
+another problem:
+pt1=Point2D(10,20)
+pt2=Point2D(10,20)
+pt1 is pt2 -> False
+pt1 == pt2 -> True
+
+pt1=Point3D(10,20,30)
+pt2=Point3D(10,20,30)
+pt1 is pt2 -> False
+pt1 == pt2 -> False                                                                          # problem 2
+
+solution:
+class Point3D:
+  def __init__(self,x,y,z):
+    self.x=x
+    self.y=y
+    self.z=z
+  def __repr__(self):
+    return f'{self.__class__.__name__}(x={self.x},y={self.y},z={self.z})'
+  def __eq__(self,other):
+    if isinstance(other,Point3D):
+      return self.x==other.x and self.y==other.y and self.z==other.z
+    else:
+      return False
+      
+new problem or some restrictions:
+pt1=Pint2D(10,20)
+pt2=Point3D(10,20,30)
+max(pt1) -> 20
+max(pt2) -> TypeEoor: 'Point3D' object is not iterable.
+
+
+other advatanges of named tuple over class:
+for example, to execute dot product
+class has to hard code attributes, x, y, z. if add more attributes, code needs to be changed accordingly
+on the other side, use named tuple, access through zip and index, zip will zip x,y,z and any other added attributes together, so no need to change code.
+
+Stock = namedtuple('Stock', ''' symbol
+                                year
+                                month
+                                day
+                                open
+                                high
+                                low
+                                close''')
+                                
+- we can iterate: 
+for item in djia:
+  print(item)
+  
+- we can unpack:
+symbol, year,month,day,*-,close = djia
+******************************************************************************************************************************************************
+problem:
+Person=namedtuple('Person','name age _ssn') -> error: field names cannot start with an underscore: '_ssn'
+solution:
+Person=namedtuple('Person','name age _ssn', rename=True) -> ok
+Person._fiels -> ('name', 'age', '_2')
+******************************************************************************************************************************************************
