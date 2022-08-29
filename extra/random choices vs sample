@@ -1,0 +1,8 @@
+random.choices: may have repeated data
+random.sample: no repeated data
+
+example:
+random.choices(data_list,k=5) # get 5 instance from data list
+random.sample(data_list,k=5) # get 5 instance from data list and 5 <= len(data_list)
+
+random.choice(data_list) # get 1 instance from data list
