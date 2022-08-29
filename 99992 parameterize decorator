@@ -3,3 +3,7 @@ def my_func():
   code
   
 how to: add one upper level decorator factory function, which has these parameters a and b. That's all.
+
+The logic is:
+first use decorator factory function to create decorator
+then can use @decorator
