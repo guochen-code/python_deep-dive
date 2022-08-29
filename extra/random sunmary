@@ -1,5 +1,13 @@
+random.seed(n)
+
 random.random() : [0,1)
+
+
 random.randint(a,b): [a,b]
+
+
+lst=list('abc')
+random.shuffle(list)
 
 
 Syntax : random.gauss(mu, sigma)
@@ -7,3 +15,6 @@ Parameters :
 mu : mean
 sigma : standard deviation
 Returns : a random gaussian distribution floating number
+
+
+
