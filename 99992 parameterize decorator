@@ -7,3 +7,10 @@ how to: add one upper level decorator factory function, which has these paramete
 The logic is:
 first use decorator factory function to create decorator
 then can use @decorator
+
+********************************
+(1) running decorator factory
+(2) running decorator
+(3) running inner
+(4) running my func
+********************************
