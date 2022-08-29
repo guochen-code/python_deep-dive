@@ -1,3 +1,8 @@
+****************************************************************************************************************************************************************
+- we cannot put parameters as arguments in our decorator function.
+- we can put parameters as arguments in our decorator factory function.
+- we use decorator factory function to call decorator function.
+****************************************************************************************************************************************************************
 @dec(a,b)
 def my_func():
   code
