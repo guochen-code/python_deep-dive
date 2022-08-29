@@ -1,0 +1,9 @@
+random.random() : [0,1)
+random.randint(a,b): [a,b]
+
+
+Syntax : random.gauss(mu, sigma)
+Parameters :
+mu : mean
+sigma : standard deviation
+Returns : a random gaussian distribution floating number
