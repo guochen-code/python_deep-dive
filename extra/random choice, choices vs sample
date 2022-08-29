@@ -1,8 +1,15 @@
-random.choices: may have repeated data
+random.choices: may have repeated data # so sample may be larger than population.
 random.sample: no repeated data
 
 example:
-random.choices(data_list,k=5) # get 5 instance from data list
-random.sample(data_list,k=5) # get 5 instance from data list and 5 <= len(data_list)
+- random.choices(data_list,k=5) # get 5 instance from data list
+- random.sample(data_list,k=5) # get 5 instance from data list and 5 <= len(data_list)
+- random.choice(data_list) # get 1 instance from data list
 
-random.choice(data_list) # get 1 instance from data list
+****************************************************************************************
+weight - choices:
+weights=[10,1,1]
+random.choices(l,k=5,weight=weights)
+or 
+cum_weights=[7,8,10]
+random.choices(l,k=5,cum_weight=cum_weights) -> 70 vs 10 vs 20
