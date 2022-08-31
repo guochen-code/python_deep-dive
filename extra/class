@@ -1,0 +1,93 @@
+__str__: only works when use str(obj)
+__repr__: works use obj
+
+__lt__: less than (<,>,<=,>=)
+
+__eq__: euqal
+
+**********************************************************
+class Rectangle:
+  def __init__(self,width,length):
+    self.width=width
+    self.height=height
+  def area(self):
+    return self.width * self.height
+  def perimeter(self):
+    return 2*(self.width+self.length)
+  
+  def __str__(self):
+    return 'Rectangle: width={}, height={}'.format(self.width, self.height)
+    
+  def __repr__(self):
+    return 'Rectangle({},{})'.format(self.width,self.height)
+  
+  def __eq__(self,other):
+    if isinstance(other,Rectangle):
+      return self.width == other.width and self.height == other.height
+    else:
+      return False
+      
+  def __lt__(self,other):
+    if isinstance(other,Rectangle):
+      return self.area() < other.area()
+    else:
+      return NotImplemented
+      
+******************************************************************************************************************** set constraints on the min and max of values      
+class Rectangle:
+  def __init__(self,width,length):
+    self._width=width
+    self._height=height
+  
+  @propery                                          ######### can call self._width using self.width (turn method that can be executed without using ()?)
+  def width(self):
+    print('getting width')
+    return self._width
+  
+  @width.setter
+  def width(self,width):
+    if width <=0:
+      raise valueError('width must be positive.')
+    else:
+      self._width = width
+  
+  @property
+  def height(self):
+    return self._height
+    
+    
+  @height.setter
+    def height(self,height):
+      if height <=0:
+        raise valueError('height must be positive.')
+      else:
+        self._height = height
+        
+  ############################### below code still working without using _width and _height      
+  def __str__(self):
+    return 'Rectangle: width={}, height={}'.format(self.width, self.height)
+    
+  def __repr__(self):
+    return 'Rectangle({},{})'.format(self.width,self.height)
+  
+  def __eq__(self,other):
+    if isinstance(other,Rectangle):
+      return self.width == other.width and self.height == other.height
+    else:
+      return False
+      
+  def __lt__(self,other):
+    if isinstance(other,Rectangle):
+      return self.area() < other.area()
+    else:
+      return NotImplemented
+*****************************************************************************************************************************************************************
+problem: after above, you can not do r1.width = -100, it will raise valueError: width must be positive
+But you can still do r1 = Rectable(-100,20), which means you can use -100 in the initialization!!!!!!!
+
+solution: only need to change: get rid of the _ sign.  ############# call the setters in my init method. the setter is gonna raise exception if it needs to
+class Rectangle:
+  def __init__(self,width,length):
+    self.width=width
+    self.height=height
+  
