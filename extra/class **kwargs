@@ -1,0 +1,10 @@
+class Person:
+  def __init__(self,name,age,**custom_attributes):
+    self.name = name
+    self.age = age
+    for attr_name, attr_value in custom_attributes.items():
+      setattr(self,attr_name,attr_value)
+      
+parrot = Person('polly',101,status='staff',,vooms=False)
+print(vars(parrot))
+michael = Person('Plain',42,role='shopkeeper',crooked=True)
