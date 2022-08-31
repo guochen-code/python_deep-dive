@@ -1,0 +1,68 @@
+min_length = 2
+name = input("please enter your name: ")
+
+while not (len(name)>=min_length and name.isprintable() and name.isalpha()):
+  name = input("Please enter your name: ")
+
+print("Hello, {}".format(name))
+
+######################################################################################## name = input("Please enter your name: ") showed twice
+
+min_length = 2
+
+while True:
+  name = input("please enter your name: ")
+  if len(name)>=min_length and name.isprintable() and name.isalpha():
+    break
+  name = input("Please enter your name: ")
+
+print("Hello, {}".format(name))
+
+
+######################################################################################## continue (can use to skip some values) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# skip every number divisiable by 2
+example:
+a = 0
+while a < 10:
+  a+=1
+  if a % 2 ==0:
+    continue
+  print(a) -> 1,3,5,7,9
+
+********** application *********** turn [0,0,0,1,1,1,0,0,1,1,0,1] to [0,1,0,1,0,1]
+from collections import Counter
+lst=[0,0,0,1,1,1,0,0,1,1,0,1] # turn to be [0,1,0,1,0,1]
+result=[float('inf')]
+for i in lst:
+    if i == result[-1]:
+        continue
+    result.append(i)
+result.pop(0)
+Counter(result)[0]
+
+********** application *********** append a value if not already in a list
+l = [1,2,3]
+val = 10
+found = False
+idx = 0
+while idx < len(l):
+  if l[idx] == val:
+    found = True
+    break
+  idex +=1
+  
+if not found:
+  l.append(val)
+print(l)
+
+**************************************
+l = [1,2,3]
+val = 10
+idx = 0
+while idx < len(l):
+  if l[idx] == val:
+    break
+  idex +=1
+else:                                       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  while ------ else -------------- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  l.append(val)
+print(l)
