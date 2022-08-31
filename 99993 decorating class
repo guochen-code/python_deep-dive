@@ -1,0 +1,12 @@
+def dec_speak(cls):
+  cls.speak = lambda self,message:'{} says: {}'.format(self.__class__.__name__, message)
+  return cls # above works without return
+  
+class Person:
+  pass
+
+Person=dec_speak(Person)
+p=Person()
+p.speak('this works!')
+
+
