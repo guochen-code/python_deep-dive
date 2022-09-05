@@ -1,0 +1,62 @@
+(1) timezone (including daylight saving)
+
+********************* before 3.9, need to do it by yourself
+import zoneinfo
+from datetime import datetime,timezone
+from zoneinfo import ZoneInfo
+import pytz
+import dateutil
+
+for tz in pytz.all_timezons:
+  print(tz)
+  
+for tz in sorted(zoneinfo.available_timezones()):
+  print(tz)
+  
+# get current time
+now_utc_naive=datetime.utcnow()
+# assign a timezone
+now_utc_aware=now_utc_native.replace(tzinfo=timezone.utc)
+#same as above
+pytz.utc.localize(now_utc_naive)
+
+#convert between different timezones
+tz_melbourne=pytz.timezone('Australia/Melbourne')
+now_utc_aware.astimezone(tz_melbourne)
+
+
+
+********************* from 3.9, it is built in: (no longer to use pytz, but still can use)
+tz_zi_dublin=ZoneInfo("Europe/Dublin") # use zoninfo timezone instead of pytz timezone above
+now_utc_aware.astimezone(tz_zi_dublin)
+
+(2) 
+-- greatest common divisor
+import math
+math.gcd(27,45) -> 9
+math.gcd(27,45,18,15) -> 3
+
+-- least common multiple
+math.lcm(2,3,4) -> 12
+
+(3) union dictionaries
+d1 = ..
+d2 = ..
+# use unpacking:
+{**d1,**d2}
+# from collections import ChainMap:
+merged=ChainMap(d1,d2)
+# union operator: (before it is ok with sets, but not with dictionaries)
+d1 | d2 
+!!!!!! d2 | d1 may have different result vs above !!!!!!!
+
+(4) 
+lstrip
+'--?abc--?'.lstrip('-?') -> abc--?
+s.replace(x,y,1) # only replace the 1st one
+s.removeprefix
+s.removessufix
+
+
+
+
