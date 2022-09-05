@@ -43,5 +43,33 @@ if my_list:
 if my_list is not None and len(my_list)>0:
   # code block
 
+********************************************************************* boolean operator*********************************************************************************
+x or y: return x if x is truthy, else evaluate y and return y !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+application --- return default value:
+s1=None
+s2=''
+s3='abc'
+s1=s1 or 'nan'  -> nan
+s2=s2 or 'nan' -> nan
+s3=s3 or 'nan' -> abc
 
+x and y: if x is falsy, return x, otherwise evaluate and return y !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+a/b on general, but return b if b=0:
+if b and a/b --- is equivalent to ----
+if b ==0:
+  return b
+else:
+  return a/b
   
+application: get string data from database and return first character of the string:
+s1=None
+s2=''
+s3='abc'
+solution:
+(s1 and s1[0]) or ''
+(s2 and s2[0]) or ''
+(s3 and s3[0]) or ''
+
+
+
+
