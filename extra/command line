@@ -40,4 +40,49 @@ you will get help information
 ********************************************************************************************************************
 pass named arguments into a .py script
 ********************************************************************************************************************
+import sys
+import datetime
 
+parser=argparse.ArgumentParser(description='returns a string containing the name and age of the person.')
+parser.add_argument('-f','--first',help='first name',type=str,required=False) 
+parser.add_argument('-l','--last',help='last name',type=str,required=True)
+parser.add_argument('-y','--yob',help='year of birth',type=str,required=False)
+
+# when you have both short and long name, it will display long name
+# short name is user friendly, no need to type in a lot of things
+# what if you want display something else, but you don't want user to type in a long command ---- use destination !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+parser=argparse.ArgumentParser(description='returns a string containing the name and age of the person.')
+parser.add_argument('-f','--first',help='first name',type=str,required=False,dest='first_name') 
+parser.add_argument('-l','--last',help='last name',type=str,required=True,dest='last_name')
+parser.add_argument('-y','--yob',help='year of birth',type=str,required=False,dest='birth_year)
+
+args=parser.parse_args()
+
+if args.first_name
+  names=[args.first_name]
+else:
+  names=[]
+
+names.append(args.last_name)
+full_name=''.join(names)
+
+current_year=datetime.datetime.utcnow().year
+age=current_year-args.birth_year
+print(f'{full_nam} is {age} years old')
+
+********************************************************************************************************************
+sepcify multiple values for a single argument
+********************************************************************************************************************
+parser=argparse.ArgumentParser(description='prints the squares of a list of numbers, and the cubes of another list of numbers.')
+parser.add_argument('--sq',help='list of numbers to square',type=float, nargs='*')  # default required is False # nargs is variable
+parser.add_argument('--cu',help='list of numbers to cube',type=float,required=True,dest='cubes', nargs='+') # + means it needs at least 1 argument
+
+args=parser.parse_args()
+
+if args.sq:
+  squares = [n**2 for n in args.sq]
+
+cubes=[n**3 for n in args.cubes]
+
+# in terminal, run: python example.py --cu 1 2 3 4.5 --sq 1 2 3 4
