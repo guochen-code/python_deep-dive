@@ -1,0 +1,41 @@
+problem statement:
+def validate(a=None):
+  if a is not None:
+    print('argument was provided')
+  else:
+  print('argument was NOT provide')
+  
+valdate() -> argument was NOT provided
+validate(10) -> argument was provided
+validate(a=None) -> argument was NOT provided
+
+# we can not differentiate if we pass None or not.
+
+solution:
+_sentinel=object()
+def validate(a=None):
+  if a is not _sentinel:
+    print('argument was provided')
+  else:
+  print('argument was NOT provide')
+  
+we cannot do:
+def validate(a=object()):
+  if a is not object():
+    print('argument was provided')
+  else:
+  print('argument was NOT provide')
+  
+solution:
+def validate(a=object()):
+  default_a = validate.__defaults__[0]
+  if a is not default_a:
+    print('argument was provided')
+  else:
+  print('argument was NOT provide')
+  
+extension:
+def validate(a=object(),b=object(),*,kw=object()):
+  default_a = validate.__defaults__[0]
+  default_b = validate.__defaults__[1]
+  default_kw = validate.__kwdefaults__['kw']
