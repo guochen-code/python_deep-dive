@@ -1,0 +1,38 @@
+(1) def func(a,b,/,*,kw=1):
+# if use / you canNOT do: func(a=1,b=2,kw=3)
+# you can only do: func(1,2,kw=3)
+
+(2) 
+from math import pi
+d=datetime.utcnow()
+e= pi
+print(f'{d=:%Y%m%d %H%M%S},{e=.3f}')
+
+(3) lru_cache
+@lru_cache(maxsize=3)
+def fib(n):
+  if n<=2:
+    return 1
+  else:
+    return fib(n-1) + fib(n-2_
+    
+(4)
+math.dist(a,b)
+
+(5)
+from collections import namedtuple
+NT=namedtuple("NT","a b c", defaults=(10,20,30))
+nt=NT()
+nt -> NT(a=10, b=20, c=30)
+
+NT=namedtple("NT","a b c", defaults=(20,30))
+nt=NT(10)
+nt -> NT(a=10, b=20, c=30) # 10 goes to a
+
+nt._field_defaults
+nt._asdict()
+
+(6) reversed
+list(d.keys())
+list(reversed(d.keys()))
+
