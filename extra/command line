@@ -86,3 +86,51 @@ if args.sq:
 cubes=[n**3 for n in args.cubes]
 
 # in terminal, run: python example.py --cu 1 2 3 4.5 --sq 1 2 3 4
+
+**************************************************************************** flag and other *************************************************************************
+paresr.add_argumnet('-q','--quite',action='store_false')
+parser.add+argument('-q2',action='store_const',const=False,default=True) # same as above
+args=parser.parse_args()
+
+# in terminal, run:
+python example.py -> Namespace(q2=True, quiet=True) 
+python example.py -q2 -q -> Namespace(q2=False, quiet=False)
+
+paresr.add_argumnet('-q','--quite',action='store_true')
+parser.add+argument('-q2',action='store_const',const=True,default=False) # same as shorthand way of doing above
+
+************************************************************************* mutually exclusive arguments *************************************************************
+# you can't have both verbose and quiet
+import argparse
+
+parser=argparse.ArgumentParser()
+
+group=parser.add_mutually_exclusive_group()
+group.add_argument('-v','--verbose',action='store_true')
+group.add_argument('-q','--quiet',action='store_true')
+
+parser.add_argument('-n',type=complext,required=True)
+
+args=parser.parse_args()
+
+prit(args)
+
+# in terminal, run: python example.py -n 10+3j -q -v -> error: argument -v/--verbose: not allowed with argument -q/--quiet
+
+application:
+import cmath
+if args.quiet:
+  print('quiet mode...')
+  print('nonthing to see here. move along now...')
+elif args.verbose:
+  print('verbose mode...')
+  print(f'input:{arg.n}')
+  print(f'real={args.n.real},image={args.n.imag}')
+  print(f'{args.n} = {cmath.polar(args.n)}')
+else:
+  print('normal mode...')
+
+
+
+
+
