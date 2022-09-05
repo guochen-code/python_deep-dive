@@ -1,0 +1,14 @@
+dict.get(x,'Not found') # if x not in dictionary keys, it will return 'Not found'. otherwise return the value of key x
+
+example:
+def dow_switch_dict(dow):
+  dow_dict= {
+    1: lambda: print('Monday'),
+    2: lambda: print('Tuesday'),
+    ....,
+    7: lambda: print('Sunday'),
+    'default': lambda: print('Invalid day of week'),
+    }
+  return dow_dict_get(dow,dow_dict['default'])()
+  
+# don't have to use lambda, here just shows it can do this way.
