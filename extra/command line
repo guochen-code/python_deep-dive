@@ -1,0 +1,43 @@
+**********************************************************
+pass arguments into a .py script
+**********************************************************
+
+# this is example.py
+import sys
+
+keys = sys.argv[1::2] # every 2 steps
+values= sys.argvp2::2]
+
+args={k:v for k,v in zip(keys,values)}
+
+first_name = args.get('--first-name',None)
+last_name = args.get('--last-name',None)
+yob = int(args.get('--yob',None)) # need conversion as original is string
+
+# in the terminal, run: python example.py --first-name John --last-name Cleese --yob 2000
+
+**********************************************************
+use library --- argparse
+**********************************************************
+import argparse
+
+parser=argparse.ArgumentsParser(description='calculates the div a//b and mode a%b of two integers')
+parser.add_argument('a',help='first integer',type=int)
+parser.add_argument('b',help='second integer',type=int)
+
+args=parser.parse_args()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+you don't need to pass from terminal, you can pass this way:
+args= parser.parse_args(['100','200'])
+even if you run in terminal: example.py 10 20, you will still get 100 and 200
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get help, can run in terminal: example.py -h or --help
+you will get help information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+********************************************************************************************************************
+pass named arguments into a .py script
+********************************************************************************************************************
+
