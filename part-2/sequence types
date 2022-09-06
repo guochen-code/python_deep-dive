@@ -1,0 +1,26 @@
+with repetition and concatenation, it's pretty safe unless you start using mutable elements
+**********************************************************************************************************************************************************
+beware of concatenations
+normal cases:
+x=[1,2]
+a= x+x
+a-> [1,2,1,2]
+pitfall:
+x=[[0,0]]
+a = x+ x
+a -> [[0,0],[0,0]] # beware that id(a[0]) == id(a[1])
+a[0][0]=100
+a->[[100,0],[100,0]]
+
+beware of repetitions
+a=[1,2,]*2
+a->[1,2,1,2]
+a[[0,0]]*2
+a->[[0,0],[0,0]] # all ids are equal
+same problem like above
+
+same happens here, but because strings are immutable it's quite safe
+above list is mutable not safe
+a=['python']*2
+a->['python','python']
+
