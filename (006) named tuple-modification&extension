@@ -1,0 +1,56 @@
+modify: modify attributes values
+extend: add more attributes
+*********************************************************************************************************************************************************************
+named tuple is immutable
+if you want to modify, you can create a new named tuple.
+but what if you have a long list of attributes
+
+example:
+Stock = namedtuple('stock','symbol year month day open high low close')
+djia=Stock('DJIA',2018,1,25,26_313,26_458,26_260,26_393)
+if you only want to change close attribute:
+djia = Stock(djia.symbol, djia.year, djia.month, djia.day, djia.open, djia.high, djia.low, 1000)
+
+solution-1, use unpacking:
+djia=Stock('DJIA',2018,1,25,26_313,26_458,26_260,26_393)
+*values,_=djia
+values.append(26_393)
+djia=Stock(*values) # this way only changes the close attribute
+
+why list append is more efficient than concatenate?
+append: id will not change
+concatenate: id will change
+extend: id will also not change !!!!!!!!!!!!!!!!!!!!!!! -> tuple extension
+if tuple, because tuple is mutable, always have a different id !!!!!!!!!!!!
+
+solution-2:
+djia=Stock('DJIA',2018,1,25,26_313,26_458,26_260,26_393)
+values= djia[:7]
+djia=Stock(*values,1000) # or Stock(*(values+(100,)))
+
+solution-3:                                                              !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+djia=Stock('DJIA',2018,1,25,26_313,26_458,26_260,26_393)
+djia=djia._replace(year=2019,open=10000) # id changes because of tuple
+
+solution-4:                                                               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+djia=Stock._make(values+(100,)) # will do unpacking for us
+
+*********************************************************************************************************************************************************************
+extension:
+
+example:
+Point2D._fields -> ('x','y')
+
+# create a Point3D
+
+solution-1:
+Point3D = namedtuple('Point3D', 'x y z') # not a good way if you have a long list of attributes
+
+solution-2:
+Point2D._fields+('z',)
+Point3D=namedtuple('Point3D', Point2D._fields+('z',))
+
+solution-3:
+# use solution-2 method to create djia_ext
+djia_ext=StockExt(*djia,1_000_000)
+
