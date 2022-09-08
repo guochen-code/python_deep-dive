@@ -1,0 +1,68 @@
+constant folding: a process of recognizing and evaluating constant expressions at compile time rather than computing them at runtime.
+
+if you do not need mutability, it is better to use tunple, which is more efficient
+
+***********************************************************************
+    >>> from dis import dis
+
+    >>> dis(compile("(10, 'abc')", '', 'eval'))
+      1           0 LOAD_CONST               2 ((10, 'abc'))
+                  3 RETURN_VALUE   
+ 
+    >>> dis(compile("[10, 'abc']", '', 'eval'))
+      1           0 LOAD_CONST               0 (10)
+                  3 LOAD_CONST               1 ('abc')
+                  6 BUILD_LIST               2
+                  9 RETURN_VALUE 
+
+
+example:
+from timeit import timeit
+timeit("(1,2,3,4,5,6,7,8,9)",number=10_000_000) -> 0.110032
+timeit("[1,2,3,4,5,6,7,8,9]",number=10_000_000) -> 0.815162
+
+timeit("([1,2],10,20)",number=1_000_000) -> 0.07079 # almost the same
+timeit("[[1,2],10,20]",number=1_000_000) -> 0.06735 
+
+***********************************************************************
+l1=[1,2,3]
+t1=(1,2,3)
+
+l2=list(l1)
+id(l1) != id(l2)
+
+t1=tuple(t1)
+id(t1) == id(t2) # immutatble, safe to do so
+
+# so tuple is more efficient in this way, no need to create a new object
+
+************************************************************************
+storage efficiency
+
+
+*************************************************************************
+retrieve elements
+
+t=tuple(range(100_000))
+l=list(t)
+
+timeit('t[999_999]',globals=globals(),number=10_000_000) -> 0.4893
+
+timeit('l[999_999]',globals=globals(),number=10_000_000) -> 0.5064
+# reason: tuple has direct access or pointer to the element while list needes to access another array that points to the elements of the list
+
+
+
+*************************************************************************
+Summary
+Tuples tend to perform better than lists in almost every category:
+
+Tuples can be constant folded.
+
+Tuples can be reused instead of copied.
+
+Tuples are compact and don't over-allocate.
+
+Tuples directly reference their elements.
+
+
