@@ -57,7 +57,14 @@ from module import func() again, so change in the namesapce, then run
 func() -> new results
 or func=sys.modules['module'].func then you can call func() -> new result
 
+root cause:
+from module import func # you can reload but not safe
 
+
+********************************************************************
+summary:
+reload can be done, but not safe, don't do it!!!!!!
+********************************************************************
 
 
 
