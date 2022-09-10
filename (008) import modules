@@ -1,0 +1,40 @@
+import modeule1
+import module1 # second time here, nothing will happen. because it looked into cache, already there.
+
+# remove module1
+del globals()['module1']
+module1.function() -> error: name module1 not defined
+
+********************************************************************************
+what does import do?
+it brings in the code, compiles, and execute and put it in sys.modules
+********************************************************************************
+
+from cmath import exp
+
+cmath is in sys.modules -> True
+cmath is in globals() -> False
+exp is in globals() -> True
+
+
+cmath=sys.modules['cmath']
+cmath is in globals() -> True
+
+********************************************************************************
+why not use from <library> import *
+
+example:
+from cmath import *
+from math import *
+# both of them have same symbol names like sqrt. so which one.....
+
+# it is not the * causing the problem. The root cause is the same name
+
+from cmath import sqrt
+from math import sqrt # still will overwrite
+
+solution: use aliases
+from cmath import c_sqrt
+from math import sqrt
+
+
