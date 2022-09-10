@@ -37,4 +37,27 @@ solution: use aliases
 from cmath import c_sqrt
 from math import sqrt
 
+*********************************************************** reloading module ***********************************************************
+(1) 
+del module
+import module
+# different id for the reimported module
+# problem with this approach: only change in global()?. No change to other module import this module!!!!!!!! they still point to the old memory address
+
+(2) use importlib
+import importlib
+importlib.reload(module) # module needs to be in global() # if not, we can use importlib.reload(sys.modules['module'])
+# will keep the same memory address !!!!!!!! but the content has been changed to reflect the change in the module
+
+(3) problem for above (2) approach
+# if call func(), still use the old module
+# because func() in namespace is still referred to the old (precondition: from module import func, executed before)
+# so need to do something:
+from module import func() again, so change in the namesapce, then run
+func() -> new results
+or func=sys.modules['module'].func then you can call func() -> new result
+
+
+
+
 
