@@ -1,0 +1,13 @@
+*************************************
+In python, everything is an object
+*************************************
+
+t = slice(0,100,2).indices(10)
+t -> (0,10,2)
+
+start = 5
+stop = 10
+step = 2
+length = 100
+
+list(range(*slice(start,stop, step).indices(lenght))) -> [5,7,9]
