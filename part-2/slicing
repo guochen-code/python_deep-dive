@@ -11,3 +11,18 @@ step = 2
 length = 100
 
 list(range(*slice(start,stop, step).indices(lenght))) -> [5,7,9]
+
+****************************
+extended application to see why sometimes return empty
+
+example:
+l='python'
+l[3:-1:-1] -? ''
+
+start = 3
+stop = -1
+step = -1
+length = 6
+
+range(*slice(start,stop, step).indices(lenght)) -> range(3, 5,-1) # 3 cannot get to 5 by step -1
+# behind the scene: python convert negative to positve indices and then do the slicing
