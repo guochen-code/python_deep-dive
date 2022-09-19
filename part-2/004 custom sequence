@@ -1,0 +1,36 @@
+import numbers
+
+class Point:
+  def __init__(self,x,y):
+    if isinstance(x,numbers.Real) and isinstance(y,numbers.Real):
+      self._pt = (x,y)
+    else:
+      rasise TypeError('Point co-ordinates must be real numbers.')
+    
+    def __repr__(self):
+      return f'Point(x={self._pt[0]}, y={self._pt[1]})'
+      
+p1= Point(10,20)
+x,y=p1 -> TypeError: 'Point' object is not iterable
+
+**********************************************************************
+class Point:
+  def __init__(self,x,y):
+    if isinstance(x,numbers.Real) and isinstance(y,numbers.Real):
+      self._pt = (x,y)
+    else:
+      rasise TypeError('Point co-ordinates must be real numbers.')
+    
+    def __repr__(self):
+      return f'Point(x={self._pt[0]}, y={self._pt[1]})'
+      
+    def __len__(self):                                              # actually, don;t need to have this. getitem is necessary for it become iterable!!!!!!
+      return len(self._pt)
+      
+    def __getitem__(self,s):
+      return self._pt[s]
+      
+ # now we can create a point given another point
+ p2 = Point(*p1) # id(p1) != id(p2)
+ 
+ 
