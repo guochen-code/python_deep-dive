@@ -50,3 +50,14 @@ so Python will use the iterator if there is one, otherwise it will fall back to 
 Of course, for selection by index or slice, the __getitem__ method must be implemented.
 We'll come back to this very topic in an upcoming video, because behind the scenes, even if we only implement the __getitem__ method, 
 Python will auto-generate an iterator for us!
+
+******************************************************************************************************************************
+how to know if an object is iterable or iterator?
+
+example:
+r=range(10)
+type(r) -> range
+'__iter__' in dir(r) -> True
+'__next__' in dir(r) -> False
+iter(r) -> <range_iterator at 0x19e3ab47810>
+
