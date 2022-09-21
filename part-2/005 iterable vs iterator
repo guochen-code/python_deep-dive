@@ -61,3 +61,9 @@ type(r) -> range
 '__next__' in dir(r) -> False
 iter(r) -> <range_iterator at 0x19e3ab47810>
 
+example:
+z=zip([1,2,3],'abc')
+'__iter__' in dir(z) -> True
+'__next__' in dir(z) -> True
+list(z) -> [(1,'a'),(2,'b'),(3,'c')]
+list(z) -> []
