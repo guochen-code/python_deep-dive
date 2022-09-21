@@ -1,0 +1,37 @@
+general iterator, not using index.
+
+*********************************************
+class CyclicIterator:
+  def __init__(self, iterable):
+    self.iterable = iterable
+    self.iterator = iter(self.iterable)
+  
+  def __iter__(self):
+    return self
+    
+  def __next__(self):
+    try:
+      item = next(self.iterator)
+    except StopIteration:
+      self.iterator = iter(self.iterable)
+      item = next(self.iterator)
+    finally:
+      return item
+      
+iter_cycl = CyclicIterator('abc')
+for i in range(10):
+  print(i,next(iter_cycl))
+  
+********************************************* with index
+class CyclicIterator:
+  def __init__(self, lst):
+    self.lst = lst
+    self.i = 0
+    
+  def __iter__(self):
+    return self
+    
+  def __next__(self):
+    result = self.lst[self.i % len(self.lst)]
+    self.i+=1
+    return result
