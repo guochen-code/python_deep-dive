@@ -7,3 +7,46 @@ __next__ -> returns the next element
 
 so iterators are themselves iterables, but they are iterables that become exhausterd
 iterables on the other hand never become exhausted, because they always return a new iterator that is then used to iterate
+
+******************************************************************************************************************************
+
+class Cities:
+    def __init__(self):
+        self._cities = ['New York', 'Newark', 'New Delhi', 'Newcastle']
+        
+    def __len__(self):
+        return len(self._cities)
+    
+    def __getitem__(self, s):
+        print('getting item...')
+        return self._cities[s]
+    
+    def __iter__(self):
+        print('Calling Cities instance __iter__')
+        return self.CityIterator(self)
+    
+    class CityIterator:
+        def __init__(self, city_obj):
+            # cities is an instance of Cities
+            print('Calling CityIterator __init__')
+            self._city_obj = city_obj
+            self._index = 0
+
+        def __iter__(self):
+            print('Calling CitiyIterator instance __iter__')
+            return self
+
+        def __next__(self):
+            print('Calling __next__')
+            if self._index >= len(self._city_obj):
+                raise StopIteration
+            else:
+                item = self._city_obj._cities[self._index]
+                self._index += 1
+                return item
+                
+                
+so Python will use the iterator if there is one, otherwise it will fall back to using __getitem__. If neither is implemented, we'll get an exception.
+Of course, for selection by index or slice, the __getitem__ method must be implemented.
+We'll come back to this very topic in an upcoming video, because behind the scenes, even if we only implement the __getitem__ method, 
+Python will auto-generate an iterator for us!
