@@ -1,0 +1,9 @@
+an iterable is an object that implements
+__iter__ -> return an iterator (in general, a new instance)
+
+an iterator is an object that implements
+__iter__ -> returns itself (an iterator) (not a new instance)
+__next__ -> returns the next element
+
+so iterators are themselves iterables, but they are iterables that become exhausterd
+iterables on the other hand never become exhausted, because they always return a new iterator that is then used to iterate
