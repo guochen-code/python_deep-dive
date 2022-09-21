@@ -1,5 +1,8 @@
 general iterator, not using index.
-
+why?
+set is iterable but set does not have index
+s={1,2,3,4,5}
+s[0] -> TypeError: 'set' object is not subscriptable
 *********************************************
 class CyclicIterator:
   def __init__(self, iterable):
