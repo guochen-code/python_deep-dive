@@ -67,3 +67,47 @@ z=zip([1,2,3],'abc')
 '__next__' in dir(z) -> True
 list(z) -> [(1,'a'),(2,'b'),(3,'c')]
 list(z) -> []
+
+example:
+f=open('cars.csv')
+print(next(f))          ##########
+print(f.__next__())      ##########
+print(f.readline())      ########## all the same thing
+f.close()
+
+example:
+e= enumerate('python rocks!')
+iter(e) is e -> True
+'__next__' in dir(e) -> True
+list(e) ->  [......]
+list(e) -> [] # again is none
+
+example:
+d={'a':1,'b':2}
+keys=d.keys()
+iter(keys) is keys -> False       # it is iterable not iterator
+'__iter__' in dir(keys) -> True
+'__next__' in dir(keys) -> False
+
+******************************************************************************************************************************
+application
+no need to load the entire file, save memory
+
+origins = set()
+with open('cars.csv') as f:
+    rows=f.readlines()                           ##################### read whole file in memory, waste, if you only need some small information
+for row in rows[2:]: 
+    origin = row.strip('\n').split(';')[-1]
+    origins.add(origin)
+print(origin) -> {'US', 'Japan', 'Europe'}
+
+solution:
+origins = set()
+with open('cars.csv') as f:
+    next(f)
+    next(f)                                     ################# first two rows are header and data type, skip                 
+    for row in f: 
+        origin = row.strip('\n').split(';')[-1]
+        origins.add(origin)
+print(origin) -> {'US', 'Japan', 'Europe'}
+
