@@ -82,3 +82,23 @@ class CallbaleIterator:
   xxxxxxxxxxxxxxxxxxx
 
 help(iter) -> python built-in sentinel value
+*************************************************************************************************************************************
+application - countdown
+
+def countdown(start=10):
+  def run():
+    nonlocal start
+    start-=1
+    return start
+  return run
+
+takeoff=countdown(10):
+for _ in range(15):
+  print(takeoff()) -> will go to -5
+  
+  
+# stop somewhere
+takeoff=countdown(10)
+takeoff_iter=iter(takeoff,-1) # stop at 0, need to use -1 here
+for num in takeoff_iter:
+print(num) -> get to and stop at 0
