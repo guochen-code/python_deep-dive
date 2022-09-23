@@ -1,0 +1,27 @@
+yield is generator function
+(1) emit
+(2) pause
+(3) StopIteration
+
+Class FactIter:
+  def __init__(self,n):
+    self.n=n
+    self.i=0
+  def __iter__(self):
+    return self
+  def __next__(self):
+    if self.i>=self.n:
+      raise StopIteration
+    else:
+      result=math.factorial(self.i)
+      self.i+=1
+      return result
+fact_iter=FactIter(5)
+
+equivalent to:
+
+def factorials(n):
+  for i in range(n):
+    yield math.factorial(i)
+fact_iter=factorials(5)
+
