@@ -20,6 +20,13 @@ f.__next__() -> line 1 /n Flying
 result=next(f) -> line 2
 result -> Circus
 
+application - generate generators:
+def squares(n):
+  for i in range(n):
+    yield i**2
+sq = squares(5)
+list(sq) -> [0,1,4,9,16]
+
 
 ******************************** less code if use yield
 yield is generator function
