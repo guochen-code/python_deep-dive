@@ -1,3 +1,11 @@
+generator functions are functions that contain at least one yield statement
+when a generator function is called, python creates a generator object
+generators implement the iterator protocol
+generators are inherently lazy iterators (and can be infinite)
+generators are iterators, and can be used in the same way (for loops, comprehensions, etc)
+generators become exhausted once the function returns a value
+
+********************************
 yield is generator function
 (1) emit
 (2) pause
