@@ -1,0 +1,32 @@
+creating iterables from generators. Same reason when we have iterables when we have iterators. don't have to create a new iterator every time we restart an iteration. 
+
+wrap iterator inside iterable, have to write iterable ourselfs
+************************************************
+def squares(n):
+  for i in range(n):
+    yield i**2
+    
+class Squares:
+  def __init__(self,n):
+    self.n=n
+  def __iter__(self):
+    return squares(self.n)
+    
+sq = Squares(n)
+
+l1=list(sq) / l1 -> [0,1,4,9,16]
+l2=list(sq) / l2 -> [0,1,4,9,16]
+
+*********************************************
+
+class Squares:
+  def __init__(self,n):
+    self.n=n
+  def __iter__(self):
+    return Squares.squares(self.n)    # change-1
+  
+  @staticmethod                       # change-2
+  def squares(n):
+    for i in range(n):
+      yield i**2
+    
