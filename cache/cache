@@ -1,0 +1,59 @@
+from functools import lru_cache
+
+@lru_cache()
+def fib_recursive(n):
+  if n<=1:
+    return 1
+  else:
+    return fib_recursive(n-1) + fib_recursive(n-2)
+    
+timeit('fib_recusive(10)', globals=globals(), number =10)
+
+problem: limit to the depth of recursive in python. you can change this limit, but not a good idea, use a lot of memory, not very effective. 
+so we will still hit the limit at some point. say 2000
+
+fib_recursive(2000) -> RecursionError: maximum recursion depth exceeded while calling a python object
+
+**************************** best approach is to use non-recursive approach ****************************
+
+def fib(n):
+  fib_0=1
+  fib_1=1
+  for i in range(n-1):
+    fib_0,fib_1 = fib_1, fib_0 + fib_1
+  return fib_1
+
+[fib(i) for i in range(7)] -> [1,1,2,3,5,8,13]
+
+timeit('fib(5000)', globals=globals(), number =10) -> 0.00646
+
+# create an iterator so don't need to use list comprehension like above
+
+class FibIter:
+  def __init__(self,n):
+    self.n = n
+    self.i = 0
+  def __iter__(self):
+    return self
+  def __next__(self):
+    if self.i >= self.n:
+      raise StopIteration
+    else:
+      result = fib(self.i)
+      self.i+=1
+      return result
+      
+fib_iter=FibIter(7)
+for num in fib_iter:
+  print(num)
+  
+# a lot of work to create this iterator
+def fib(n):
+  fib_0, fib_1 = 1, 1
+  for i in range(n-1):
+    fib_0,fib_1=fib_1,fib_0+fib_1
+    yield fib_1
+    
+# problem: first two 1s not returned
+
+  
