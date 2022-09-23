@@ -4,8 +4,24 @@ generators implement the iterator protocol
 generators are inherently lazy iterators (and can be infinite)
 generators are iterators, and can be used in the same way (for loops, comprehensions, etc)
 generators become exhausted once the function returns a value
-
 ********************************
+def my_func():
+  print('line 1')
+  yield 'Flying'
+  print('line 2')
+  yield 'Circus'
+
+f=my_func()                                 # didn't do anything, only assign an object, created this generator object from this code, not run anything inside func
+type(f) -> generator                        # will be exhausted
+'__iter__' in dir(f) -> True
+'__next__' in dir(f) -> True
+iter(f) is f -> True
+f.__next__() -> line 1 /n Flying
+result=next(f) -> line 2
+result -> Circus
+
+
+******************************** less code if use yield
 yield is generator function
 (1) emit
 (2) pause
