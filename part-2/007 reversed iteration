@@ -1,0 +1,5 @@
+for sequence, it is by default, you can use reversed()
+but for iterables, you need to def __reversed__ () function to enable reversed function on an iterable
+
+example:
+see ipynb file
