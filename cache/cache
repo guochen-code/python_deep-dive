@@ -55,5 +55,20 @@ def fib(n):
     yield fib_1
     
 # problem: first two 1s not returned
+solution:
 
-  
+def fib_gen(n):
+  fib_0 = 1
+  yield fib_0
+  fib_1 = 1
+  yield fib_1
+  for i in range(n-2):                # n-2 here!!!
+    fib_0,fib_1=fib_1,fib_0+fib_1
+    yield fib_1  
+
+from timeit import timeit
+timeit('FibIter(5000)',globals=globals(),number=1) -> 4.300000000512227e-06
+timeit('fib_gen(5000)',globals=globals(),number=1) -> 8.999995770864189e-07
+
+timeit('list(FibIter(5000))',globals=globals(),number=1) -> 0.7039179999992484
+timeit('list(fib_gen(5000))',globals=globals(),number=1) -> 0.0012905999974464066
