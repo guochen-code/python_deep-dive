@@ -13,7 +13,7 @@ class Point:
 p1= Point(10,20)
 x,y=p1 -> TypeError: 'Point' object is not iterable
 
-**********************************************************************
+********************************************************************** getitem is needed for you to unpack the class object
 class Point:
   def __init__(self,x,y):
     if isinstance(x,numbers.Real) and isinstance(y,numbers.Real):
@@ -33,4 +33,98 @@ class Point:
  # now we can create a point given another point
  p2 = Point(*p1) # id(p1) != id(p2)
  
- 
+ **********************************************************************************************************************************************************
+ class Polygon:
+  def __init__(self,*pts):
+    if pts:
+      self._pts = [Point(*pt) for pt in pts] # able to pass anything, tuple or class Point
+    else:
+      self._pts=[]
+      
+  def __repr__(self):
+    return f'Polygon({self._pts})'
+p = Polygon((0,0),Point(1,1))
+p -> Polygon([Point(x=0,y=0), Point(x=1,y=1)])  # only problem there is a square brackets 
+p1 = Polygon(Point(x=0,y=0),Point(x=1,y=1)) -> error
+# the polygon initializer expects a variable number of positional arguments. this will fail if try to create a new polygon
+# we want each of individual item as individual argument
+
+solution:
+ class Polygon:
+  def __init__(self,*pts):
+    if pts:
+      self._pts = [Point(*pt) for pt in pts] # able to pass anything, tuple or class Point
+    else:
+      self._pts=[]
+      
+  def __repr__(self):
+    pts_str=','.join([str(pt) for pt in self._pts])
+    return f'Polygon({pts_str})'
+
+p = Polygon((0,0),Point(1,1))
+p1 = Polygon(Point(x=0,y=0),Point(x=1,y=1)) -> NO error
+
+************************ start making polygon into a sequence type
+ class Polygon:
+  def __init__(self,*pts):
+    if pts:
+      self._pts = [Point(*pt) for pt in pts] # able to pass anything, tuple or class Point
+    else:
+      self._pts=[]
+      
+  def __repr__(self):
+    pts_str=','.join([str(pt) for pt in self._pts])
+    return f'Polygon({pts_str})'
+    
+  def __len__(self):
+    return len(self._pts)
+  
+  def __getitem__(self,s):
+    return self._pts[s
+*********************************** define concatenation
+def __add__(self,other):
+  if isinstance(other,Polygon):
+    new_pts = self._pts + other._pts
+    return Polygon(*new_pts)
+  else:
+    raise TypeError('can only concatenate with another Polygon')
+
+p1 = Polygon((0,0),Point(1,1))
+p2 = Polygon((2,2),Point(3,3))
+p1+p2
+
+************************************ in place concatenation
+def __iadd__(self,other):
+  if isinstance(other,Polygon):
+  self._pts = self._pts + other._pts                               # change-1
+    return self                                                    # change-2
+  else:
+    raise TypeError('can only concatenate with another Polygon')
+
+************************************* above it too restrict
+def __iadd__(self,other):
+  if isinstance(other,Polygon):
+    points = other._pts                              
+  else:
+    points = [Point(*pt) for pt in other].                                              ########### same idea as above !!!!!!!!!!!!!!!!!!
+  self._pts = self._pts + points
+  return self
+
+*************************************** implement extend, append, and insert
+def append(self,pt):
+  self._pts.append(Point(*pt))
+
+def insert(self,i,pt):
+  self._pts.insert(i,Point(*pt))
+  
+def extend(self,pts):
+  if isinstance(pts,Polygon):
+    self._pts+=pts._pts
+  else:
+    points = [Point(*pt) for pt in pts]
+    self._pts+=points
+
+**************************************** iadd can be changed to
+def __iadd__(self,other):
+  self.extend(other)
+  return self
