@@ -1,0 +1,23 @@
+sort key:
+it has to be a function, that is going to be given every item in the iterable that we are trying to sort
+and it will return a value, the natural ording on that value is going to determine the ordering of the list
+*************************************************************************************************************************************
+application:
+# ordering based on values rather than keys
+d = {'a':100, 'b': 50, 'c': 10}
+sorted(d) -> ['a','b','c']
+sorted(d,key=lambda k:d[k]) -> ['c','b','a']
+
+t='this', 'parrot','is','a','late','bird'
+
+def sort_key(s):
+  return len(s)
+
+sorted(t,key=sort_key)         # by default, reserve = False, it is ascending order
+sorted(t,key=lambda s:len(s))
+
+# notice that if equal ordering, the original ordering will be preserved.
+
+
+
+
