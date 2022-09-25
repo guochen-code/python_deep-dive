@@ -20,3 +20,34 @@ for i in range(5):
     
 l = [(i,j,k) for i in range(5) for j in range(5) for k in range*5)]
 note that the order in which the for loops are specified in the comprehension correspond to the order of the nested loops
+
+****************************************************************************************************************************************************************
+
+funcs=[lambda x:x**i for i in range(5)]
+funcs[0](10) -> 10000 # but we expect it to be 10^0 =1
+why?
+we have to differentiate when python builds, compiles the function and when it executes the body of the function. 
+when it compiles the function, it sees this variable i, sees it in the enclosing scope and it finds it, this is a closure, this is a free variable.
+when we evaluate the function, it calls the body and at that point it looks at what the value i is.
+
+solution:
+same problem, as showed before.
+
+example:
+from datetime import datetime
+
+def log(msg, current_dt=datetime.now()):
+  print(msg,current_dt)
+log('abc') -> abc 2018-04-23 22:21:33.974410
+log('cde') -> cde 2018-04-23 22:21:33.974410
+log('a') -> a 2018-04-23 22:21:33.974410
+
+what happends is that the default values of function parameters are calculated when the function is compiled, not when the function is executed!!!
+by the time of execution, this has already been evaluated and assigned as the default value of current date.
+if i don't specify current date, it takes that value and so it will be the same every time I call !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+we could use this to our advantage !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+funcs = [lambda x,p=i: x**p for i in range(5)]
+funcs[0](10) -> 1
+
