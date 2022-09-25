@@ -18,6 +18,29 @@ sorted(t,key=lambda s:len(s))
 
 # notice that if equal ordering, the original ordering will be preserved.
 
+*************************************************************************************************************************************
+sorted(lst) vs lst.sort()
+lst.sort() is in-place sort, which is more efficient 
+if lst is sorted once, the next time run lst.sort() will be faster
 
+*************************************************************************************************************************************
+ordering of Class
 
+class MyClass:
+  def __init__(self,name,val):
+    self.name=name
+    self.value=value
+    
+  def __repr__(self):
+    return f'MyClass({self.name},{self.val})'
+    
+  def __gt__(self,other):
+    return self.val > other.val
+    
+****************
+Conclusion:
+(1) if no __gt__, you can have __lt__, python will infer one from the other
+(2) if no __gt__ and no __lt__, sorted([c1,c2,c3,c4]) will get an error
+(3) if no __gt__ and no __lt__, but don't want error: sorted([c1,c2,c3,c4],key=lambda c: c.val). this will work.
+****************
 
