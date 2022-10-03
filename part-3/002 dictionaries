@@ -2,3 +2,12 @@
 
 - value: any python object
 
+creating dictionaries - literals
+{key1:value1}
+
+creating dictionaries- constructor
+dict(key1=value1) # key1 must be a valid identifier name, cannot be (0,0) which can be when using literals
+
+creating dictionaries - comprehensions
+{str(i):i**2 for i in range(1,5)}
+
