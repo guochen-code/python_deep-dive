@@ -1,5 +1,7 @@
 never rely on a hash value being the same from one program to another!!!
 
+two objects that do not compare equal may still have the same hash - hash collision
+
 ************
 map(hash,(1,2,3,4))
 map(hash,(1.1,2.2,3.3,4.4))
