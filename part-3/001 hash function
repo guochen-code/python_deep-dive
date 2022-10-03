@@ -1,0 +1,28 @@
+never rely on a hash value being the same from one program to another!!!
+
+************
+map(hash,(1,2,3,4))
+map(hash,(1.1,2.2,3.3,4.4))
+map(hash,('hello','python','!'))
+hash((1,'a',10,5))
+
+# mutable
+hash([1,2]) -> TypeError: unhashable type
+hash({'a','b'}) -> TypeError: unhashable type
+
+# immutable
+hash((1,2)) -> ok
+hash(frozenset({'a','b'})) -> ok
+
+# comnination
+hash((1,2,[3,4])) -> TypeError: unhashable type
+
+caveat:
+hash():
+- always returns an int
+- if a == b is True, then hash(a) == hash(b) is also True
+- python truncates hashes to some fixed size (sys.hash_info.width)
+
+during the single run, hash is guaranteed to be the same
+during multiple runs, not guaranteed
+
