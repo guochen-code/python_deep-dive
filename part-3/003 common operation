@@ -1,0 +1,81 @@
+del d['z'] # if no z, keyerror
+
+d.pop('z')
+(1) delete
+(2) return z's value
+(3) keyerro if not exist
+
+d.pop('z',100) # return 100 if z not exist; will return 100
+
+d.popitem()
+(1) delete the last item
+(2) return the last item
+(3) keyerror if empty
+
+
+**************************************************************************
+from itertools import chain
+import string
+
+cat_1={'':None}
+cat_2=dict.fromkeys(string.ascii_lowercase,'lower')
+cat_3=dict.fromkeys(string.ascii_uppercase,'upper')
+categories=dict(chain(cat_1.items(),cat_2.items(),cat_3.items()))
+categories ->
+  
+{'': None,
+ 'a': 'lower',
+ 'b': 'lower',
+ 'c': 'lower',
+ 'd': 'lower',
+ 'e': 'lower',
+ 'f': 'lower',
+ 'g': 'lower',
+ 'h': 'lower',
+ 'i': 'lower',
+ 'j': 'lower',
+ 'k': 'lower',
+ 'l': 'lower',
+ 'm': 'lower',
+ 'n': 'lower',
+ 'o': 'lower',
+ 'p': 'lower',
+ 'q': 'lower',
+ 'r': 'lower',
+ 's': 'lower',
+ 't': 'lower',
+ 'u': 'lower',
+ 'v': 'lower',
+ 'w': 'lower',
+ 'x': 'lower',
+ 'y': 'lower',
+ 'z': 'lower',
+ 'A': 'upper',
+ 'B': 'upper',
+ 'C': 'upper',
+ 'D': 'upper',
+ 'E': 'upper',
+ 'F': 'upper',
+ 'G': 'upper',
+ 'H': 'upper',
+ 'I': 'upper',
+ 'J': 'upper',
+ 'K': 'upper',
+ 'L': 'upper',
+ 'M': 'upper',
+ 'N': 'upper',
+ 'O': 'upper',
+ 'P': 'upper',
+ 'Q': 'upper',
+ 'R': 'upper',
+ 'S': 'upper',
+ 'T': 'upper',
+ 'U': 'upper',
+ 'V': 'upper',
+ 'W': 'upper',
+ 'X': 'upper',
+ 'Y': 'upper',
+ 'Z': 'upper'}
+
+
+
