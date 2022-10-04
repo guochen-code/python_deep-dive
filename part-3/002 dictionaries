@@ -9,6 +9,7 @@ creating dictionaries- constructor
 dict(key1=value1) # key1 must be a valid identifier name, cannot be (0,0) which can be when using literals
 d = dict(x=100,y=200) -> {'x':100,'y':200}
 d=dict([('a',100),['b',200]])
+d=dict(zip('abc',range(1,4)))
 
 creating dictionaries - comprehensions
 {str(i):i**2 for i in range(1,5)}
