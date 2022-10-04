@@ -1,0 +1,22 @@
+(1) keys only                             ---- d.keys()
+(2) values only                           ---- d.values()
+(3) key/value pairs -> (key,value)        ---- d.items()
+
+important:
+order of keys and values and items are the same
+the position of an item in one view corresponds to the same position in other views
+python 3.6+: in addition, this order is same as dictionary insertion order
+
+these views are dynamic
+
+
+set operation
+- union : s1 | s2
+- intersection : s1 & s2
+- difference : s1 - s2 # element in s1 but not in s2
+
+dictionaries are now considered ordered (insertion order)
+sets are not ordered
+
+d1.keys() and d2.keys() are ordered
+but d1.keys() | d2.keys is a set -> ordering of result is not guaranteed
