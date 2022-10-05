@@ -1,0 +1,61 @@
+chaining of the dictionaries into a new dictionary
+doing configuration for applications
+have a dictionary that defines the default value for configurations for your app
+may have another configuration used to define environment specific configurations, development and production.
+
+conf_defaults = dict.fromkeys(('host','port','user','pwd','database'),None)
+conf_global = {'port':5432, 'database': 'deepdive'}
+conf_dev={'host':'localhost',
+          'user': 'test',
+          'pwd': 'test'
+          }
+conf_prod={'host':'prodpg.deepdive.com',
+          'user': '$prod_user',
+          'pwd': '$prod_pwd',
+          'database' : 'deepdive_prod'
+          }
+# if in development environment:          
+conf = {**conf_defaults,**conf_global,**conf_dev}
+# if in production environment:          
+conf = {**conf_defaults,**conf_global,**conf_dev,**conf_prod}
+
+**************************************************************************
+another application: pass arguments into a function
+
+def my_func(*,kw1,kw2,kw3):
+  print(kw1,kw2,kw3)
+  
+d = {'kw2':20,'kw1':10,'kw3':30}
+my_func(**d) -> 10 20 30
+
+if do the following, be careful of the order
+def my_func(**kwargs):
+  for k,v in kwargs.items():
+    print(k,v)
+    
+my_func(b=1,a=2) ->
+b 1
+a 2
+
+my_func(**d) ->
+kw2 20
+kw1 10
+kw3 30
+
+**************************************************************************
+from copy import deepcopy
+d_deep = deepcopy(d)
+d_shallow = d.copy()
+
+unpacking d2 = {**d1} # shallow copy
+d2= dict(d1)  # shallow copy
+d2 = {k:v for k,v in d1.items()} # shallow copy
+
+4 ways to do shallow copy, which is faster?
+comprehensive is slowest, use the others, all the same
+
+
+
+
+
+
