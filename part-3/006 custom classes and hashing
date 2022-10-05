@@ -1,0 +1,48 @@
+how python inserts a key/value item in a dictionary (simplified)
+
+hash(key) -> mod dictionary size (allocated) -> start index in hash table (sequence of slots)
+          -> generate probe sequence (sequence of valid indices)
+          -> iterate over probe sequence -> index                                  # continue loop until an empty slot is found to store the item
+            -> is the slot at that index empty?
+              yes -> store the new item there (hash, key, value)                   #
+              no -> hash collision
+                 -> continue iteration to look for an empty slot                   #
+                 
+more hash collisions -> more inefficient
+
+
+how python finds a key in a dictionary (simplified)
+
+hash(key) -> mod dictionary size (allocated) -> start index in hash table (sequence of slots)
+          -> generate probe sequence (sequence of valid indices)
+          -> loop over probe sequence                                              # continue loop until found or empty slot
+            -> is slot empty?
+              yes -> key does not exist in dictionary                              #
+              no -> are hash equal and are keys equal (==)?
+                yes -> found the key
+                no (caused by hash collision upon insertion/resizing)
+                  -> continue iteration to find key or empty slot                   #
+                 
+more hash collisions -> more inefficient
+predictable hashes -> subject to DOS attacks
+
+
+******************************************************************************************************************************************
+remember the rules:
+- __hash__ must return an integer
+- if a == b -> True then __hash__(a) == __hash__(b) -> True
+******************************************************************************************************************************************
+
+calling hash(p)
+in reality:
+hash(p) -> looks for p.__hash__
+          -> None means not hashable
+          -> otherwise, calls p.__hash__()
+          -> truncates returned integers to 32-bit, 64-bit (depends on your specific Python)
+import sys
+sys.hash_info.width -> 64
+
+how does python truncate to that number of bits?
+sys.hash_info.modulus -> 2305843009213693951
+  p.__hash__() % sys.hash_info.modulus
+
