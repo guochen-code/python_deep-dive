@@ -46,3 +46,16 @@ how does python truncate to that number of bits?
 sys.hash_info.modulus -> 2305843009213693951
   p.__hash__() % sys.hash_info.modulus
 
+ ****************** !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ mutable object as key in a dictionary:
+ problem:
+ when you mutate, the hash value doesn't change, although the key changed in the dictionary, the old hash value still there
+ when you look up using the mutated key, it cannot find the object, because of different hash values
+ 
+ solution:
+ it is ok to have mutable objects as key in the dictionary as long as how we compare the objects and the hash of the objects does not change based on
+ how we mutate the object
+ 
+ previously: use (name,age) as hash
+ now: use(id) as hash
+ you can change name and age. but not id.
