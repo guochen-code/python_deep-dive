@@ -6,3 +6,44 @@ s.clear()
 
 set is like a bag of values, you can process one by one if you don't care about the order
 
+
+
+********************************************************* always return a new set **********************************************************
+- intersection
+- union
+- disjoint
+- difference
+- symmetric difference # = union - intersection
+- containment
+
+
+{1,2,3} &{2,4} -> {2}
+{1,2,3}.intersection([2,4]) -> {2}
+
+s1&s2&s3&s4
+s1.intersection(s2,s3,s4)
+
+
+two sets are disjoint if their intersection is empty
+len(s1&s2) -> 0
+empty sets are falsy
+if s1 & s2:
+  print('sets are not disjoint')
+if not(s1 & s2):
+  print('sets are disjoint')
+if not s1 & s2:
+  print('sets are disjoint')
+s1.isdisjoint(s2)
+
+
+s1.difference(s2,s3) -> s1 - (s2 - s3)
+
+
+s1.symmetric_difference(s2)
+
+
+s1<s2
+s1<=s2  --- s1.issubset(s2)
+s1>s2
+s1>=s2 ---- s1.issuperset(s2)
+
