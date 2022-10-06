@@ -1,0 +1,8 @@
+s.add
+s.remove  # KeyError
+s.discard # no error
+s.pop #random removal # can't pop an empty set
+s.clear()
+
+set is like a bag of values, you can process one by one if you don't care about the order
+
