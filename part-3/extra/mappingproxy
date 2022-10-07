@@ -1,0 +1,9 @@
+it is a view of dictionary. It can be really handy in some situations where you want to make sure somebody cannot modify your dictionary directly.
+instead of returning a dictionary of making a copy of it, just return a mapping proxy of that dictionary.
+
+from types import MappingProxyType
+
+d = {'a':1,'b':2}
+
+mp = MappingProxyType(d)
+
