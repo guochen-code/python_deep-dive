@@ -7,5 +7,5 @@ my_func(a=1,b=2) -> result is computed and cached
 my_func(a=1,b=2) -> result is returned directly from cache
 my_func(b=2,a=1) -> result is computed again, and cached
 
-solution: use frozen set
+solution: write your own decorator, using frozen set
 
