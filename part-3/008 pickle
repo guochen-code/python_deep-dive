@@ -1,0 +1,9 @@
+import pickle
+
+# export to a file
+ser = pickle.dump()
+deser = pickle.load()
+
+# export to a variable
+serialization = pickle.dumps()
+deserialization = pickle.loads()
