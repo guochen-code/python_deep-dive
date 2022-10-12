@@ -1,0 +1,11 @@
+json keys must be strings -> but python dictionary keys just have to be hashable
+                          -> how to serialize?
+                          
+json value types are limited -> but python dictionary values can be any data type
+                             -> how to serialize?
+                             
+even if we can serialize a complex data type, such as custom class
+                             -> how to deserialize back to original data type?    
+                             
+customize serialization and deserialization
+
