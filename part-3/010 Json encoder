@@ -1,0 +1,105 @@
+json.dumps(dict(name='test', time=datetime.utcnow()),
+            cls=CustomJSONEncoder
+            )
+            
+class CustomJSONEncoder(json.JSONEncoder):
+  def default(self,arg):
+    if isinstance(arg,datetime):
+      return arg.isoformat()
+    else:
+      super().default(arg) # if cannot handle, pass it back to parent class
+      
+why use cls instead of default,example:
+
+d={
+  'a':float('inf')
+  'b':float('nan')
+  }
+
+ser = json.dumps(d)
+dser=json.loads(ser) -> {'a':inf, 'b':nan}
+
+other language other than python may not know what does inf mean
+original intention
+ser -> {"a":Infinity, "b":NaN} 
+this is invalid json for C++ or Java, it will fail, but not give an error
+
+# what we can do:
+json.dump(d,allow_nan=False) -> this will give an error
+
+***************************** skipkeys
+d ={10:"init", 10.5:"float",(1,1):"complex"} -> TypeError: keys must be a string
+
+json.dumps(d,skipkeys=True)
+
+***************************** indent/separator
+print(json.dumps(d,indent='***'))
+
+print(json.dumps(d,indent=2,separators=(', ',': '))) # default separators
+(1) remove indentation
+(2) remove white space
+print(json.dumps(d,separators=(',',':')))
+
+to be as compact as possible:
+print(json.dumps(d,separators=(',',':'),allow_nan=False,skipkeys=True))
+# next to remember to specify all the function
+# a month later, want space back after comma, you need to go over every single dump call and make the change
+# not fun and error prone
+
+solution: package all that up inside our custom encoder object       ******************* why we use JSONEncoder
+
+class CustomEcoder(json.JSONEncoder):
+  def __init__(self):
+    super().__init__(skipkeys=True,
+                      allow_nan=False,
+                      indent='---',
+                      separators=('',' = ')
+                      )
+   def default(self,arg):
+    if isinstance(arg,datetime):
+      return arg.isoformat()
+    else:
+      return super().default(arg)
+ 
+ d ={
+      'time':datetime.utcnow(),
+      1+1j: "complex",
+      'name': 'Python'
+     }
+ 
+ print(json.dumps(d,cls=CustomEncoder)) -> TypeError: __init__() got an unexpected keyword argumnet 'skipkeys' ???? why
+ # because json.dumps(d,cls=CustomEncoder,skipkeys=False,....) # skipkeys argument is still there
+ 
+solution:
+class CustomEcoder(json.JSONEncoder):
+  def __init__(self,*args,**kwargs): ############## change is here!!!!!
+    super().__init__(skipkeys=True,
+                      allow_nan=False,
+                      indent='---',
+                      separators=('',' = ')
+                      )
+   def default(self,arg):
+    if isinstance(arg,datetime):
+      return arg.isoformat()
+    else:
+      return super().default(arg)
+
+********************* extended
+class CustomEncoder(json.JSONEncoder):
+  def default(self,arg):
+    if isinstance(arg,datetime):
+      obj = dict(
+                datatype="datetime",
+                iso=arg.isoformat(),
+                date=arg.date().isoformat(),
+                time=arg.time().isoformat(),
+                year=arg.year,
+                month=arg.month,
+                day=arg.day,
+                hour=arg.hour,
+                minutes=arg.minute,
+                seconds=arg.second
+                )
+      return obj
+     else:
+      return super().default(arg)
