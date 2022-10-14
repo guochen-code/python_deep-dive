@@ -23,3 +23,18 @@ def custom_json_formatter(arg):
         return vars(arg)
       except TypeError:
         return str(arg)
+
+from decimal import Decimal
+
+pt1 = Point(1,2)
+p = Person('John',18)
+pt2 = Point(Decimal('10.5'),Decimal(100.5))
+
+log_record = dict(time=datetime.utcnow(),
+                  message='Created new point',
+                  point = pt1,
+                  point_2 = pt2,
+                  created_by = p
+                  )
+
+json.dumps(long_record, default=custom_json_formatter)
