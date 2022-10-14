@@ -9,3 +9,17 @@ even if we can serialize a complex data type, such as custom class
                              
 customize serialization and deserialization
 
+
+def custom_json_formatter(arg):
+  if isinstance(arg,datetime):
+    return arg.isoformat()
+  elif isinstance(arg,set):
+    return list(arg)
+  else:
+    try:
+      return arg.toJson()
+    except AttributeError:
+      try:
+        return vars(arg)
+      except TypeError:
+        return str(arg)
