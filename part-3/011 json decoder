@@ -1,0 +1,103 @@
+regular expression
+
+import re
+pattern = r'"_type\s*:\s*"point"'
+# r means raw string
+
+---- 1st way - complie regular expression
+regexp=re.compile(pattern) # use the same pattern in your program, over and over again, it's better to compile it.
+
+print(regexp.search('"a":1')) ->None
+print(regexp.search('"_type":"point"') -> <_sre.SRE_Match object; span=90,16), match='"_type":"point"'>
+
+print(regexp.search('"_type"      :\t"point"') # still match, \t is space in nature.
+
+
+---- 2nd way, not complied:
+re.search(r'"_type\s*:\s*"point"', '"_type"      :\t"point"')
+
+**********************************************************************************************************************************************************
+
+class CustomDecoder(json.JSONDecoder):
+  def decode(self,arg):
+    obj = json.loads(arg)
+    pattern = r'"_type\s*:\s*"point"'
+    if re.search(pattern,arg):
+      obj = self.make_pts(obj):
+    return obj
+    
+  def make_pts(self,obj):
+    if isinstance(obj,dict):
+      if '_type' in obj and obj['_type'] == 'point':
+        obj = Point(obj['x'],obj['y'])
+      else:
+        for key, value in obj.items():
+          obj[key] = self.make_pts(value)
+    elif isinstance(obj,list):
+      for index, item in enumerate(obj):
+        obj[index]  = self.make_pts(item)
+    return obj
+    
+# application
+from pprint import pprint
+
+pprint(json.loads(j,cls=CustomDecoder))
+
+**********************************************************************************************************************************************************
+
+from decimal import Decimal
+
+j= json data
+CustomerDecoder = json.JSONDecoder(parse_float=Decimal)
+d = CustomDecoder.decode(j)
+
+**********************************************************************************************************************************************************
+combine together
+
+class CustomDecoder(json.JSONDecoder):
+  base_decoder = json.JSONDecoder(parse_float=Decimal)
+  
+  def decode(self,arg):
+    obj = self.base_decoder.decode(arg)
+    pattern = r'"_type\s*:\s*"point"'
+    if re.search(pattern,arg):
+      obj = self.make_pts(obj):
+    return obj
+    
+  def make_pts(self,obj):
+    if isinstance(obj,dict):
+      if '_type' in obj and obj['_type'] == 'point':
+        obj = Point(obj['x'],obj['y'])
+      else:
+        for key, value in obj.items():
+          obj[key] = self.make_pts(value)
+    elif isinstance(obj,list):
+      for index, item in enumerate(obj):
+        obj[index]  = self.make_pts(item)
+    return obj
+
+**********************************************************************************************************************************************************
+same result
+
+class CustomDecoder(json.JSONDecoder):
+  def __init__(self,,*args,**kwargs):         ###############
+    super().__init__(parse_float=Decimal)     ###############
+  
+  def decode(self,arg):
+    obj = super().decode(arg)                 ###############
+    pattern = r'"_type\s*:\s*"point"'
+    if re.search(pattern,arg):
+      obj = self.make_pts(obj):
+    return obj
+    
+  def make_pts(self,obj):
+    if isinstance(obj,dict):
+      if '_type' in obj and obj['_type'] == 'point':
+        obj = Point(obj['x'],obj['y'])
+      else:
+        for key, value in obj.items():
+          obj[key] = self.make_pts(value)
+    elif isinstance(obj,list):
+      for index, item in enumerate(obj):
+        obj[index]  = self.make_pts(item)
+    return obj
