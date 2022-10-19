@@ -1,0 +1,44 @@
+for person, details in persons.items():
+  if 'eye_color' in details:
+    color = details['eye_color']
+  else:
+    color = 'unknow'
+  if color in eye_colors:
+    eye_colors[color].append(person)
+  else:
+    eye_colors[color] = [person]
+****************************************************    
+eye_colors={}
+for person, details in persons.items():
+  color = details.get('eye_color','unknow')
+  person_list=eye_colors.get(color,[])
+  person_list.append(person)
+  eye_colors[color] = person_list
+****************************************************  
+eye_colors=defaultdict(list)
+for person, details in person.items():
+  color=details.get('eye_color','unknow')
+  eye_colors[color].append(person)
+****************************************************  
+persons = {
+          'john':defaultdict(lambda:'unknow',age=20,eye_color='blue'),
+          'jack':defaultdict(lambda:'unknow',age=25,eye_color='brown'),
+          'jill':defaultdict(lambda:'unknow',age=22,eye_color='blue'),
+          'eric':defaultdict(lambda:'unknow',age=35),
+          'michael':defaultdict(lambda:'unknow',age=27)
+          }
+          
+eye_colors=default(list)
+for person, details in persons.items():
+  eye_colors[details['eye_color']].append(person)
+****************************************************  
+# simply above
+(1) use partial
+from functools import partial
+eyedict=partial(defaultdict,lambda:'unknow')
+
+(2) use lambda function
+eyedict = lambda *args,**kwargs: default(lambda:'unknow',*args,**kwargs)
+  
+
+          
