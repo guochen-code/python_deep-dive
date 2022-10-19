@@ -1,3 +1,24 @@
+**************************************************** counts
+counts={}
+sentence = 'able was I ere I saw elba'
+
+for c in sentence:
+  if c in counts:
+    counts[c] += 1
+  else:
+    counts[c] = 1
+
+****************************************************
+counts={}
+for c in sentence:
+  counts[c] = counts.get(c,0) + 1
+****************************************************
+counts = defaultdict(lambda : 0)
+for c in sentence:
+  counts[c] += 1
+****************************************************
+****************************************************
+****************************************************  keys
 for person, details in persons.items():
   if 'eye_color' in details:
     color = details['eye_color']
@@ -37,8 +58,61 @@ for person, details in persons.items():
 from functools import partial
 eyedict=partial(defaultdict,lambda:'unknow')
 
-(2) use lambda function
-eyedict = lambda *args,**kwargs: default(lambda:'unknow',*args,**kwargs)
-  
+persons = {
+          'john':eyedict(lage=20,eye_color='blue'),
+          'jack':eyedict(age=25,eye_color='brown'),
+          'jill':eyedict(age=22,eye_color='blue'),
+          'eric':eyedict(age=35),
+          'michael':eyedict(age=27)
+          }
+eye_colors=default(list)
+for person, details in persons.items():
+  eye_colors[details['eye_color']].append(person)
 
-          
+(2) use lambda function
+eyedict = lambda *args,**kwargs: defaultdict(lambda:'unknow',*args,**kwargs)
+  
+*****************************************************************************
+application
+# return how many times a function has been called and what is the time when it was first called
+ 
+ from collections import defaultdict, namedtuple
+ from datetime import datetime
+ from functools import wraps
+ 
+ def function_stats():
+  d = defaultdict(lambda:{"count":0, "first_called": datetime.utcnow()})  # return different value each time
+  Stats = namedtuple('Stats', 'decorator data')
+  
+  def decorator(fn):
+    @wraps(fn)
+    def wrapper(*args,**kwargs):
+      d[fn.__name__]['count'] += 1
+      return fn(*arg,**kwargs)
+    return wrapper
+    
+  return Stats(decorator, d)
+
+stats = function_stats()
+stats.data
+stats.decorator
+
+@stats.decorator
+def func_1():
+  pass
+
+@stats.decorator
+def func_2(x,y):
+  pass
+
+stats.data
+func_1()
+stats.data -> have sth
+func_1()
+stats.data -> have sth
+func_2(10,20)
+stats.data -> have sth
+func_2(8,1)
+stats.data -> have sth
+
+# it could be sth that calls out to a database, calls out to an API, some calculations.........
