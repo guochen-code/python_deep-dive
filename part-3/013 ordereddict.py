@@ -20,7 +20,7 @@ ordered_d1==d2 # when compare with normal dict, the order does not matter any mo
 
 it depends on your problem
 
-if you only need to insert and pop, deque will be much faster.
+if you only need to insert and pop, deque will be much faster. you don't need to frequently check the membership.....
 but if you also want to look up for one element to check if it is in the collection, ordered dict will be faster 
 because in deque or list it needs to iterate through the whole deque or list
 
