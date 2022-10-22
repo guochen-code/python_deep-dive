@@ -13,7 +13,7 @@ counts={}
 for c in sentence:
   counts[c] = counts.get(c,0) + 1
 ****************************************************
-counts = defaultdict(lambda : 0)
+counts = defaultdict(lambda : 0) # or counts = defaultdict(int)
 for c in sentence:
   counts[c] += 1
 ****************************************************
