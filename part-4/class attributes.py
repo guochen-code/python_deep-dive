@@ -32,7 +32,8 @@ del MyClass.version
 MyClass.language
 getattr(MyClass,'language')
 MyClass.__dict__['language'] # not always, some attributes not stored in this dict !!!!!!
-
+                             # for example, MyClass.__name__ is not stored in the dict
+        
 
 
 
