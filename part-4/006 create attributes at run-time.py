@@ -66,4 +66,29 @@ class Person:
     else:
       raise AttributeError('You must first register a do_work method.')
       
+math_teacher = Person('Eric')
+english_teacher = Person('Jhon')
+
+math_teacher.do_work -> AttributeError: 'You must first register a do_work method.'
+
+def work_math(self):
+  return f'{self.name} will teach differentials today.'
+
+match_teacher.register_do_work(work_math)
+math_teacher.do_work() -> 'Eric will teach differentials today.'
+
+def work_english(self):
+  return f'{self.name} will analyze Hamlet today.'
+
+english_teacher.register_do_work(work_english)
+english_teacher.do_work() -> 'John will analyze Hamlet today.'
+  
+# handy to get a comprehensive list of do_work
+persons = [math_teacher, english_teacher]
+for p in persons:
+  print(p.do_work())
+  
+
+  
+  
   
