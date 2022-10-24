@@ -11,12 +11,12 @@ my_obj.say_hello() -> TypeError: say_hello() takes 0 positional arguments but 1 
 # method is an actual object type in python, like a function, it is callable
 # but unlike a function it is bound to some object, and that object is passed to the method as its first parameter
 
-# methods are onjects that combine:
+# methods are objects that combine:   !!!!!!!!!!!!!!!!!!!!!
   -- instance (of some class)
   -- function
 # like any object it has attributes:
 __self__ -> the instance the method is bound to
-__func__ -> the original function (defined in the class)
+__func__ -> the original function (defined in the class)          # method is bound to instance, so "method = instance.method"; instance.method.__self__ -> instance
 
 obj.method(args) -> method.__func__(method.__self__, args) 
 
