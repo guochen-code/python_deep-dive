@@ -43,3 +43,27 @@ from types import MethodType
 obj.say_hello = MethodType(lambda self : f'{self.language} Hello World!', obj)
 obj.say_hello() -> 'Python Hello World!'
 
+********************************************************************* extended application
+we have different implementations for different instances, but we are still calling them the same way. It is kind of idea of plug in 
+# we CAN achieve this using inheritance or maybe using masterclasses and so on. but these things get really complicated sometime.
+# this is a nice application of creating your own methods and adding them to instances at runtime, essentially monkey patching your instances with these custom 
+# boud methods
+
+from types import MethodType
+
+class Person:
+  def __init__(self,name):
+    self.name=name
+    
+  def register_do_work(self,func):
+    setattr(self,'_do_work',MethodType(func,self))
+    
+  def do_work(self):
+    do_work_method = getattr(self,'_do_work',None)
+    
+    if do_work_method:
+      return do_work_method()
+    else:
+      raise AttributeError('You must first register a do_work method.')
+      
+  
