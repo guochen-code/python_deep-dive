@@ -1,0 +1,14 @@
+# the function can be found in the types module
+
+import types
+def my_func():
+  pass
+type(my_func) is type.FunctionType
+isinstance(my_func, types.FunctionType) -> True
+
+# nothing fancy, just that some standard types are not availabe directly in the builtins
+
+-- types.ModuleType
+-- types.FunctionType
+-- types.GeneratorType
+
