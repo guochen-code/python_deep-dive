@@ -22,3 +22,48 @@ class Account:
                                          # beware: this can produce subtle bugs!! if you have APY in the module
 # "monthly_interest_3" looks into the module namespace rather than the class namespace
 # so cannot find APY
+********************************************************************************************************************
+major=0
+minor=0
+revision=1
+
+def gen_class():
+  major=0
+  minor=4
+  revision=2
+  
+  class Language:
+    major=3
+    minor=7
+    revision=4
+    
+    #classmethod
+    def version(cls):
+      return'{}.{}.{}'.fomrat(major,minor,revision)
+    
+  return language
+
+cls = gen_class()
+cls.version() -> '0.4.2' # if remove 0.4.2 in source code, it will show '0.0.1'
+
+import inspect
+inspect.getclosurevars(cls.version) -> ........
+
+********************************************************************************************************************
+
+name = 'Guido'
+
+class MyClass:
+  name = 'Raymond'
+  list_1 = [name]*3
+  list_2 = [name for i in range(3)]
+  
+  @classmethod
+  def hello(cls):
+    return'{} says hellp'.format(name)
+  
+MyClass.hello() -> 'Guido says hello'
+
+MyClass.list_1 -> ['Raymond','Raymond','Raymond']
+
+MyClass.list_2 -> ['Guido','Guido','Guido']   # comprehensives(list/generator/set) are functions under the hood!!!!!!!
