@@ -1,0 +1,7 @@
+(1) if no str defined, python will force back to repr
+(2) if both defined:
+    p =MyClass()
+    p -> repr
+    print(p) -> str
+(3) repr usually for developer and str for user and logging    
+    
