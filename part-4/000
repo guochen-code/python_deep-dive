@@ -1,0 +1,36 @@
+class Person1:
+    def __init__(self, name):
+        print("init called")
+        self._name = name  # _name private
+ 
+    @property
+    def name(self):
+        print("getter called")
+        return self._name
+ 
+    @name.setter
+    def name(self, value):
+        print("setter called")
+        self._name = value
+or
+class Person2:
+    def __init__(self, name):
+        print("init called")
+        self.name = name     # no underscore
+ 
+    @property
+    def name(self):
+        print("getter called")
+        return self._name    
+ 
+    @name.setter
+    def name(self, value):
+        print("setter called")
+        self._name = value
+        
+ In both cases you have a property called name.
+The getter and setter for that property use a (pseudo) private variable named _name.
+In Version 1, your __init__ is setting _name directly on the instance.
+In Version 2, you are using the property name, so it is using the setter, which in turn sets the _name attribute.
+
+The only benefit of defining the variable at __init__ seems to be that we will get None or whatever value we assign to it instead of getting an exception if we haven't called the setter before the getter.
