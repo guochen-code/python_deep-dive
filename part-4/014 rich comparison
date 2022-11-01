@@ -1,0 +1,31 @@
+in many cases, we can derive most of the rich comparisons from just two base ones: the __eq__ and the other one, maybe __lt__ or __le__, etc.
+
+for example, if == and < is defined, then:
+- a<=b is a ==b or a < b
+- a>b is b<a
+- a>=b is a==b or b<a
+- a!=b is not(a==b)
+
+on the other hand if we define == and <=, then:
+- a<b is a<=b and not(a==b)
+- a>=b is b<=a
+- a>b is b<=a and not(b==a)
+- a!=b is not(a==b)
+
+# don't need to write all the dunder methods yourself, use @total_ordering decorator
+from functools import total_odering
+
+@total_ordering
+class Number:
+  def __init__(self,x):
+    self.x=x
+    
+  def __lt__(self,other):
+    print('__lt__ called...')
+    if isinstance(other,Number):
+      return self.x<other.x
+    return NotImplemented
+    
+# note: although the documentation says no need to implement __eq__,but we should, because the default __eq__ in @total_ordering
+is using identity. so if you have two objects a=Number(1), b=Number(1), a==b -> False
+# so add your own the __eq__ method to the class above!!!!!!
