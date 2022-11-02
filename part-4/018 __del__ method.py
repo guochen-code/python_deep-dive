@@ -34,7 +34,7 @@ if an exception occurs in the __del__ method
 -> perosnally I do not use __del__
 '''
 
-
+please see the notebook
 
 
 
