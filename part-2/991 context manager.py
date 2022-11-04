@@ -97,3 +97,31 @@ def read_data():
 type(reader) -> list
 for row in reader:
   print(row) -> working
+
+************************************************************************************************************************
+class DataIterator:
+  def __init__(self,fname):
+    self._fname=fname
+    self._f=None
+    
+  def __iter__(self):
+    return self
+  
+  def __next__(self):
+    row=next(self.f)
+    return row.strip('\n').split(',')
+  
+  def __enter__(self):
+    self._f=open(self._fname)
+    return self
+  
+  def __exit__(self,exc_type,exc_value,exc_tb):
+    if not self._f.closed:
+      self._f.close()
+    return False
+  
+# note:
+data = DataIterator('test.csv')
+for row in data:
+  print(row) -> TypeError: 'NoneType' object is not an iterator, # because of self._f=None above
+    
