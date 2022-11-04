@@ -63,5 +63,37 @@ with File('test.txt','w') as f:
 with File('test.txt','r') as f:
   print(f.readlines())
   
+**************************************************************************************************
+# caveat with lazy iterators !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+'''
+no matter what, the file will always be closed with context manager, so you can not iterator after that
+'''
 
+import csv
+def read_data():
+  with open('test.csv') as f:
+    return csv.reader(f,delimiter=',',quotechar='"')
+
+reader=read_data()
+type(reader) -> _csv.reader
+
+for row in reader:
+  print(row) -> valueError: I/O operation on closed file.
+    
+# how to fix
+def read_data():
+  with open('test.csv') as f:
+    yield from csv.reader(f,delimiter=',',quotechar='"')
+    
+type(reader) -> generator
+for row in reader:
+  print(row) -> working
   
+# alternatively
+def read_data():
+  with open('test.csv') as f:
+    return list(csv.reader(f,delimiter=',',quotechar='"')) # issue here, we put entire file into the mermoy
+    
+type(reader) -> list
+for row in reader:
+  print(row) -> working
