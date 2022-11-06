@@ -55,3 +55,7 @@ with OutToFile('my_list.txt'):
     lm.print_item('sub item 2a')
     lm.print_item('sub item 2b')
     
+with open('my_list.txt') as f:
+  for row in f:
+    print(row, end='')
+    
