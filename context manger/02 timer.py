@@ -17,3 +17,21 @@ class Timer:
 with Timer() as timer:
   sleep(1)
 print(timer.elaspsed)
+
+*********************************************************************************** generator + context manager
+from time import perf_counter, sleep
+@contextmanager
+def timer():
+  stats=dict()
+  start=perf_counter()
+  stats['start']=start
+  try:
+    yield stats
+  finally:
+    end=perf_counter()
+    stats['end']=end
+    stats['elasped']=end-start
+
+with timer() as stats:
+  sleep(2)
+print(stats)
