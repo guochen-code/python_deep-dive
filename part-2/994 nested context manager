@@ -1,0 +1,126 @@
+with open('file1.txt') as f1, open('file2.txt') as f2:
+  print(f1.readlines())
+  print(f2.readlines())
+  
+with open('file1.txt') as f1:
+  with open('file2.txt') as f2:
+    with open('file3.txt') as f3:
+      print(f1.readlines())
+      print(f2.readline())
+      print(f3.readlines())
+      
+# what if 100 files......
+@contextmanager
+def open_file(f_name):
+  print('opening{f_name})
+  f=open(f_name)
+  try:
+    yield f
+  finally:
+    print(f'closing {f_name}')
+    f.close()
+        
+f_names='file1.txt','file2.txt','file3.txt'
+exits=[]
+enters=[]
+
+for f_name in f_names:
+  ctx=open_file(f_name)
+  enters.append(ctx.__enter__)
+  exits.append(ctx.__exit__)
+
+# entering context manager
+files=[enter() for enter in enters]
+
+# do work
+while True:
+  try:
+    rows=[next(f).strip('\n') for f in files]
+  except StopIteration:
+    break
+  else:
+    row=','.join(rows)
+    print(row)
+    
+# existing context manager
+for exit in exits[::-1]:
+  exit(None,None,None)
+
+### a lot of code above, the pattern of the code reminds you of context manager: enter-do sth-exit
+### so the above code can be written as a context manager
+### it will be a context manager that will alow us to host multiple context manager
+
+class NestedContext:
+  def __init__(self,*contexts): # pass multiple context manager objects
+    self._enters=[]
+    self._exits=[]
+    self._values=[]
+
+    for ctx in contexts:
+      self._enters.append(ctx.__enter__)
+      self._exits.append(ctx.__exit__)
+
+  def __enter__(self): #enter sth, do the work, return sth
+    for enter in self._enters:
+      self._values.append(enter())
+    return self._values
+  
+  def __exit__(self,exc_type, exc_value, exc_tb):
+    for exit in self._exits[::-1]:
+      exit(exc_type,exc_value,exc_tb)
+    return False # pop out the error if any
+    
+with NestedContexts(open_file('file1.txt'),open_file('file2.txt'),open_file('file3.txt')) as files:
+  # do the work code
+  while True:
+    try:
+      rows=[next(f).strip('\n') for f in files]
+    except StopIteration:
+      break
+    else:
+      row=','.join(rows)
+      print(row)
+
+### still it is painful to type 100 files......
+
+f_names='file1.txt','file2.txt','file3.txt'
+
+contexts=[open_file(f_name) for f_name in f_names]
+with NestedContexts(*contexts) as files:
+  # do the work
+  .......
+  
+### here I have to know ahead of time everthing that i'm going to pass in 
+### it is better if I can add new contexts later
+
+class NestedContext:
+  def __init__(self): # pass multiple context manager objects
+    self._exits=[]
+
+  def __enter__(self): #enter sth, do the work, return sth
+    return self # return the context itself !!!!!
+    
+  def enter_context(self,ctx):
+    self._exits.append(ctx.__exit__)
+    value=ctx.__enter__()
+    return value
+  
+  def __exit__(self,exc_type, exc_value, exc_tb):
+    for exit in self._exits[::-1]:
+      exit(exc_type,exc_value,exc_tb)
+    return False # pop out the error if any
+    
+f_names='file1.txt','file2.txt','file3.txt'
+
+with NestedContexts() as stack:
+  files = [stack.enter_context(open_file(f)) for f in f_names]
+  
+  # do the work
+  .....
+  
+************************ already built-in in python, along with open instead of using open_file
+from contextlib import ExitStack
+f_names='file1.txt','file2.txt','file3.txt'
+with ExitStack() as stack:
+  files = [stack.enter_context(open(f)) for f in f_names]
+
