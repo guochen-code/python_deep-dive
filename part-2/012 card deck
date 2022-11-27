@@ -1,11 +1,3 @@
-******************************** generator ***************************
-
-SUITS=('Spades','Hearts','Diamonds','Clubs')
-RANKS=tuple(range(2,11)+tuple('JQKA')
-for suits in CardDeck.SUITS:
-      for rank in CardDeck.RANKS:
-        yield Card(rank,suit)
-
 ******************************** iterable ***************************
 class CardDeck:
   SUITS=('Spades','Hearts','Diamonds','Clubs')
