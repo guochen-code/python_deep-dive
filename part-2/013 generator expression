@@ -1,0 +1,40 @@
+the only difference vs list comprehensive is () vs []
+
+(i**2 for i in range(5)) # this syntax retunrs a generator, just a simple way to define a generator function
+
+list comprehensive [], all elements calcualted ahead of time before assign to a variable # eager evalution vs lazy evaluation
+
+the biggest difference:
+[]: iterable, can be reused
+(): iterator, get exausted
+
+
+resource utilization
+(1)
+list comprehensions are eager
+all objects are created right away
+  -> takes longer to create/return the list
+  -> iteration is faster (objects already created)
+  -> entire collections is loaded into memory
+  
+(2) 
+generators are lazy
+object creation is deplayed until requested by next()
+  -> generator is created/returned immediately
+  -> iteration is slower (objects need to be created)
+  -> only a single item is loaded at a time
+
+if you iterate through all the elements -> time performance is about the same
+if you do not iterate through all the elements -> generator more efficient
+
+in general, genrators end to have less memory overhead
+
+************************************************************************************************************************************
+import dis
+
+exp=compile('[i**2 for i in range(5)]',filename='<string>',mode='eval')
+dis.dis(exp)
+
+exp=compile('(i**2 for i in range(5))',filename='<string>',mode='eval')
+dis.dis(exp)
+
