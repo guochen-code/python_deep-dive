@@ -1,0 +1,46 @@
+******************************** generator ***************************
+
+SUITS=('Spades','Hearts','Diamonds','Clubs')
+RANKS=tuple(range(2,11)+tuple('JQKA')
+for suits in CardDeck.SUITS:
+      for rank in CardDeck.RANKS:
+        yield Card(rank,suit)
+
+******************************** iterable ***************************
+class CardDeck:
+  SUITS=('Spades','Hearts','Diamonds','Clubs')
+  RANKS=tuple(range(2,11)+tuple('JQKA')
+  
+  def __iter__(Self):
+    return CardDeck.card_gen()
+              
+  @staticmethod
+  def card_gen():
+    for suits in CardDeck.SUITS:
+      for rank in CardDeck.RANKS:
+        yield Card(rank,suit)
+        
+******************************** reversed ***************************
+class CardDeck:
+  SUITS=('Spades','Hearts','Diamonds','Clubs')
+  RANKS=tuple(range(2,11)+tuple('JQKA')
+  
+  def __iter__(Self):
+    return CardDeck.card_gen()
+    
+  def __reversed__(Self):
+    return CardDeck.reversed_card_gen()  
+              
+  @staticmethod
+  def card_gen():
+    for suits in CardDeck.SUITS:
+      for rank in CardDeck.RANKS:
+        yield Card(rank,suit)        
+    
+  @staticmethod
+  def reversed_card_gen():
+    for suits in reversed(CardDeck.SUITS):
+      for rank in reversed(CardDeck.RANKS):
+        yield Card(rank,suit)         
+        
+        
