@@ -30,3 +30,49 @@ the items yielded by repeat are the same object -> they each reference the same 
 string does not matter, it is immutable
 but be careful about mutable objects
 
+************************************************************************************************************************************************************
+g=count(10)
+list(islice(g,5)) -> [10,11,12,13,14] # count can be used for integer, float, decimal, real number etc....
+# need islice because of infinite loop
+
+************************************************************************************************************************************************************
+from collections import namedtuple
+
+Card = namedtuple('Card', 'rank suit')
+
+def card_deck():
+    ranks = tuple(str(num) for num in range(2, 11)) + tuple('JQKA')
+    suits = ('Spades', 'Hearts', 'Diamonds', 'Clubs')
+    for suit in suits:
+        for rank in ranks:
+            yield Card(rank, suit)
+
+            
+hands = [list() for _ in range(4)] !!!! cannot do hands = []*4 because they are refering to the same memory address
+
+index = 0
+for card in card_deck():
+    index = index % 4
+    hands[index].append(card)
+    index += 1
+
+----------------------------------------------------------------------------------------------------------------------------    
+You notice how we had to use the mod operator and an index to cycle through the hands.
+
+So, we can use the cycle function instead:
+  
+hands = [list() for _ in range(4)]
+
+index_cycle = cycle([0, 1, 2, 3])
+for card in card_deck():
+    hands[next(index_cycle)].append(card)
+    
+----------------------------------------------------------------------------------------------------------------------------   
+But we really can simplify this even further - why are we cycling through the indices? 
+Why not simply cycle through the hand themselves, and append the card to the hands?
+
+hands = [list() for _ in range(4)]
+
+hands_cycle = cycle(hands)
+for card in card_deck():
+    next(hands_cycle).append(card)
