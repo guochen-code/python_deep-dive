@@ -89,3 +89,19 @@ del l.longitude -> AttributeError: can't delete attribute # because didnot defin
 del l._longitude -> ok
 
 l.__dict__ -> 'Location' object has no attribute '__dict__' # when use slots, we lose dictionary.......
+*********************************************************************************************************************************************
+
+the best of both worlds
+slots -> faster attribute access, less memory
+instance directionary -> can add attributes arbitrarily at run-time
+
+-> can we do both> -> yes!
+-> specify __dict__ as a slot
+
+class Person:
+  __solots__ = 'name', '__dict__'
+  
+p.name = 'Alex'
+p.age = 18
+p.__dict__ -> {'age':18}
+
