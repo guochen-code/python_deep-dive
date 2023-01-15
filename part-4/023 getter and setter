@@ -1,0 +1,54 @@
+# property
+class Logger:
+  @property
+  def current_time(self):
+    return datetime.utcnow().isoformat()
+
+logger.current_time # access from class
+-> <property at 0x7ff93841e9f8>
+
+l=Logger()
+l.current_time # access from instance
+-> '2019-07-05T15:44:54.500008'
+
+# descriptor
+class TimeUTC:
+  def __get__(self, instance, owner_class):
+    if instance is None:
+      return self
+    else:
+      return datetime.utcnow().isoformat()
+      
+class Logger:
+  current_time = TimeUTC()
+  
+Logger.current_time # access from class
+-> <__main__.TimeUTC at 0x7ff928726470>
+
+l=Logger()
+l.current_time # access from instance
+-> '2019-07-05T15:44:54.500008'
+
+**************************************************************************************************
+class TimeUTC:
+  def __get__(self,instance,owner_class):
+    print(f'__get__ called, self = {self}, instance = {instance}, owner_class={owner_class}')
+    return datetime.utcnow().isoformat()
+    
+class Logger1:
+  current_time = TimeUTC()
+  
+class Logger2:
+  current_time = TimeUTC()
+  
+Logger.current_time # access from class
+-> __get__ called, self=<__main__.TimeUTC object at 0x7ff9287261d0>, instance=None, owner_class=<class '__main__.Logger1'>
+
+they are class level attributes that are instances of some other class that implements the __get__ method
+so an instance of a descriptor object
+
+l1=Logger1()
+print(hex(id(l1))) -> 0x7ff9287264e0
+l1.current_time
+-> __get__ called, self=<__main__.TimeUTC object at 0x7ff9287261d0>, instance =<__main__.Logger1 object at 0x7ff9287264e0>, 
+owner_class=<class '__main__.Logger'>
