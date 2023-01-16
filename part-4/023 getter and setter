@@ -131,6 +131,33 @@ we have to be careful how we deal with instance level state
 **************************************************************************************************************
 __setter__
 
+class IntegerValue:
+  def __set__(self,instance,value):
+    self._value = value
+  
+  def __get__(self,instance,owner_class):
+    if instance is None:
+      return self
+    else:
+      return self._value
+      
+ Class Point2D:
+  x = IntegerValue()
+  y = IntegerValue()
 
+p1 = Point2D()
+p1.x=1.1
+p1.y=2.2
+
+p2 = Point2D()
+p2.x=10
+
+p1.x -> 10
+# do not want to be storing thins directly in the descriptor, that's not going to work correctly
+# it worked when you have a single instance
+
+so that's why both the get and the set methods need to know the instance they are working with
+because we are going to store a value for that instance
+we have to make our code and our descriptor class instance specific !!!!!!!!!!!!!
 
 
