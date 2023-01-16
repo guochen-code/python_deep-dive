@@ -51,4 +51,38 @@ l1=Logger1()
 print(hex(id(l1))) -> 0x7ff9287264e0
 l1.current_time
 -> __get__ called, self=<__main__.TimeUTC object at 0x7ff9287261d0>, instance =<__main__.Logger1 object at 0x7ff9287264e0>, 
-owner_class=<class '__main__.Logger'>
+owner_class=<class '__main__.Logger'> # __main__.TimeUTC object at 0x7ff9287261d0> will remain the same for Logger2, see below subtle point
+
+--- that's the main difference. when we call the descriptor, when we call the get on the descriptor from the class,
+the instance will come back as none, 
+when we call from instance, instance will be populated with whatever instance it was called from
+--- that means we can differentiate inside our __get__ method, whether the descriptor was accessed via the class or an instance of the class
+when the descriptor is accessed from the class, we want to return the descriptor instance itself because 
+that allows us to have a handle to that descriptor instance, we wouldnot be able to otherwise or at least not easily
+
+example:
+class TimeUTC:
+  def __get__(self, instance, owner_class):
+    if instance is None:
+      return self
+    else:
+      return datetime.utcnow().isoformat()
+      
+class Logger:
+  current_time = TimeUTC()
+  
+Logger.current_time # access from class
+-> <__main__.TimeUTC at 0x7ff928726470>
+
+l=Logger()
+l.current_time # access from instance
+-> '2019-07-05T15:44:54.500008'
+
+**************************************************************************************************************
+there is a subtle point that we have to understand when we create multiple instances of a class that uses a descriptor as a class attribute
+since the descriptor is assigned to a class attribute al instances of the class will share the same descriptor instance
+that is always going to be true because the descriptor instance is a class attribute
+important to undestand otherwise will run into issues
+
+
+
