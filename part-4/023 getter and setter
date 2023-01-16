@@ -84,5 +84,53 @@ since the descriptor is assigned to a class attribute al instances of the class 
 that is always going to be true because the descriptor instance is a class attribute
 important to undestand otherwise will run into issues
 
+example:
+
+class TimeUTC:
+  def __get__(self, instance, owner_class):
+    if instance is None:
+      return self
+    else:
+    print(f'__get__ called in {self}')
+      return datetime.utcnow().isoformat()
+
+l1=Logger()
+l2=Logger()
+l1.current_time, l2.current_time
+->
+__get__ called in <__main__.TimeUTC object at 0x7ff938e0b70>
+__get__ called in <__main__.TimeUTC object at 0x7ff938e0b70>
+('2019-07-05T15:46:57.197518','2019-07-05T15:46:57.197558')
+
+in this example doesnot matter, but
+what happens if our property relies on some kind of state in the descriptor
+
+class Countdown:
+  def __init__(self,start):
+    self.start=start+1
+    
+  def __get__(self,instance,owner):
+    if instance is None: # not use: if not instance, totally different things
+      return self
+    self.start-=1
+    return self.start
+    
+class Rocket:
+  countdown = Countdown(10)
+
+rocket1=Rocket()
+rocket2=Rocket()
+
+rocket1.countdown -> 10
+rocket2.countdown -> 9 # problem!!!!!!!
+rocket1.countdown -> 8
+
+!!!!!!! the current countdown value is ahred by both the rocket 1 and rocket 2 instance !!!! can be useful in some cases.
+we have to be careful how we deal with instance level state
+
+**************************************************************************************************************
+__setter__
+
+
 
 
