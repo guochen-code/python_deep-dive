@@ -5,3 +5,162 @@ which is not guaranteed to have an instance dictioanry available
 
 
 how to use descriptor to read and write instance's properties
+
+class IntegerValue:
+  def __set__(self,instance,value):
+    instance.stored_value=int(value)
+    
+  def __get__(self,instance,owner_class):
+    if instance is None:
+      return self
+    return getattr(instance, 'stored_value',None)
+    
+class Point1D:
+  x=Integervalue()
+  
+p1,p2=Point1D(),Point1D()
+p1.x=10.1
+p2.x=20.2
+p1.__dict__ -> {'stored_value':10}
+p2.__dict__ -> {'stored_value':20}
+
+# notice descriptor is hard coded to using the same key in the instance dictionary
+# I store the value using key "stored_value" under my instance dictionary
+# it works when i have multiple HIGH LEVEL instances 
+But
+
+class Point2D():
+  x=IntegerValue()
+  y=IntegerValue()
+# x, y are different descriptor instances. however, they share the same instance underneath
+
+p=Point2D()
+p.x=10.1
+p.x -> 10
+p,y=20.2
+p.y-> 20
+
+p.__dict__ -> {'stored_value':20}
+p.x ->20 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! problem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+cannot hard code "stored_value", because we have multiple instances of the same descriptor inside the same class
+------- somehow need a distinct storage name for each property !!!!!
+
+# the idea is when create multiple instances of integer value inside the class, give a different name
+# my property x name will be x, my property y name will be y
+class IntegerValue:
+  def __init__(self,name):
+    self.storage_name='_'+name # name of the property
+    
+  def __set__(self,instance,value):
+    instance.storage_name=int(value) # need instance.[self.storage_name]=int(value) -> setattr(instance,self.storage_name,value)
+    
+  def __get__(self,instance,owner_class):
+    if instance is None:
+      return self
+    return getattr(instance, 'storage_name',None) # not hardcoding, 'storage_name' -> self.storage_name
+
+**** this should work 
+
+class IntegerValue:
+  def __init__(self,name):
+    self.storage_name='_'+name 
+    
+  def __set__(self,instance,value):
+    setattr(instance,self.storage_name,value)
+    
+  def __get__(self,instance,owner_class):
+    if instance is None:
+      return self
+    return getattr(instance,self.storage_name,None)
+    
+    
+class Point2D:
+  x=IntegerValue('x')
+  y=IntegerValue('y')
+  
+p1=Point2D()
+p1.x=10.1
+p1.y=20.2
+p1.__dict__ -> {'_x': 10.1, '_y':20.2}
+
+# drawbacks:
+(1) specify the name twice: x=IntegerValue('x') / y=IntegerValue('y')
+(2) assuming _x, _y is not used by the user already in the class. they may have _x, _y property in the class, so we may overwrite these properties
+(3) use slots
+    cannot do this: setattr(instance,self.storage_name,value). because of no dictionary.
+
+
+
+class IntegerValue:
+  def __init__(self,name):
+    self.values={}
+    
+  def __set__(self,instance,value):
+    self.values[instance] = int(value)
+    
+  def __get__(self,instance,owner_class):
+    if instance is None:
+      return self
+    return self.values.get(instance,None)
+    
+instead create storage inside the descriptor that's going to store the data
+not going to store it in the instance dictionary
+going to store it in actual dictionary of the descriptor instance
+has to be unique by instance
+
+class Point2D:
+  x=IntegerValue()
+  y=IntegerValue()
+  
+p1=Point2D()
+p2=Point2D()
+p1.x=10.1
+p1.y=20.2
+Point2D.x.values -> {<__main__.Point2D at 0x7ffdd872feb8>: 10}
+hex(id(p1)) -> 0x7ffdd872feb8
+p2.x=100.1
+Point2D.x.values -> 
+{<__main__.Point2D at 0x7ffdd872feb8>: 10,
+<__main__.Point2D at 0x7ffdd872fc50>: 100}
+
+# the same instance of the descriptor is able to store in itself values for multiple instances
+# just by using the instance as the key in the dictionary
+
+Point2D.y.values -> {<__main__.Point2D at 0x7ffdd872feb8>: 20}
+
+# can now store the data that is differentiated by the instance, even though it is the same instance of the descriptor
+# counld now potentially deal with objects that us slots because we are not trying to store extra information on the instance !!!!!!!!!!!!!!!!!!!!!
+# still it does make the assumption that the classes, the objects you are using are hashable
+# so you need to define __eq__ method in your class, define __hash__ as well. otherwise it will become unhashable
+
+
+# another problem !!!! potential memory leak !!!!!!
+# notice how the dictionary in the descriptor instance is also storing a reference to the same object
+# object p2, p2.x.values, it has reference p2: hex(id(p1)) -> 0x7ffdd872feb8, this is referenced as a key in the dictionary.
+# so in fact we have more than one reference currently for p1 and p2, p1 and p2 objects
+# if we delete them, we have a potential issue
+
+del p1 (python supposed to reclaim the memory space with garbage collector) ############################################################################
+Point2D.x.values ->
+{<__main__.Point2D at 0x7ffdd872feb8>: 10,
+<__main__.Point2D at 0x7ffdd872fc50>: 100}
+# we still have the reference to the object!!!!!!!!!!!!!!!!!!! still exits
+
+import ctypes
+
+def ref_count(address):
+  return ctypes.c_long.from_address(address).value
+  
+p1=Point2D()
+id_p1=id(p1)
+ref_count(id_p1) -> 1
+p1.x=100.1
+ref_count(id_p1) -> 2
+'p1' in globals() -> True
+del p1
+'p1' in globals() -> False
+ref_count(id_p1) -> 1
+
+weak reference vs strong reference
+
+
