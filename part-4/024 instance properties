@@ -1,0 +1,7 @@
+where to store the attribute value (=instance)
+instance dictionary?
+what about __slots__?
+which is not guaranteed to have an instance dictioanry available
+
+
+how to use descriptor to read and write instance's properties
