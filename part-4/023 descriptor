@@ -1,3 +1,50 @@
 why need descriptor
-what is descriptor
 
+
+************************************************************************
+what is descriptor: function - decorator / class - descriptor
+
+take instance of one class and set that as another class's attribute
+
+
+from random import choice, seed
+
+class Deck:
+  @property
+  def suit(self):
+    return choice(('Spade','Heart','Diamond','Club'))
+    
+  @property
+  def card(self):
+    return choice(tuple('23456789JQKA')+('10',))
+    
+ d = Deck()
+ seed(0)
+ for _ in range(10):
+  print(d.card, d.suit)
+  
+# here we have two properties that essentially doing the same thing which is they choose from a given iterable
+# as descriptor, we can write once and send in as a parameter, the list or the iterable that we want to choose from
+
+class Choice:
+  def __init__(self,*choice):
+    self.choices=choices
+
+  def __get__(self,instance,owner_class):
+    return choice(self.choices)
+  
+class Deck:
+  suit=Choice('Spade','Heart','Diamond','Club')
+  card=Choice(*'23456789JQKA','10')
+  
+class Dice:
+  die_1=Choice(1,2,3,4,5,6)
+  die_2=Choice(1,2,3,4,5,6)
+  die_3=Choice(1,2,3,4,5,6)
+  
+seed(0)
+dice=Dice()
+for _ in range(10):
+  print(dice.die_1,dice.die_2,dice.die_3)
+  
+!!!!!!!!!!!!!!!!!!!! that's non data descriptor   !!!!!!!!!!!!!!!!!!!!
