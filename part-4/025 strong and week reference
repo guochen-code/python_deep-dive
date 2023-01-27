@@ -1,0 +1,133 @@
+import ctypes
+
+def ref_count(address):
+  return ctypes.c_long.from_address(address).value
+  
+class Person:
+  def __init__(self,name):
+    self.name=name
+  
+  def __repr__(self):
+    return f'Person(name={self.name})'
+    
+p1=Person('Guido')
+p2=p1
+p1 is p2, id(p1), id(p2)
+-> (True, 104518849835136,104518849835136)
+
+ref_count(id(p1)) -> 2
+
+del p2
+ref_count(id(p1)) -> 1
+
+
+p1_id=id(p1) # store it
+re_count(p1_id) -> 1
+
+del p1
+re_count(p1_id) -> 604092457935328120 # already destroyed by garbage collector
+
+# weak reference not be counted against garbage collector
+
+import weakref
+p1=Person('Guido')
+p1_id=id(p1)
+re_count(p1_id) -> 1
+p2=p1
+re_count(p1_id) -> 2
+weak1=weakref.ref(p1)
+re_count(p1_id) -> 2 # not changed
+weak1 ->
+<weakref at 0x786789994f8; to 'Person' at 0x7f8698751c0> # an object that holds a weak reference to another object
+hex(p1_id) -> 0x7f8698751c0
+weak1 is p1 -> False
+weak1() is p1 -> True
+
+# be careful, if write in this way
+p3= weak1() # this is strong reference
+ref_count(p1_id) -> 3
+
+del p3
+ref_count(p1_id) -> 2
+del p2
+ref_count(p1_id) -> 1
+weak1 ->
+<weakref at 0x786789994f8; to 'Person' at 0x7f8698751c0>
+del p1
+ref_count(p1_id) -> 5796446632483060254
+weak1 -> <weakref at 0x786789994f8; dead>
+
+result=weak1()
+result -> None
+
+# not all python objects support weak reference. Many built-in objects do not support.
+l = [1,2,3]
+try:
+  w=weakref.ref(l)
+except Exception as ex:
+  print(ex) -> cannot create weak reference to 'list' object # same thing to dictionary, integer, string.....
+  
+  
+****************
+p1=Person('Guido')
+d=weakref.WeakKeyDictionary()
+ref_count(id(p1)) -> 1
+n={p1:'Guido'}
+ref_count(id(p1)) -> 2
+del n
+ref_count(id(p1)) -> 1
+
+d[p1]='Guido'
+ref_count(id(p1)) -> 1 # the key in our weak dictionary was actually made into a weak reference to the object that we use as a key automatically for us
+
+# get how many weak references
+weakref.getweakrefcount(p1) -> 1
+# where store this informatin - in the instance itself
+p1.__weak_ref__ ->
+<weakref at 0x7fb410433868; to 'Person' at 0x7fb41042f978> 
+# this is linked list, we don't see all the linked references, we only see the first one that was created
+# if we create more and more, this becomes a list......longer and longer....but now shown up here
+# python doesnot provide us any tools to iterate through the link list, so we cannot really use that
+# but internally, it goes through this linked list and count the number of items there.
+# because it is a dictionary, that is why if we ave a slot at class, you may not be able to create a weak reference to those objects.
+
+hex(id(p1)) -> 0x7fb5283070f0
+list(d.keyrefs()) -> # returns all the weak references
+[<weakref at 0x7fb5282f80e8; to 'Person' at 0x7fb5283070f0>]
+del p1
+list(d.keyrefs()) -> [] # can use this for our advantage
+
+# unhashable custom object cannot be used as well
+class Person:
+  def __init__(self,name):
+    self.name=name                                                   ### up to here is ok
+    
+  def __eq__(self,other):
+    return isinstance(other, Person) and self.name==other.name       ### adding this is not ok, becomes unhashable
+    
+  def __hash__(self):
+    return hash(self.name)                                           ### then need to make it hashable
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
