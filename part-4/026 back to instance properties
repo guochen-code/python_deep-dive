@@ -1,0 +1,15 @@
+final approach
+weakref.ref -> callback functionality
+            -> automatically calls a custom function when the object is being finalized
+-> use regular data dictionary
+  -> use id(instance) as key
+  -> use (weak_ref, value) as corresponding dictionary value
+      -> for each weak_ref register a callback function
+      -> callback function will removed dead entry from dictionary
+we can now implement data descriptors that:
+    -> have instance specific storage
+    -> do not use the instance itself for storage(__slots__problem)
+    -> handle non-hashable objects
+    -> keep the data storage mechanism clean
+    
+    
