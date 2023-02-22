@@ -1,0 +1,26 @@
+python is inherently single threaded, means python app runs on a single core
+need to distribute your work across multiple cores or multiple cpus
+some people think threading is the answer
+because python is inherently single threaded, multi-threading is not going to speed up your app
+If I/O bound, running slow and waiting for something to happen, I/O operation such as api calls or call to database. Threading can help. 
+But it is much simpler to use async
+
+*************************
+MOVE AWAY FROM THREADING
+*************************
+
+either asynchronous processing
+or 
+this techqnie that allows to distribute across work more than one computer
+(subprocessing can scale up to the number of cores or cpus, but limited to single computer, limited cores/cpus)
+
+***************************
+redis queue / sqs (two used most)
+elastic mq (similar to sqs) / kafka / rabbit.....
+
+*** like many concurrency problems, one of the key things is that the order in which the items are handled from the queue should not have any bearing on the final result
+even with FIFO, the worker will pick up messages in that order, but when the worker is going to complete its work, there is no guarantee that 
+the order in which that worker will complete its work
+make sure your program it is not dependent on the worker processing the data in the same orders which it was pushed to the queue
+
+
