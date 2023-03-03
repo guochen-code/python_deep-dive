@@ -1,0 +1,140 @@
+import enum
+class Color(enum.Enum):
+  RED=1 #'1' # (1,)
+  GREEN=2 #(1,1)
+  BLUE=3 #(1,1,1)
+  
+The basics:
+type(Color.RED) -> Color
+isinstance(Color.RED,Color) -> True
+str(Color.RED) -> 'Color.RED'
+repr(Color.RED) -> '<Color.RED: 1>'
+Color.RED.name -> 'RED'
+Color.RED.value -> 1
+
+equality and membership:
+member equality is done using identity -> is (but == works too)
+membership uses in
+
+Color.GREEN in Color -> True
+Color.RED is Color.RED -> True
+Color.RED is Color.BLUE -> False
+
+-> note that member and it's associated value are not equal!
+Color.RED ==1 -> False
+
+members are always hashable (unless we write __eq__ method):
+-> can be used as keys in dictionaries
+-> can be used as elements of a set
+example:
+pixel_color = {
+  Color.RED: 100,
+  Color.GREEN: 25,
+  Color.Blue: 255
+  }
+  
+- to get a member by value
+enumerations are callable
+Color(2) -> Color.GREEN
+- to get a member by name
+enumerations implement __getitem__ method
+Color['GREEN']
+- retrieve the object by value and by name
+Color(2) is Color['GREEN'] -> True
+
+************************************************************
+class Person:
+  def __getitem__(self,val):
+    return f'__getitem__({val}) called...'
+p=Person()
+p['some value'] -> '__getitem__(some value) called...'
+************************************************************
+
+- emunerations are iterables
+list(Color) -> [Color.RED, Color.GREEN, Color.BLUE]
+- definition order is preerved:
+class Color(Enum):
+  green=2
+  blue=3
+  red=1
+list(Color) -> [Color.green, Color.blur, Color.red] # has nothing to do with member value
+
+- enumerations have a __members__ property
+-> returns a mapping proxy 9immutable dict)
+-> keys are the names (as strings), and values are the values
+
+*** constant members and constant values ***
+once an enumeration has been declared:
+-> member list is immutable (cannot add or remove members)
+-> member values are immutable (except value itself is a mutable object like list) (cannot replace the object that the member is pointing to as its value)
+-> cannot be subclassed (extended via inheritance)
+    -> unless it contains no members!
+    
+
+*********************************
+class Person:
+  __hash__=None
+p = Person()
+hash(p) -> TypeError: unhashable type: 'Person'
+
+class Family(enum.Enum):
+  person_1=Person()
+  person_2=Person()
+  
+Family.person_1 -> <Family.person_1: <__main__.Person object at 0x7fed504241d0>>
+# but can still be used as keys in dictionaries:
+{Family.person_1:'person 1', Family.person_2:'person 2'}
+
+hasattr(Status,'__iter__') -> True # implement iterable protocol
+for member in Status:
+  print(repr(member))
+list(Status)[0] is Status.PENDING -> True # order is preserved, not based on its value
+
+class EnumBase(enum.Enum):
+  pass
+class EnumExt(EnumBase):
+  ONE=1
+# work just fine
+# not working
+class EnumBase(enum.Enum):
+  ONE=1
+class EnumExt(EnumBase):
+  TWO=2
+-> TypeError
+
+application:
+
+payload = """
+{"name": "Alex",
+"status":"PENDING"
+"""
+
+import json
+data=json.loads(payload)
+data -> {'name:'Alex','satus':PENDING'} # dictionary # status is just a string in our dictionary
+Status[data['status']] # grap value from dictionary and look up in my enumeration and now have an enumeration member, not just a string
+# a good question at this point, is there a way that we can easily test if a particular string corresponds to a member of our enumeration?
+can do that by cathcing exceptions:
+
+# (1)
+def is_member(en,name):
+  try:
+    en[name]
+  except KeyError:
+    return False
+  return True
+# (2)
+gettattr(Status,'PENDING')
+def is_member(en,name):
+  return getattr(en,name,None) is not None
+# (3)
+'PENDING' in Status.__members__ # same thing if use: in Status.__members__.keys()
+
+
+
+
+
+
+  
+
+
