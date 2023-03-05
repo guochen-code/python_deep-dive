@@ -1,0 +1,204 @@
+class Number(Enum):
+  ONE=1
+  TWO=2
+  THREE=3
+  
+  def __repr__(self):
+    return f'(self.name} ({self.value})'
+  
+  def __lt__(self,other):
+    return isinstance(other,Number) and self.value < other.value
+    
+  def __eq__(self,other):
+    if isinstance(other,Number):
+      return self is other
+    elif isinstance(other,int):
+      return self.value==other
+    return False
+    
+ Number.ONE < Number.Two -> True
+ Number.ONE==1 -> True
+ Number.ONE==1.0 ->False
+ 
+ #careful. because all the members of enumeration are always hashable
+ #no longer the case now. because we have implemented __eq__ method
+ hash(Number.ONE) -> TypeError: unhashable type: 'Number'
+ # so need to implement __hash__ to keep supporing hashability
+ #therefore able to use our enumeration members in dictionarties!!!
+ 
+ Number.ONE >= Number.ONE
+ -> TypeError: '>=' not supported between instances of 'Number' and 'Number'
+ 
+ (1) implement __le__ method
+ (2) decorator
+ 
+ from functools import total_ordering
+ @total_ordering
+ class Number(Enum):
+  ONE=1
+  TWO=2
+  THREE=3
+  
+  def __lt__(self,other):
+    return isinstance(other,Number) and self.value < other.value
+
+# will complete these not implemented 
+# but recommended that we implement __eq__method otherwise it's using identity by default
+
+****************************************************************************************
+application case - enumeration preserves the order of its members - can be used to our advantage
+
+class Phase(Enum):
+  READY='ready'
+  RUNNING='running'
+  FINISHED='finished' ### although not numbers, they are in order: ready before running before finished
+  
+  def __str(self):
+    return self.value
+  
+  def __eq__(self,other):
+    if isinstance(other,Phase):
+      return self is other
+    elif isinstance(other,str):
+      return self.value==other
+    return False
+    
+  def __lt__(self,other):
+    ordered_items=list(Phase)
+    self_order_index=ordered_items.index(self)
+    
+    if isinstance(other,Phase):
+      other_order_index=ordered_items.index(other)
+      return self_order_index<other_order_index
+      
+    if isinstance(other,str):
+      try:
+        other_member=Phase(other)
+        other_order_index=ordered_itens.index(other_member)
+        return self_order_index<pther_order_index
+      except ValueError:
+        return False
+        
+ Phase.READY=='ready' -> True
+ Phase.READY<Phase.RUNNING -> True
+ Phase.READY<'running' -> True
+ 
+ ************************************************************************************
+ class State(Enum):
+  READY=1
+  BUSY=0
+  
+bool(state.READY), bool(State.BUSY) -> (True, True) # always return true by default, we may want change this behaviour
+
+(1) one way
+if state is State.READY:
+  print('system is ready to process next item')
+else:
+  print('system is busy')
+
+(2) but what we want may like this
+if state:
+  print('ready')
+else:
+  print('busy')
+# need to make modification to make it happen
+
+def __bool__(self):
+  return bool(self.value)
+
+************************************************************************************
+can not subclass if it already contains memebrs
+
+base class implements some functions for all our instances
+then extend this enumeration class to concret enumerations that define the members
+
+from functools import total_ordering
+@total_ordering
+class OrderedEnum(Enum):
+  '''create an ordering based on the member values. so member values have to support rich comparisons'''
+  def __lt__(self,other):
+    if isinstance(other,OrderedEnum):
+      return self.value<other.value
+    return NotImplemented
+
+class Number(OrderedEnum):
+  ONE=1
+  TWO=2
+  THREE=3
+  
+class Dimension(OrderedEnum):
+  D1 =1,
+  D2 =1,1
+  D3 =1,1,1
+  
+Number.ONE<Number.Two -> True
+Dimension.D1<Dimension.D2 -> True
+************************************************************************************
+built-in
+from http import HTTPStatus
+type(HTTPStatus) -> enum.EnumMeta
+list(HTTPStatus)[0:10]
+->
+[<HTTPStatus.CONTINUE: 100>,...<HTTPStatus.OK: 200>,....]
+# lookup by value
+HTTPStatus(400) -> <HTTPStatus.BAD_REQUEST: 400>
+# more than just one associated value with each member in this particular enumeration
+HTTPStatus.NOT_FOUND.value, HTTPStatus.NOT_FOUND.name, HTTPStatus.NOT_FOUND.phrase
+-> (404, 'NOT FOUND', 'Not Found')
+
+*****************************
+class AppStatus(Enum):
+  ok = (0,'No problem')
+  FAILED=(1,'Crap!')
+  
+  @property
+  def code(self):
+    return self.value[0]
+  @property
+  def phrase(self):
+    return self.value[1]
+AppStatus.OK.code, APPStatus.OK.phase, AppStatus.OK.name ->
+(0,'No problem!','OK')
+*****************************
+# AppStatus.OK.value -> return a tuple
+# problem: 
+HTTPStatus(200) -> <HTTPStatus.OK: 200>
+AppStatus(0) -> ValueError: 0 is not a valid AppStatus
+AppStatus(0, 'No problem!') -> <AppStatus.Ok: (0, 'No problem!')>
+# not ideal
+
+class AppStatus(Enum):
+  ok = (0,'No problem')
+  FAILED=(1,'Crap!')
+  
+  def __new__(cls, member_value, member_phrase):
+  print(cls, member_value, member_phrase)
+    member = object.__new__(cls)
+    member._value_= member_value
+    member.phrase=member_phrase
+    return member
+  
+AppStatus.OK.value, AppStatus.OK.name, AppStatus.OK.phrase
+-> (0,'OK','No Problem!')
+AppStatus(0) -> <AppStatus.OK: 0>
+
+Application:
+class TwoValueEnum(Enum):
+  def __new__(cls,member_value,member_phrase):
+    member=object.__new__(cls)
+    member._value_=member_value
+    member.phrase=member_phrase
+    return member
+class AppStatus(TwoValueEnum):
+  OK=(0,'No problem!')
+  FAILED=(1,'Crap!')
+
+APPStatus.FAILED.name, AppStatus.FAILED.value, APPStatus.FAILED.phrase
+('FAILED', 1, 'Crap!')
+
+
+
+
+
+
+ 
