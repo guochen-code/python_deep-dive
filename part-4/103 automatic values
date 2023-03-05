@@ -74,3 +74,28 @@ class Enum1(NameAsString):
   A=enum.auto()
   B-enum.auto()
 list(Enum1) -> [<Enum1.A: 'a', <Enum1.B: 'b'>]
+****************************************************************8
+what if we do not want user to use lookup by value
+
+class State(enum.Enum):
+  WAITING=1
+  STARTED=2
+  FINISHED=3
+# later we may want to add:
+class State(enum.Enum):
+  WAITING=1
+  STARTED=2
+  RUNNINGPENDING=3
+  FINISHED=4
+# solution  
+class State(enum.Enum):
+'''please do not use member values. These are meaningless and subject to change'''
+  WAITING=object()
+  STARTED=object()
+  RUNNINGPENDING=object()
+  FINISHED=object()
+  
+***************************************************************
+make second element aliase to the first one - count - _generate_next_value
+
+ 
