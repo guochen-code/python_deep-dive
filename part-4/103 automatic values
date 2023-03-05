@@ -94,8 +94,24 @@ class State(enum.Enum):
   STARTED=object()
   RUNNINGPENDING=object()
   FINISHED=object()
-  
+State.WAITING, State['FINISHED']
+-> (<State.WAITING: <object object at 0x7fa....>>,<State.FINISHED: <object object at 0x7fa108...>>)
 ***************************************************************
 make second element aliase to the first one - count - _generate_next_value
 
+class Aliased(enum.Enum):
+  def _generate_next_value_(name,start,count,last_values):
+    print(f'count={count}')
+    if count%2==1:
+      #make this member an alias of the previous one
+      return last_values[-1]
+    else:
+      return last_values[-1]+1
+      
+GERREN=1
+GREEN_ALIAS=1
+RED=10
+CRIMSON=enum.auto()
+BLUE=enum.auto()
+AQUA=enum.auto()
  
