@@ -114,4 +114,16 @@ RED=10
 CRIMSON=enum.auto()
 BLUE=enum.auto()
 AQUA=enum.auto()
- 
+************************ a step further
+class Aliased(enum.Enum):
+  def _generate_next_value_(name,start,count,last_values):
+    return last_values[-1]
+class Color(Alised):
+  RED=object()
+  CRIMSON=enum.auto()
+  CARMINE=enum.auto()
+  BLUE=object()
+  AQUAMARINE=enum.auto()
+  AZURE=enum.auto()
+Color.__members__ -> 6 colors
+list(Color) -> 2 colors: RED and BLUE
