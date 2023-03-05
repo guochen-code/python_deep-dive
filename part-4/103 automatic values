@@ -1,0 +1,76 @@
+import enum
+
+class State(enum.Enum):
+  WAITING=enum.auto()
+  STARTED=enum.auto()
+  FINISHED=enum.auto()
+
+for member in State:
+  print(member.name,member.value)
+->
+WAITING 1
+STARTED 2
+FINISHED 3
+
+# careful - do not mix
+class State(enum.Enum):
+  WAITING=100
+  STARTED=enum.auto()
+  FINISHED=enum.auto()
+list(State) -> [<State.WAITING: 100>, <State.STARTED: 101>, <State.FINISHED: 102>]
+
+class State(enum.Enum):
+  WAITING=enum.auto()
+  STARTED=1
+  FINISHED=enum.auto()
+list(State) -> [<State.WAITING: 1>, <State.FINISHED: 2>]
+# let's look at this:
+State.__members__
+-> mappingproxy({'WAITING': <State.WAITING: 1>,
+                  'STARTED': <State.WAITING: 1>,
+                  'FINISHED': <State.FINISHED: 2>})
+                  
+# what happened really
+hasattr(State, '_generate_next_value_') -> True
+# when auto gets called, it actually looks for this function in class and runs it
+# example: what to do if you want your random numbers to be unique (no repeated values)
+
+import random
+random.seed(0)
+class State(enum.Enum):
+  def _generate_next_value_(name,start,count,last_values):
+    while True:
+      new_value=random.randint(1,100)
+      if new_value not in last_values:
+        return new_value
+  a=enum.auto()
+  b=enum.auto()
+  c=enum.auto()
+  d=enum.auto()
+for member in State:
+  print(member.name, member.value)
+  
+******
+class State(enum.Enum):
+  def _generate_next_value_(name,start,count,last_values):
+    return name.title()
+    
+  WAITING=enum.auto()
+  STARTED=enum.auto()
+  FINISHED=enum.auto()
+for member in State:
+  print(member.name, member.value)
+->
+WAITING Waiting
+STARTED Started
+FINISHED Finished
+
+*** how to make it reusable
+class NameAsString(enum.Enum):
+  def _generate_next_value_(name,start,count,last_values):
+    return name.lower()
+    
+class Enum1(NameAsString):
+  A=enum.auto()
+  B-enum.auto()
+list(Enum1) -> [<Enum1.A: 'a', <Enum1.B: 'b'>]
