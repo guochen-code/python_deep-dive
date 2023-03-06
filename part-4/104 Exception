@@ -24,3 +24,58 @@ finally:
 
 else: code that executes if try terminates normally (an except clause must be present)
 
+# common mistake. these two are totally different:
+try:
+  pass
+except ValueError:
+  print('value error...')
+else:
+  print('no exception...') # this got printed out because no exception raised
+  
+try:
+  raise ValueError()
+except ValueError:
+  print('value error...')
+print('no exception...') # this got printed out because exception was handled before print
+
+*****************************************************
+
+import json
+# raw data
+json_data="""{
+          "Alex": {"age": 18},
+          "Bryan": {"age": 21, "city": "London"}
+          "Guido": {"age": "unknown"}
+}"""
+
+data=json.loads(json_data)
+data->
+{'Alex': {'age': 18},
+  'Bryan': {'age': 21, 'city': 'London'},
+  'Guido': {'age': 'unknown'}}
+# want to load this raw data to create instances. keep Bryan because has age. raise exception for Guido because no age.  
+class Person:
+  __slots__ = 'name','_age' # maybe a lot of person objects, use slot to minimize the footprints
+  
+  def __init__(self,name):
+    self.name=name
+    self._age=None
+  
+  @property
+  def age(self):
+    return self._age
+    
+  @property.setter
+  def age(self,value):
+    if isinstance(value,int) and value>=0:
+      self._age=value
+    else:
+      raise ValueError('Invalid age')
+      
+  def __repr__(self):
+    return f'Person((name={self.name},age={self.age}))'
+    
+#city is going to be a problem, because city is not attribute of our class and we are using slots
+#so it's not like we'll be able to say this person object dot city equals London. it's gonna cause issue.
+
+
