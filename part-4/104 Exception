@@ -1,0 +1,26 @@
+what is Python Exception? object
+
+type(BaseException), type(Exception) -> (type,type)
+ex=Exception()
+ex.__class__ -> Exception
+type(ex) -> Exception
+isinstance(ex,Exception) -> True
+isinstance(ex,BaseException) -> True
+# since everythin is object inherits from object, everything is also an instance of object as well
+issubclass(IndexError, LookupError) -> True
+issubclass(IndexError, Exception) -> True
+
+l=[1,2,3]
+l[4] -> IndexError: list index out of range # workflow triggered #(jupyter notebook handles this for us, otherwise it will crash)
+# difference between creating an instance of index error:
+ex=IndexError() # not trigger the workflow versus having an index error exception raised
+
+************************************** exception handling
+try:
+
+except:
+
+finally:
+
+else: code that executes if try terminates normally (an except clause must be present)
+
