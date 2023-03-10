@@ -1,0 +1,60 @@
+raise object must be an instance of BaseException
+i.e. class must be a subclass of BaseException (does not have to be a direct subclass)
+******************************************************************************
+BaseException
+-> __init__ can handle *args
+  -> accessible via args attribute of exception object (instance)
+  -> used for str() and repr() representations
+  -> subclasses inherit this behaviour
+  
+ex = valueError('a','b','c')
+  ex.args -> ('a','b','c')
+  str(ex) -> "('a','b','c')"
+  repr(ex) -> "ValueError('a','b','c')"
+  
+******************************************************************************  
+Re-raising current exception being handled (if use try...except... means being handled, no more error will be raised at the end, program will not be interrupted)
+when are handling an exception
+  -> inside an except block
+  -> we can re-raise the current exception
+     raise (no exception object specified)
+  -> will resume exception propagation
+  
+try:
+  ...
+except: ### usually not use this broad one. here we know what to do, to log
+  # bare except!
+  log('..')
+  raise
+  
+******************************************************************************  
+Exception traceback
+sometimes it is too much information for our user
+use raise....from... we can control (to some extent) what trackback is included
+example:
+try:
+  raise ValueError()
+except ValueError:
+  try:
+    raise TypeError()
+  except TypeError:
+    raise KeyError() from None       #### do not use any previous traceback
+----> will only see KeyError
+******************************************************************************
+try:
+  raise ValueError()
+except ValueError as ex_1:
+  try:
+    raise TypeError()
+  except TypeError:
+    raise KeyError() from ex_1        #### can specify which one you want to use
+----> will only see valueError and KeyError
+# but you can only control it to a certain point, if there are exceptions above ex_1, this exceptions will be shown up as well
+
+
+
+
+
+
+
+
