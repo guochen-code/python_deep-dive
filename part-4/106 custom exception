@@ -1,0 +1,23 @@
+creating new exception classes
+
+class WidgetException(Exception):
+  """base custom exception for widget library"""
+  
+class WidgetException(ValueError):  # can be any exception type
+  """base custom exception for widget library"""
+  
+class myclass(WidgetException):
+  """..............."""
+*******************************************************************************************************************  
+creating an exception hierarchy
+allow trapping exceptions at multiple levels
+*******************************************************************************************************************
+exceptions are classes
+  -> add functionality (properies,methods,attributes)
+  -> implement special methods (__str__,__repr__, etc)
+  -> add auto-logging to your exceptios
+  -> use for consistent output mechanisms (e.g. json representatio of the exception)
+*******************************************************************************************************************
+multiple inheritance
+*******************************************************************************************************************
+
