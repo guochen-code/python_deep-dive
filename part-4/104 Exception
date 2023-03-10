@@ -38,7 +38,7 @@ except ValueError:
   print('value error...')
 print('no exception...') # this got printed out because exception was handled before print
 
-*****************************************************
+********************************************************************************************************** application
 
 import json
 # raw data
@@ -53,7 +53,7 @@ data->
 {'Alex': {'age': 18},
   'Bryan': {'age': 21, 'city': 'London'},
   'Guido': {'age': 'unknown'}}
-# want to load this raw data to create instances. keep Bryan because has age. raise exception for Guido because no age.  
+# want to load this raw data to create instances. keep Bryan because has age. raise exception for Guido because no age.  !!!!!!!!!!!!!!!!!!!!!!!!
 class Person:
   __slots__ = 'name','_age' # maybe a lot of person objects, use slot to minimize the footprints
   
@@ -78,4 +78,148 @@ class Person:
 #city is going to be a problem, because city is not attribute of our class and we are using slots
 #so it's not like we'll be able to say this person object dot city equals London. it's gonna cause issue.
 
+for name, attributes in data.items():
+  try:
+    p = Person(name)
+    for attrib_name, attrib_value in attributes.items():
+      try:
+        setattr(p,attrib_name, attrib_value)
+      except AttributeError:
+        print(f'ignoring attribute: {name}.{attrib_name}={attrib_value}')  ## AttributeError in inner level, it will not continue with else statement !!!!!!!!!
+  except ValueError as ex:
+    print(f'Data for Person({name}) contains an invalid attribute value: {ex}') ## ValueError in outer level, it will not execute else statement !!!!!!!!
+  else:
+    persons.append(p)
 
+persons
+--> [Person((name=Alex, age=18)), Person((name=Bryan, age=21))]
+
+alternatively:
+persons=[]
+for name, attributes in data.items():
+  p = Person(name)
+  
+  for attrib_name, attrib_value in attributes.items():
+    skip_person = False ##############################################################
+    try:
+      setattr(p,attrib_name, attrib_value)
+    except AttributeError:
+      print(f'ignoring attribute: {name}.{attrib_name}={attrib_value}') 
+    except ValueError as ex:
+      print(f'Data for Person({name}) contains an invalid attribute value: {ex}') 
+      skip_person=True
+      continue
+  if not skip_person:
+    persons.append(p)
+********************************************************************************************************** application - ask for forgiveness
+Exception handlers may also be nested a different levels of the call stack, and either an exception is handled, or it is propagated up.
+
+Here we want to create a simple function to transform 0, 1, "0", "1", "T", "F", "True", "False", True and False into the equivalent boolean type, 
+as well as case insensitive versions of the strings.
+
+
+def convert_int(val):
+    if not isinstance(val, int):  # remember this will work for booleans too!
+        raise TypeError()
+    if val not in {0, 1}:
+        raise ValueError("Integer values 0 or 1 only")
+    return bool(val)
+    
+def convert_str(val):
+    if not isinstance(val, str):
+        raise TypeError()
+        
+    val = val.casefold()  # for case-insensitive comparisons
+    if val in {'0', 'f', 'false'}:
+        return False
+    elif val in {'1', 't', 'true'}:
+        return True
+    else:
+        raise ValueError('Admissible string values are: T, F, True, False (case insensitive)')    
+
+class ConversionError(Exception):
+    pass
+
+def make_bool(val):
+    try:
+        try:
+            b = convert_int(val)
+        except TypeError:
+            # it wasn't an int/bool, so let's try it as a string
+            try:
+                b = convert_str(val)
+            except TypeError:
+                raise ConversionError(f'The type {type(val).__name__} cannot be converted to a bool')
+    except ValueError as ex:
+        # this will catch ValueError exceptions from either convert_int or convert_str
+        raise ConversionError(f'The value {val} cannot be converted to a bool: {ex}')
+    else:
+        return b
+
+
+values = [True, 0, 'T', 'false', 10, 'ABC', 1.0]
+
+for value in values:
+    try:
+        result = make_bool(value)
+    except ConversionError as ex:
+        result = str(ex)
+
+    print(value, result)
+
+---> 
+
+True True
+0 False
+T True
+false False
+10 The value 10 cannot be converted to a bool: Integer values 0 or 1 only
+ABC The value ABC cannot be converted to a bool: Admissible string values are: T, F, True, False (case insensitive)
+1.0 The type float cannot be converted to a bool
+
+********************************************************************************************************** application - ask for permission
+Usually the "ask forgiveness later" approach is favored over the "look before you leap" approach in Python. 
+This is sometimes referred to as EAFP - easier to ask for permission.
+
+The "forgiveness" approach first:
+def get_item_forgive_me(seq, idx, default=None):
+    try:
+        return seq[idx]
+    except (IndexError, TypeError, KeyError):
+        # catch either not indexable (TypeError), or index out of bounds, 
+        # or even a KeyError for mapping types
+        return default
+
+The "ask permission" first is not that simple! How do we determine if an object is a sequence type?
+def get_item_ask_perm(seq, idx, default=None):
+    if hasattr(seq, '__getitem__'):
+        if idx < len(seq):
+            return seq[idx]
+    return default
+
+get_item_ask_perm({'a': 1}, 'a') -> TypeError: '<' not supported between instances of 'str' and 'int'
+
+def get_item_ask_perm(seq, idx, default=None):
+    if hasattr(seq, '__getitem__'):
+        # could be sequence type or mapping type, or something else altogether??
+        if isinstance(seq, dict):
+            return seq.get(idx, default)
+        elif isinstance(idx, int):
+            # looks like a numerical index...
+            if idx < len(seq):            # But now we are also relying on the sequence type having a length!
+                return seq[idx]
+    return default
+## But now we are also relying on the sequence type having a length!
+
+class ConstantSequence:
+    def __init__(self, val):
+        self.val = val
+        
+    def __getitem__(self, idx):
+        return self.val
+seq = ConstantSequence(10)
+get_item_ask_perm(seq, 10, 'Nope') -> TypeError: object of type 'ConstantSequence' has no len()
+
+
+And so on, we could really dig ourselves into a hole here. When all we're interested in in making this call seq[idx], and using a default if that does not work.
+And that's why EAFP is favored - in Python, we are more interested in can an object perform this type of work, versus
