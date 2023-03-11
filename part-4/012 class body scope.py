@@ -67,3 +67,8 @@ MyClass.hello() -> 'Guido says hello'
 MyClass.list_1 -> ['Raymond','Raymond','Raymond']
 
 MyClass.list_2 -> ['Guido','Guido','Guido']   # comprehensives(list/generator/set) are functions under the hood!!!!!!!
+
+*** summary:
+The problem here is related to define a new function, within the scope of this new function, there is no such variable, so python will look into
+upper level scope, if find will use that one, this will cause an unintentional bug.
+If not start in a new function, there is no problem, python will recognize the correct variable if they are in the same class scope
