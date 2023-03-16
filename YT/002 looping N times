@@ -1,0 +1,17 @@
+
+for _ in range(10):
+  print('loop...')
+  
+  
+from itertools import repeat
+for _ in repeat(None,10): # None: what object we want to repeat in our loop, here is sinlgton None object
+  print('loop...')
+  
+  
+n = 100_000 , number = 1_000
+(1) --> 1.073
+(2) --> 0.446
+
+# large loops, whether it slows your app
+# do not optimize your code prematurely
+# you don't care about loop variable, repeat is an option
