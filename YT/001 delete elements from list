@@ -1,0 +1,40 @@
+def include(value):
+  return value%2==0
+
+(1) for loop
+l=list(range(10))
+
+for i in range(len(l)-1,-1,-1):
+  if not include(l[i]):
+    del l[i]
+
+(2) use filter
+l=list(range(10))
+l=list(filter(include,l))
+
+(3) list comprehensive 
+l=[el for el in l if include(el)]
+
+# (1) mutate the original list; (2) and (3) create a new list and point it to vairable l
+
+# if you want to mutate your original list, not change the reference for l at all
+# faster but more memory compared to (1)
+l=list(range(10))
+print(id(l))
+l[:]=[el for el in l if include(el)]
+print(id(l))
+---> id will not change
+
+
+from timeit import timeit
+
+l=list(range(20_000))
+
+timeit("remove_loop(l.copy())",globals=globals(),numer=10) # why need copy() here: because every time it change the size of the list, we want it not to be changed.
+--> 7.958s
+timeit("remove_filter(l.copy())",globals=globals(),numer=10)
+-->0.123s 
+timeit("remove_comprehension(l.copy())",globals=globals(),numer=10)
+--->0.139s
+
+# do not need to optimize unless it is a bottleneck
