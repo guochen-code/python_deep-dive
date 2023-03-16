@@ -1,0 +1,27 @@
+(1) identity matters
+lst_1 is lst_2
+
+(2) order and duplicates matter
+[1,1,2,2] vs [1,2] is different # order the same but have duplicates
+
+lst_1 == lst_2
+
+(3) order is ignored, duplicates matter
+[1,2,3,4,4] vs [1,4,3,2,4] vs [4,4,3,2,1] are equal
+
+from collections import Counter
+
+Counter(lst_1)
+Counter(lst_2)
+
+Counter(lst_1) == Counter(lst_2)
+---> True
+
+(4) order is ignored, duplicates also ignored
+[1,2,2,3,3,4] vs [4,3,2,1] are equal
+
+set(lst_1) == set(lst_2)
+---> True
+
+# Counter or set approach
+# only work elements in your list are hashable and support equality
