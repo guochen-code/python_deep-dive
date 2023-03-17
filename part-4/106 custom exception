@@ -147,7 +147,7 @@ class APIException(Exception):
       self.internal_err_msg=args[0]
       super().__init__(*args)
     else:
-      super().__init__(serlf.internal_err_msg)
+      super().__init__(self.internal_err_msg)
       
     if user_err_msg is not None:
       serlf.user_err_msg=user_err_msg
@@ -160,7 +160,7 @@ class APIException(Exception):
     exception = {
                 "type": type(self).__name__,
                 "http_status": self.http_status,
-                "message": self.args[0] if self args else self.internal_err_msg,
+                "message": self.args[0] if self.args else self.internal_err_msg,
                 "args": self.args[1:]
                 }
     print(f'EXCEPTION: {datetime.utcnow().isoformat()}: {exception}')
