@@ -20,4 +20,155 @@ exceptions are classes
 *******************************************************************************************************************
 multiple inheritance
 *******************************************************************************************************************
+class APIException(Exception):
+"""Base API exception"""
 
+class ApplicationException(APIException):
+  """Indicates an application error (not user caused) - 5xx HTTP type errors"""
+  
+class DBException(ApplicationException):
+  """General database exception"""
+
+class DBConnectionError(DBException):
+  """Indicates an error connecting to database"""
+  
+class ClientException(APIException):
+  """Indicates exception that was caused by user, not an internal error"""
+  
+class NotFoundError(CLientException):
+  """Indicates resource was not found"""
+  
+class NotAuthorizedError(ClientException):
+  """User is not authorized to perform requested action on resources"""
+
+class Account:
+  def __init__(self,account_id,account_type):
+    self.account_id=account_id
+    self.account_type=type
+  
+  def lookup_account_by_id(account_id):
+    if not isinstance(account_id,int) or account_id<=0:
+      raise ClientException(f'Account number {account_id} is invalid.')
+      
+      if account_id<100:
+        raise DBConnectionError('Permanent failure connecting to database.')
+      elif account_id<200:
+        raise NotAuthorizedError('User does not have permission to read this account.')
+      elif account_id<300:
+        raise NotFoundError('Account not found')
+      else:
+        return Account(account_id, 'saving')
+        
+  from http import HTTPStatus
+  
+  def get_account(account_id):
+    try:
+      account=lookup_account_by_id(account_id)
+    except ApplicationException as ex:
+      return HTTPStatus.INTERNAL_SERVER_ERROR, str(ex)
+    except NotFoundError as ex:
+      return HTTPStatus.NOT_FOUND, 'The account {} does not exist'.format(account_id)
+    except NotAuthorizedError as ex:
+      return HTTPStatus.UNAUTHORIZED, 'You do not have the proper authorization'
+    except ClientException as ex:
+      return HTTPStauts.BAD_REQUEST, str(ex)
+    else:
+      return HTTPStatus.OK, {"id": account.account_id, "type": account.account_type}
+
+****************************************************************************************
+
+class APIException(Exception):
+  """Base API exception"""
+  
+  http_status=HTTPStatus.INTERNAL_SERVER_ERROR
+  internal_err_msg='API exception occurred.'
+  user_err_msg='We are sorry! An unexpected error occurred on our end.'
+  
+  def __init__(self,*args,user_err_msg=None):
+    if args:
+      self.internal_err_msg=args[0]
+      super().__init__(*args)
+    else:
+      super().__init__(serlf.internal_err_msg)
+      
+    if user_err_msg is not None:
+      serlf.user_err_msg=user_err_msg
+ 
+try:
+  raise APIException()
+except APIException as ex:
+  print(repr(ex))
+  print(ex.user_err_msg)
+
+try:
+  raise APIException('custom message...', 10, 20, user_err_msg='custom user msg')
+except APIException as ex:
+  print(repr(ex))
+  print(ex.user_err_msg)  
+
+import json
+
+class APIException(Exception):
+  """Base API exception"""
+  
+  http_status=HTTPStatus.INTERNAL_SERVER_ERROR
+  internal_err_msg='API exception occurred.'
+  user_err_msg='We are sorry! An unexpected error occurred on our end.'
+  
+  def __init__(self,*args,user_err_msg=None):
+    if args:
+      self.internal_err_msg=args[0]
+      super().__init__(*args)
+    else:
+      super().__init__(serlf.internal_err_msg)
+      
+    if user_err_msg is not None:
+      serlf.user_err_msg=user_err_msg
+      
+  def to_json(self):
+    err_object = {'status':self.http_status, 'message': self.user_err_msg}
+    return json.dumps(err_object)
+    
+Try:
+  raise APIException()
+except APIException as ex:
+  print(repr(ex))
+  print(ex.to_json())
+  
+class APIException(Exception):
+  """Base API exception"""
+  
+  http_status=HTTPStatus.INTERNAL_SERVER_ERROR
+  internal_err_msg='API exception occurred.'
+  user_err_msg='We are sorry! An unexpected error occurred on our end.'
+  
+  def __init__(self,*args,user_err_msg=None):
+    if args:
+      self.internal_err_msg=args[0]
+      super().__init__(*args)
+    else:
+      super().__init__(serlf.internal_err_msg)
+      
+    if user_err_msg is not None:
+      serlf.user_err_msg=user_err_msg
+      
+  def to_json(self):
+    err_object = {'status':self.http_status, 'message': self.user_err_msg}
+    return json.dumps(err_object)
+    
+  def log_exception(self):
+    exception = {
+                "type": type(self).__name__,
+                "http_status": self.http_status,
+                "message": self.args[0] if self args else self.internal_err_msg,
+                "args": self.args[1:]
+                }
+    print(f'EXCEPTION: {datetime.utcnow().isoformat()}: {exception}')
+    
+try:
+  raise APIException()
+except APIException as ex:
+  ex.log_exception()
+  print(ex.to_json())
+  
+  
