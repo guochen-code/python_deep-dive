@@ -1,0 +1,41 @@
+*******************************
+beyond ascii character set
+*******************************
+
+s1.casefold()
+s2.casefold()
+
+import unicodedata
+
+unicodedata.name(s1)
+[unicodedata.name(c) for c in s2]
+
+'\u00ea'
+'\u0065\0302'
+# look the same, but the same thing
+
+# unicode normalization
+unicodedata.normalize('NFD',s1)
+unicodedata.normalize('NFD',s2)
+--> now they are the same when use == to compare
+
+s1=']u0065\u0302
+s2='\u00ca'
+
+s1.casefold() == s2.casefold() --> False
+unicodedata.normalize('NFD',s1) == unicodedata.normalize('NFD',s2)
+--> False
+
+unicodedata.normalize('NFD',s1).casefold() == unicodedata.normalize('NFD',s2).casefold()
+
+# define a function
+
+def strcom(a,b,case_insensitive=False):
+  a = unicodedata.normalize('NFD',a)
+  b = unicodedata.normalize('NFD',b)
+  if case_insensitive:
+    return a.casefold() == b.casefold()
+  else:
+    return a == b
+    
+    
