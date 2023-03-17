@@ -1,0 +1,44 @@
+class Person:
+  def __init__(self,name):
+    self.name=name
+  
+p = object.__new__(Person)
+-> p is a new object, an instance of Person
+-> __init__ is not called
+# we have to do by ourselves
+p.__init__('Raymond')
+# kind of reproduce the steps to create an instance of a class by calling new and init
+
+
+class Point:
+  def __new__(cls,x,y):
+    print('creating instance...',x,y)
+    instance=object.__new__(cls) # delegate to parent, use super()
+    return instance
+  
+  def __init__(self,x,y):
+    print('init called...',x,y)
+    self.x=x
+    self.y=y
+    
+p=Point(10,20)
+--->
+creating instance... 10 20
+init called... 10 20
+
+********** preferred way
+ the point is inheriting from some other class, that also did not override on new
+ if I call object here, it will just call objects new directly, it would not call the parent class's new method, this is not what i want
+
+class Point:
+  def __new__(cls,x,y):
+    print('creating instance...',x,y)
+    instance=super().__new__(cls) ####################################
+    return instance
+  
+  def __init__(self,x,y):
+    print('init called...',x,y)
+    self.x=x
+    self.y=y
+    
+    
