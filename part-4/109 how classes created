@@ -1,0 +1,100 @@
+a class is an instance of type (type is a class, class Person is actually an instance of type)
+that's why a class is also called a type
+type is a callable
+type in fact a type(class) itself, and inherits from object
+
+step-1:
+the class body is extracted (basically just a blob of text, but it is valid code)
+step-2:
+a new dictionary is created - this will be the namespace of the new class
+step-3:
+the body code is executed inside that namespace, thereby populating the namespace
+(think of this code directly inside a module: after the code has been executed, the module namespace will contain planet, name, __init__)
+step-4:
+a new type instance is created using the name of the class, the base classes and the populated dictionary
+-> type(class_name, class_bases, class_dict)
+
+calling type
+what happens when we call a custom class (e.g. Person('Alex'))?
+-> creates an instance of that custom class (e.g. Person instance)
+-> tyoe is itself a class
+what happens when we call type?
+  -> type(class_name, class_bases, class_dict)
+  -> creates an instance of type
+    -> which will be a type (or class)
+      -> named class_name
+      -> inherits from class_bases
+      -> class dictionary will be class_dict
+      
+************************************************************************************************************************************
+import math
+
+class Circle(object):
+  def __init__(self,x,y,r):
+    self.x=x
+    self.y=y
+    self.r=r
+  
+  def area(self):
+    return math.pi*self.r**2
+
+'Circle' in globals() -> True
+type(Circle) -> type
+Circle -> __main__.Circle
+
+*** manually create a class
+namespace={}
+exec('''
+a=10
+b=20
+''',globals(),namespace)
+namespace->{'a':10,'b':20}
+
+namespace={}
+exec('''
+a=10
+b=20
+def __init__(self):
+  pass
+''',globals(),namespace)
+namespace->{'a':10,'b':20,'__init__':<function __main__.__init__(self)>}
+# exec will execute the code and use the dictionary
+
+namespace={}
+exec('''
+def add(a,b):
+  return a+b
+def mul(a,b):
+  return a*b
+''',globals(),namespace)
+namespace['add'](10,20) -> 30
+
+------------------------------
+class_name='Circle'
+class_body="""
+def __init__(self,x,y,r):
+    self.x=x
+    self.y=y
+    self.r=r
+  
+  def area(self):
+    return math.pi*self.r**2
+"""
+class_bases=() # default is class_baes=(object,)
+class_dict={}
+exec(class_body,globals(),class_dict)
+Circle=type(class_name,class_bases,class_dict) # create an instance of type
+Circle.__dict__
+--->
+mappingproxy({'__init__': <function __main__.__init__(self, x, y, r)>,
+              'area': <function __main__.area(self)>,
+              '__module__': '__main__',
+              '__dict__': <attribute '__dict__' of 'Circle' objects>,
+              '__weakref__': <attribute '__weakref__' of 'Circle' objects>,
+              '__doc__': None})
+# python do some extra things we did not do, like this __name__, when we call type
+Circle.__name__ -> 'Circle'
+c=Circle(0,0,1)
+type(c) -> __main__.Circle
+c.__dict__ -> {'x':0,'y':0,'r':1}
+c.area() -> 3.1415926......
