@@ -1,0 +1,79 @@
+to create a class, another class is used
+ -> typically type
+
+the class used to create a class, is called the metaclass of that class
+  -> by default python uses tyoe as the metaclass
+  -> but we can override this
+      class Person(metaclass=MyType):
+        ...
+  -> default is actually:
+      class Person(metaclass=type):
+        ...
+        
+ putting together
+ 
+ class MyType(type):
+  def __new__(mcls,name,bases,cls_dict): #mcls-first argument is the metaclass(MyType) # second argument is the name of the class being created
+    #tweak things
+    
+    #create the class itself via delegation
+    new_class=super().__new__(mcls,name,bases,cls_dict)
+    
+    #tweak some more
+    
+    #and return the new class
+    return new_class
+    
+class Person(metaclass=MyType): # does all the manual steps: name, code, class dict, bases, then calls MyType(name,bases,cls_dict)
+  def __init__(self,name):
+    self.name=name
+    
+******************************************************************************************************************************************************
+
+The metaclass argument essentially allows us to specify what class we want to use to construct our class. 
+So we could create a custom class that will build a new type, injecting whatever functionality we want into the creation process
+- essentially allowing us to modify the definition/functionality of the class we are creating using code.
+
+Python will call our metaclass with the same arguments it would pass to the type constructor: name, bases and class_dict, 
+so we need to handle those arguments, but it does the work of creating the class dictionary and executing the code in that context, 
+gathering the bases and the name of the class we are defining.
+
+class CustomType(type):
+    def __new__(mcls, name, bases, class_dict):
+        print(f'Using custom metaclass {mcls} to create class {name}...')
+        cls_obj = super().__new__(mcls, name, bases, class_dict)
+        cls_obj.circ = lambda self: 2 * math.pi * self.r
+        return cls_obj
+        
+class Circle(metaclass=CustomType):
+    def __init__(self, x, y, r):
+        self.x = x
+        self.y = y
+        self.r = r
+        
+    def area(self):
+        return math.pi * self.r ** 2
+ ---> Using custom metaclass <class '__main__.CustomType'> to create class Circle...
+# As you can see from the print output, our custom metaclass was used, and here's the class info:
+
+vars(Circle)
+--->
+mappingproxy({'__module__': '__main__',
+              '__init__': <function __main__.Circle.__init__(self, x, y, r)>,
+              'area': <function __main__.Circle.area(self)>,
+              '__dict__': <attribute '__dict__' of 'Circle' objects>,
+              '__weakref__': <attribute '__weakref__' of 'Circle' objects>,
+              '__doc__': None,
+              'circ': <function __main__.CustomType.__new__.<locals>.<lambda>(self)>})
+              
+c = Circle(0, 0, 1)
+print(c.area()) --->3.141592653589793
+print(c.circ()) --->6.283185307179586
+
+And that's how we use metaclasses declaratively. 
+Python handles the complexity of creating the instance of the metaclass, getting the name, bases and class dictionary we 
+otherwise have to create ourselves and pass as arguments when we call the metaclass.
+
+
+
+        
