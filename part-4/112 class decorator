@@ -1,0 +1,364 @@
+function decorator
+
+@my_dec
+def my_func():
+  pass
+  
+-----> equal to
+
+def my_func():
+  pass
+
+my_func = my_dec(my_func) # reassign the symbol
+
+class decorator
+
+@my_dec
+class MyClass:
+  pass
+  
+------> equal to
+
+class MyClass:
+  pass
+MyClass = my_dec(MyClass)
+
+****************************************************************************************************************************************************
+
+def saving(cls):
+  cls.account_type='savings'
+  return cls
+def checking(cls):
+  cls.account_type='checking'
+  return cls
+  
+class Account:
+  pass
+  
+@savings
+clas Bank1Savings(Account):
+  pass
+  
+@checking
+clas Bank1Checking(Account):
+  pass
+
+# two decorators, we can use one parameterized decorator
+def account_type(type_):
+  def decorator(cls):
+    cls.account_type=type_
+    return cls
+  return decorator
+
+@account_type('Savings')
+class Bank1Savings:
+  pass
+  
+# same applied to method
+def hello(cls):
+  cls.hellp=lambda self:f'{self} says hello!'
+
+@hello
+class Person:
+  def __init__(self,name):
+    self.name=name
+  def __str__(self):
+    return self.name
+
+**************************
+from functools import wraps
+
+def func_logger(fn):
+    @wraps(fn)
+    def inner(*args, **kwargs):
+        result = fn(*args, **kwargs)
+        print(f'log: {fn.__qualname__}({args}, {kwargs}) = {result}')
+        return result
+    return inner 
+    
+class Person:
+    @func_logger
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    @func_logger
+    def greet(self):
+        return f'Hello, my name is {self.name} and I am {self.age}'
+        
+But this is kind of tedious if we have many methods in our class. Not very DRY!
+Instead, how about creating a class decorator that will decorate every callable in a given class with the logger decorator:        
+
+def class_logger(cls):
+    for name, obj in vars(cls).items():
+        if callable(obj):
+            print('decorating:', cls, name)
+            setattr(cls, name, func_logger(obj))
+    return cls
+    
+@class_logger
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def greet(self):
+        return f'Hello, my name is {self.name} and I am {self.age}'
+        
+Now we have to be a bit careful. Although this class decorator seems to work fine, it will have issues with static and class methods!
+
+@class_logger
+class Person:
+    @staticmethod
+    def static_method():
+        print('static_method invoked...')
+    
+    @classmethod
+    def cls_method(cls):
+        print(f'cls_method invoked for {cls}...')
+        
+    def instance_method(self):
+        print(f'instance_method invoked for {self}')
+        
+You'll notice that in the cls_method and instance_method cases, the logger printout never showed up! 
+In fact, we did not get the message that these methods had been decorated.
+The problem is that static and class methods are not functions, they are actually descriptors, not callables. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Which is probably a good thing, because our decorator is expecting to decorate a function, not a class!
+
+This, by the way, is why when you decorate static or class methods using a function decorator in your classes, 
+you should do so before you decorate it with the @staticmethod or @classmethod decorators:
+
+class Person:
+    @staticmethod
+    @func_logger            ################################
+    def static_method():
+        pass
+Person.static_method() ---> TypeError: 'staticmethod' object is not callable
+
+Let's first examine two things separately.
+First let's make sure we can recognize the type of a class or static method in our class:
+class Person:
+    @staticmethod
+    def static_method():
+        pass
+    
+    @classmethod
+    def class_method(cls):
+        pass
+type(Person.__dict__['static_method']) --> staticmethod
+type(Person.__dict__['class_method']) ---> classmethod
+
+Next, can we somehow get back to the original function that was wrapped by the @staticmethod and @classmethod decorators?
+The answer is yes, since these are method objects - we've seen this before when we studied the relationship between functions and descriptors and 
+how methods were created.
+
+Person.__dict__['static_method'].__func__
+---> <function __main__.Person.static_method()>
+So now, we could modify our class decorator needs to unwrap any class or static methods, decorate the original function, 
+and then re-wrap it with the appropriate classmethod or instancemethod decorator:
+
+def class_logger(cls):
+    for name, obj in vars(cls).items():
+        if callable(obj):
+            print('decorating:', cls, name)
+            setattr(cls, name, func_logger(obj))
+        elif isinstance(obj, staticmethod):
+            original_func = obj.__func__
+            print('decorating static method', original_func)
+            decorated_func = func_logger(original_func)
+            method = staticmethod(decorated_func)
+            print(method, type(method))
+            setattr(cls, name, method)
+        elif isinstance(obj, classmethod):
+            original_func = obj.__func__
+            print('decorating class method', original_func)
+            decorated_func = func_logger(original_func)
+            method = classmethod(decorated_func)
+            setattr(cls, name, method)
+    return cls
+
+Not bad... Not what about properties?
+
+@class_logger
+class Person:
+    def __init__(self, name):
+        self._name = name
+        
+    @property
+    def name(self):
+        return self._name
+        
+type(Person.__dict__['name']) ---> property
+
+And how do we get the original functions on a property?
+prop = Person.__dict__['name']
+prop.fget ---> <function __main__.Person.name(self)>
+prop.fset, prop.fdel ---> (None, None)
+
+def class_logger(cls):
+    for name, obj in vars(cls).items():
+        if callable(obj):
+            print('decorating:', cls, name)
+            setattr(cls, name, func_logger(obj))
+        elif isinstance(obj, staticmethod):
+            original_func = obj.__func__
+            print('decorating static method', original_func)
+            decorated_func = func_logger(original_func)
+            method = staticmethod(decorated_func)
+            print(method, type(method))
+            setattr(cls, name, method)
+        elif isinstance(obj, classmethod):
+            original_func = obj.__func__
+            print('decorating class method', original_func)
+            decorated_func = func_logger(original_func)
+            method = classmethod(decorated_func)
+            setattr(cls, name, method)
+        elif isinstance(obj, property):
+            print('decorating property', obj)
+            if obj.fget:
+                obj = obj.getter(func_logger(obj.fget))
+            if obj.fset:
+                obj = obj.setter(func_logger(obj.fset))
+            if obj.fdel:
+                obj = obj.deleter(func_logger(obj.fdel))
+            setattr(cls, name, obj)
+    return cls
+    
+Let's make sure it works if we have setters and deleters as well:
+
+@class_logger
+class Person:
+    def __init__(self, name):
+        self._name = name
+        
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value):
+        self._name = value
+        
+    @name.deleter
+    def name(self):
+        print('deleting name...')
+        
+***********************************************************************************************************
+We can still run into trouble because not every callable is a function that can be decorated:
+
+@class_logger
+class Person:
+    class Other:
+        def __call__(self):
+            print('called instance of Other...')
+            
+    other = Other()
+    
+So, as you see it decorated both the class Other (since classes are callables), and it decorated other since we made instances of Other callable too.
+How does that work with the logger though:
+
+Person.Other ---> <function __main__.Person.Other()>
+Person.other ---> <function __main__.func_logger.<locals>.inner()>
+And that's the problem, because Other and other are callables, they have been replaced in our class by what comes out of the decorator - a function.
+So maybe we can use the inspect module to restrict our callables further:
+
+import inspect
+
+def class_logger(cls):
+    for name, obj in vars(cls).items():
+        if isinstance(obj, staticmethod):
+            original_func = obj.__func__
+            print('decorating static method', original_func)
+            decorated_func = func_logger(original_func)
+            method = staticmethod(decorated_func)
+            setattr(cls, name, method)
+        elif isinstance(obj, classmethod):
+            original_func = obj.__func__
+            print('decorating class method', original_func)
+            decorated_func = func_logger(original_func)
+            method = classmethod(decorated_func)
+            setattr(cls, name, method)
+        elif isinstance(obj, property):
+            print('decorating property', obj)
+            if obj.fget:
+                obj = obj.getter(func_logger(obj.fget))
+            if obj.fset:
+                obj = obj.setter(func_logger(obj.fset))
+            if obj.fdel:
+                obj = obj.deleter(func_logger(obj.fdel))
+            setattr(cls, name, obj)
+        elif inspect.isroutine(obj):
+            print('decorating:', cls, name)
+            setattr(cls, name, func_logger(obj))
+    return cls
+    
+If we really wanted to, we could also decorate the Other class:
+
+@class_logger
+class MyClass:
+    @staticmethod
+    def static_method():
+        print('static_method called...')
+    
+    @classmethod
+    def cls_method(cls):
+        print('class method called...')
+    
+    def inst_method(self):
+        print('instance method called...')
+    
+    @property
+    def name(self):
+        print('name getter called...')
+    
+    def __add__(self, other):
+        print('__add__ called...')
+    
+    @class_logger
+    class Other:
+        def __call__(self):
+            print(f'{self}.__call__ called...')
+        
+    other = Other()
+************************************************************************************************************************    
+************************************************************************************************************************    
+************************************************************************************************************************    
+We could also do a bit of DRYing on our decorator code.
+
+import inspect
+
+def class_logger(cls):
+    for name, obj in vars(cls).items():
+        if isinstance(obj, staticmethod) or isinstance(obj, classmethod):
+            type_ = type(obj)
+            original_func = obj.__func__
+            print(f'decorating {type_.__name__} method', original_func)
+            decorated_func = func_logger(original_func)
+            method = type_(decorated_func)
+            setattr(cls, name, method)
+        elif isinstance(obj, property):
+            print('decorating property', obj)
+            methods = (('fget', 'getter'), ('fset', 'setter'), ('fdel', 'deleter'))
+            for prop, method in methods:
+                if getattr(obj, prop):
+                    obj = getattr(obj, method)(func_logger(getattr(obj, prop)))
+            setattr(cls, name, obj)
+        elif inspect.isroutine(obj):
+            print('decorating:', cls, name)
+            setattr(cls, name, func_logger(obj))
+    return cls
+
+
+
+    
+
+
+
+        
+        
+        
+
+
+
+        
