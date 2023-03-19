@@ -21,4 +21,115 @@ class Logger:
     print(f'Log: {self.fn.__name__} called.')
     return self.fn(*args,**kwargs)
     
+def say_hello():
+  return 'hello'
+  
+f=Logger(say_hello) # f is instance of Logger and pass say_hello
+f --> <__main__.Logger at 0x7fa1212f99b0>
+
+# f is callable
+f() --->
+Log: say_hello called
+'hello'
+
+
 @Logger
+def say_hello():
+  return 'hello'
+
+say_hello() ---> # get same thing
+Log: say_hello called
+'hello'
+# it is equal to doing: say_hello=Logger(say_hello)
+
+# the big different between using a function or class is that the type has changed dramactically
+(1) return type is also a function
+(2) return an instance of a class
+this leads us to an issue - class method decoration
+
+class Person:
+  def __init__(self,name):
+    self.name=name
+  
+  @Logger
+  def say_hello(self):
+    return f'{self.name} says hello!'
+ 
+p = Person('David')
+p.say_hello()
+--->
+Log: say_hello called
+TypeError: say_hell() missing 1 required positional argument: 'self'
+******************
+why was not p passed into say_hello????????????/
+say_hello has been decorated
+when a class created, python takes the code and compiles it, it runs it and creates class dictionary
+say_hello used to be a function and we transformed it into an instance of a class, not a function
+so it does not get transformed into a method when we call it from the instance
+** remember the reason why functions get transformed into methods when they get callled from the instanceis because they implement the descriptive
+protocol. so when we have a function, python sees that as a descriptor, it's going to use that. in this case, it does not see it as a descriptor
+because the logger class is not a descriptor, not implement any part of the descriptive protocol, not get called as a bound method, just regular callable
+
+p.say_hello ---> <__main__.Logger at 0x7...> # just instance of Logger, that does not have get method, unlike regular function
+Person.__init__ ---> <function __main__.Person.__init__(self,name)> # this is a function
+hasattr(Person.__init__,'__get__') ---> True
+hasattr(Person.say_hello,'__get__') ---> False # it used to have, but no longer since we decorated it
+
+# we can implement __get__ method in our class to turn it into a non-data descriptor
+remember how we can create a method bound to an object
+
+from types import MethodType
+
+class Logger:
+  def __init__(self, fn):
+    self.fn=fn
+  def __call__(self,*args,**kwargs):
+    print(f'Log: {self.fn.__name__} called.')
+    return self.fn(*args,**kwargs)
+  def __get__(self, instance,owner_class):
+    print(f'__get__ called: self={self}, instance={instance}')
+    if instance is None:
+      print('\returning self unbound...')
+      return self
+    else:
+      print('\returning self as a method to bound to instance')
+      return MethodType(self,instance)
+ 
+class Person:
+  def __init__(self,name):
+    self.name=name
+  
+  @Logger
+  def say_hello(self):
+    return f'{self.name} says hello!'
+ 
+p = Person('Alex')
+p.say_hello() 
+---> 
+__get__ called: self=.....
+  returning self as a method bound to isntance
+Log: say_hello called.
+'Alex says hello!'
+
+****** summary:
+it's only when you are in the context of decorating a function inside of class, an instance method inside a class
+then the descriptive protocol comes into play
+- know descriptors
+- know class decorators
+- know decorators
+
+********************************************************************************************************************************************
+
+@classmethod
+@staticmethod
+
+also working
+
+when you are writting decorator classes, if you are going to use them decorate methods inside anther class
+then you need to remember to implement __get__ method 
+something very often people miss
+so implement the descriptor protocol basically to make sure that the function that you decrorate that used to be a descriptor because
+it was a function remains a descriptor
+
+
+
