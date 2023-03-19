@@ -1,0 +1,24 @@
+from functools import wraps
+
+def logger(fn):
+  @wraps(fn)
+  def wrapped(*args,**kwargs):
+    print(f'log: {fn.__name__} called.')
+    return fn(*args,**kwargs)
+  return wrapped
+  
+@logger
+def say_hello():
+  pass
+  
+say_hello() ---> Log: say_hello called
+
+class Logger:
+  def __init__(self,fn):
+    self.fn=fn
+    
+  def __call__(self,*args,**kwargs):
+    print(f'Log: {self.fn.__name__} called.')
+    return self.fn(*args,**kwargs)
+    
+@Logger
