@@ -66,7 +66,7 @@ func() ---> 2903.1140798 2581971705904
 func() ---> 2903.7128727 2581971023408
 
 **********************************************************************************************************************************************
-Beware!
+Beware!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Remember when I said the captured variable is a reference established when the closure is created, but the value is looked up only once the function is called?
 This can create very subtle bugs in your program    
 
@@ -95,7 +95,76 @@ adders[0](10), adders[1](10), adders[2](10), adders[3](10) ---> (14, 14, 14, 14)
 Remember what I said about when the variable is captured and when the value is looked up?
 When the lambdas are created their n is the n used in the loop - the same n!!
 and n stopped at 4
-**********************************************************************************************
+********************************************************************************************************************************************************
+********************************************************************************************************************************************************
+********************************************************************************************************************************************************
+If you want to use a loop to do this and not end up using the same cell for each of the free variables, 
+we can use a simple trick that forces the evaluation of n at the time the closure is created, instead of when the closure function is evaluated.
+
+We can do this by creating a parameter for n in our lambda whose default value is the current value of n 
+- remember from an earlier video that parameter defaults are avaluated when the function is created, not called.
+
+def create_adders():
+    adders = []
+    for n in range(1, 5):
+        adders.append(lambda x, step=n: x + step)    ######## turn it into function argument !!!!! argument is created at compile time !!!!!
+    return adders
+    
+adders = create_adders()
+
+adders[0].__closure__
+---> None
+
+adders[0].__code__.co_freevars
+---> ()
+Hmm, nothing either... Why?
+
+Well, look at the lambda in that loop. Does it reference the variable n (other than in the default value)? 
+No. Hence, n is not a free variable in this case, and our lambda is just a plain lambda, not a closure.
+
+add_1(10), add_2(10), add_3(10), add_4(10) ---> (11, 12, 13, 14)
+********************************************************************************************************************************************************
+********************************************************************************************************************************************************
+********************************************************************************************************************************************************
+Nested Closures
+We can also nest closures, as can be seen in this example:
+
+def incrementer(n):
+    def inner(start):
+        current = start
+        def inc():
+            a = 10  # local var
+            nonlocal current
+            current += n
+            return current
+        return inc
+    return inner
+    
+fn = incrementer(2)
+fn ---> <function __main__.incrementer.<locals>.inner>
+fn.__code__.co_freevars ---> ('n',)
+fn.__closure__ ---> (<cell at 0x0000015F5299B798: int object at 0x00000000506FEC90>,)
+inc_2 = fn(100) 
+inc_2 ---> <function __main__.incrementer.<locals>.inner.<locals>.inc>
+inc_2.__code__.co_freevars ---> ('current', 'n')
+inc_2.__closure__ ---> (<cell at 0x0000015F5299B318: int object at 0x00000000506FF8D0>, <cell at 0x0000015F5299B798: int object at 0x00000000506FEC90>)
+
+Here you can see that the second free variable n, is pointing to the same cell as the free variable in fn.
+
+Note that a is a local variable, and is not considered a free variable.
+
+And we can call the closures as follows:
+inc_2() ---> 102
+inc_2() ---> 104
 
 
 
+
+
+    
+    
+    
+    
+    
+    
+    
