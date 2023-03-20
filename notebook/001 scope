@@ -1,0 +1,86 @@
+*******************************************************************************
+Python determines the scope of objects at compile-time, not at run-time.
+*******************************************************************************
+example-1:
+a = 10
+b = 100
+def my_func():
+    print(a)
+    print(b)
+my_func() 
+----> 
+10
+100
+
+example-2:
+a = 10
+b = 100
+
+def my_func():
+    print(a)
+    print(b)
+    b = 1000
+    
+my_func()
+--->
+10
+UnboundLocalError: local variable 'b' referenced before assignment
+###
+As you can see, b in the line print(b) is considered a local variable - that's because the next line assigns a value to b - 
+hence b is scoped as local by Python for the entire function.
+**************************************************************************************************************************************************************
+If you have experience in some other programming languages you may be wondering if loops and other code "blocks" have their own local scope too. 
+For example in Java, the following would not work:
+
+for (int i=0; i<10; i++) { int x = 2 * i; } system.out.println(x);
+
+But in Python it works perfectly fine:
+
+for i in range(10):
+    x = 2 * i
+print(x)
+---> 18
+###
+In this case, when we assigned a value to x, Python put it in the global (module) scope, so we can reference it after the for loop has finished running.
+
+**************************************************************************************************************************************************************
+Functions defined inside anther function can reference variables from that enclosing scope, just like functions can reference variables from the global scope.
+In fact, any level of nesting is supported since Python just keeps looking in enclosing scopes until it finds what it needs 
+(or fails to find it by the time it finishes looking in the built-in scope, in which case a runtime error occurrs.)
+
+def outer_func():
+    x = 'hello'
+    def inner1():
+        def inner2():
+            print(x)
+        inner2()
+    inner1()
+outer_func() ---> hello
+
+def outer():
+    x = 'hello'
+    def inner():
+        nonlocal x
+        x = 'python'
+    inner()
+    print(x)
+outer() ---> python # like above, Of course, this can work at any level as well:
+**************************************************************************************************************************************************************
+But this will not work. In inner Python is looking for a local variable called x. outer has a label called x, but it is a global variable, not a local one 
+- hence Python does not find a local variable in the scope chain.
+
+x = 100
+def outer():
+    global x
+    x = 'python'
+    
+    def inner():
+        nonlocal x
+        x = 'monty'
+    inner()
+---> SyntaxError: no binding for nonlocal 'x' found
+    
+    
+
+
+
