@@ -1,0 +1,83 @@
+in a metaclass
+__new__(mcls,name,bases,cls_dict)
+
+when the metaclass is called (via class MyClass(metaclass=MyMeta))
+  -> python determines and sends to the __new__ method of the metaclass
+      -> the metaclass used to create the class (mcls)
+      -> name of the class we are creating (name)
+      -> the class we are inheriting from (bases)
+      -> a dictionary used as the class namespace (cls_dict)
+ 
+ where does cls_dict come from?
+  -> __prepare__ method of the metaclass
+  -> type implements it
+  
+  
+The __prepare__ method
+-> type implements a default __prepare__ method
+-> it is also a static method (like __new__)
+-> if additional (named) args are passed to metaclass, they are also passed to __prepare__
+-> python calls __prepare before it calls __new__
+-> the return value of __prepare__ must be a mapping type (e.g. a dict)
+-> python manipulates that dictionary a bit
+
+***************************************************************************************************************************************************
+So, as we see, cls_dict is a dictionary and it also contains some information already. It is obviously being created somewhere before being passed to the __new__ method.
+
+The class dictionary is actually created by calling the __prepare__ method, which the type class implements.
+
+When the class is created, Python calls __prepare__ and uses the return value of that method as the initialized class dictionary. Then right before calling __new__ it adds a few items into that dictionary, and then calls the __new__ method using that pre-created and initialized dictionary.
+
+Since __prepare__ is just a method in type, we can override it.
+
+class MyMeta(type):
+    @staticmethod
+    def __prepare__(name, bases, **kwargs):
+        print('MyMeta.__prepare__ called...')
+        print('\tname:', name)
+        print('\tkwargs:', kwargs)
+        return {'a': 100, 'b': 200}
+    
+    def __new__(mcls, name, bases, cls_dict, **kwargs):
+        print('MyMeta.__new__ called...')
+        print('\tcls: ', mcls, type(mcls))
+        print('\tname:', name, type(name))
+        print('\tbases: ', bases, type(bases))
+        print('\tcls_dict:', cls_dict, type(cls_dict))
+        print('\tkwargs:', kwargs)
+        return super().__new__(mcls, name, bases, cls_dict)
+
+class MyClass(metaclass=MyMeta, kw1=10, kw2=20):
+    pass
+    
+--->
+MyMeta.__prepare__ called...
+	name: MyClass
+	kwargs: {'kw1': 10, 'kw2': 20}
+MyMeta.__new__ called...
+	cls:  <class '__main__.MyMeta'> <class 'type'>
+	name: MyClass <class 'str'>
+	bases:  () <class 'tuple'>
+	cls_dict: {'a': 100, 'b': 200, '__module__': '__main__', '__qualname__': 'MyClass'} <class 'dict'>
+	kwargs: {'kw1': 10, 'kw2': 20}
+  
+Notice how the __prepare__ method was called before the __new__ method was called.
+
+Also notice how it contains the items 'a': 100 and 'b': 200 which we injected in the __prepare__ method.
+
+The cls_dict argument in __new__ has a couple of extra items that it injects for us prior to calling the __new__ method.
+
+Of course, if we do not specify a __prepare__ method in our metaclass, we inherit the one that is already defined in type - 
+which returns an empty dictionary.
+
+type.__prepare__()
+---> {}
+
+........
+.......
+.....
+....
+...
+..
+.
+        
