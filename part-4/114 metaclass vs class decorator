@@ -1,0 +1,99 @@
+from functool import wraps
+
+def func_logger(fn):
+  @wraps(fn)
+  def inner(*args,**kwargs):
+    result=fn(*args,**kwargs)
+    print('flog: {fn.__qualname__}({args}, {kwargs}) = {result}')
+    return result
+  return inner
+  
+def class_logger(cls):
+  for name, obj in vars(cls).items():
+    if callable(obj):
+      print('decorating:', cls, name)
+      setattr(cls, name, func_logger(obj))
+  return cls
+  
+@class_logger
+class Person:
+  def __init(self,name,age):
+    self.name=name
+    self.age=age
+  def greet(self):
+    return f'hello, my name is {self.name} and I am {self.age} years old.'
+---->
+decorating: <class '__main__.Person'> __init__
+decorating: <class '__main__.Person'> greet
+
+Person('Alex',10).greet()
+--->
+
+# let's use metaclass do the same thing
+
+class CLassLogger(type):
+  def __new__(mcls,name,bases,class_dict):
+    cls=super().__new__(mcls,name,bases,class_dict)
+    for name, obj in vars(cls).items(): # or use: in cls.__dict__.items()
+      if callable(obj):
+        print('decorating:', cls, name)
+        setattr(clas,name,func_logger(obj))
+    eturn cls
+    
+class Person(metaclass=ClassLogger):
+  def __init__(self,name,age):
+    self.name=name
+    self.age=age
+  def greet(self):
+   return f'hello, my name is {self.name} and I am {self.age} years old.'
+
+### problem with inheritance
+@class_logger
+class Person:
+  def __init(self,name,age):
+    self.name=name
+    self.age=age
+  def greet(self):
+    return f'hello, my name is {self.name} and I am {self.age} years old.'
+
+class Student(Person):
+  def __init__(self,name,age,student_number):
+    super().__init__(name,age)
+    self.student_number=student_numer
+  def study(self):
+    return f'{self.name} studies...'
+
+s=Student('Alex',19,'abcd')
+---> log: Person.__init__((<__main__.Student object ........
+# worked on Person class, not on Student class
+s.study()
+---> did not get logged
+# you need to do this:
+
+@class_logger
+class Student(Person):
+  def __init__(self,name,age,student_number):
+    super().__init__(name,age)
+    self.student_number=student_numer
+  def study(self):
+    return f'{self.name} studies...'
+    
+# the disadvantage of the functional appraoch is that I have to remember decorate every class where I want the logger to be applied
+# if use metaclas, it's going to inherit the functionality because it inherits the metaclass
+
+class Person(metaclass=ClassLogger):
+  def __init__(self,name,age):
+    self.name=name
+    self.age=age
+  def greet(self):
+   return f'hello, my name is {self.name} and I am {self.age} years old.'
+   
+class Student(Person):
+  def __init__(self,name,age,student_number):
+    super().__init__(name,age)
+    self.student_number=student_numer
+  def study(self):
+    return f'{self.name} studies...'   
+
+# got the decorator working
+
