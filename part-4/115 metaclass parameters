@@ -1,0 +1,74 @@
+class Metaclass(type):
+  def __new__(mcls,name,bases,cls_dict):
+    return super().__new__(mcls,name,bases,cls_dict)
+    
+class MyClass(metaclass=Metaclass):
+  pass
+  
+type(MyClass), type(MyClass()) # MyClass() is instance of MyClass
+--->
+(__main__.Metaclass, __main__.MyClass)
+
+
+# since pyhton 3.6
+
+class Metaclass(type):
+  def __new__(mcls,name,bases,cls_dict,arg1,arg2,arg3=None):
+    print(arg1,arg2,arg3)
+    return super().__new__(mcls,name,bases,cls_dict)
+    
+class MyClass(object, metaclass-Metaclass, arg1=10, arg2=20, arg3=30):
+  pass
+  
+class MyClass(object, metaclass=Metaclass, arg1=10, arg2=20,arg3=30)
+  pass
+---> 10 20 30
+
+class AutoClassAttrib(type):
+  def __new__(mcls,name,bases,cls_dict,extra_attrs=None):
+    print('Creating class with some extra attributes:', extra_attrs)
+    for attr_name, attr_value in extra_attrs:
+      cls_dict[attr_name]=attr_value
+    return super().__new__(mcls,name,bases,cls_dict)
+
+class Account(metaclass=AutoClassAttrib, extra_attrs=(('account_type','Savings'),('apr',0.5))):
+  pass
+  
+---------
+
+class AutoClassAttrib(type):
+  def __new__(mcls,name,bases,cls_dict,extra_attrs=None):
+    print('creating class with some extra attributes:', extra_attrs)
+    new_cls=super().__new__(mcls,name,bases,cls_dict)
+    if extra_attrs:
+      for attr_name, attr_value in extra_attrs:
+        setattr(new_cls, attr_name, attr_value)
+    return new_cls
+    
+class Account(metaclass=AutoClassAttrib, extra_attrs=(('account_type','Savings'),('apr',0.5))):
+  pass  
+  
+# also working, but will notice the order is different, when run vars(Account) or Account.__dict__
+---------------------------------
+class AutoClassAttrib(type):
+  def __new__(mcls,name,bases,cls_dict,**kwargs):
+    print('creating class with some extra attributes:', kwargs)
+    new_cls=super().__new__(mcls,name,bases,cls_dict)
+    if extra_attrs:
+      for attr_name, attr_value in kwargs.items():
+        setattr(new_cls, attr_name, attr_value)
+    return new_cls
+    
+class Account(metaclass=AutoClassAttrib, account_type='Savings',apr=0.5):
+  pass     
+
+---------------------------------
+class AutoClassAttrib(type):
+  def __new__(mcls,name,bases,cls_dict,**kwargs):
+    print('creating class with some extra attributes:', kwargs)
+    cls_dict.update(kwargs)
+    new_cls=super().__new__(mcls,name,bases,cls_dict)
+    return new_cls
+
+class Account(metaclass=AutoClassAttrib, account_type='Savings',apr=0.5):
+  pass  
