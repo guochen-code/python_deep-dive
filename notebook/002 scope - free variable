@@ -1,0 +1,101 @@
+def outer():
+    x = 'python'
+    def inner():
+        print(x)
+    return inner
+
+fn = outer()
+
+fn.__code__.co_freevars
+--->
+('x',)
+
+**********************************************************************************************************************************************
+
+def counter():
+    count = 0 # local variable
+    
+    def inc():
+        nonlocal count  # this is the count variable in counter
+        count += 1
+        return count
+    return inc
+    
+c = counter()
+c() ---> 1
+c() ---> 2
+c() ---> 3
+
+**********************************************************************************************************************************************
+Shared Extended Scopes
+As we saw in the lecture, we can set up nonlocal variables in different inner functionsd that reference the same outer scope variable, 
+i.e. we have a free variable that is shared between two closures. 
+This works because both non local variables and the outer local variable all point back to the same cell object.    
+
+def outer():
+    count = 0
+    def inc1():
+        nonlocal count
+        count += 1
+        return count
+    
+    def inc2():
+        nonlocal count
+        count += 1
+        return count
+    
+    return inc1, inc2
+    
+fn1, fn2 = outer()
+
+fn1() ---> 1
+fn1() ---> 2
+fn2() ---> 3 # shared
+
+**********************************************************************************************************************************************
+Multiple Instances of Closures
+Recall that every time a function is called, a new local scope is created.
+
+from time import perf_counter
+
+def func():
+    x = perf_counter()
+    print(x, id(x))
+    
+func() ---> 2903.1140798 2581971705904
+func() ---> 2903.7128727 2581971023408
+
+**********************************************************************************************************************************************
+Beware!
+Remember when I said the captured variable is a reference established when the closure is created, but the value is looked up only once the function is called?
+This can create very subtle bugs in your program    
+
+We could do the following:
+
+def adder(n):
+    def inner(x):
+        return x + n
+    return inner
+
+add_1 = adder(1)
+add_2 = adder(2)
+add_3 = adder(3)
+add_4 = adder(4)
+
+add_1(10), add_2(10), add_3(10), add_4(10) ---> (11, 12, 13, 14)
+
+def create_adders():
+    adders = []
+    for n in range(1, 5):
+        adders.append(lambda x: x + n)
+    return adders
+adders = create_adders()
+adders[0](10), adders[1](10), adders[2](10), adders[3](10) ---> (14, 14, 14, 14)
+**********************************************************************************************
+Remember what I said about when the variable is captured and when the value is looked up?
+When the lambdas are created their n is the n used in the loop - the same n!!
+and n stopped at 4
+**********************************************************************************************
+
+
+
