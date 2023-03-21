@@ -1,0 +1,15 @@
+# switch configures in different execution environments
+
+# create two files
+with open('prod.ini', 'w') as prod, open('dev.ini', 'w') as dev:
+    prod.write('[Database]\n')
+    prod.write('db_host=prod.mynetwork.com\n')
+    prod.write('db_name=my_database\n')
+    prod.write('\n[Server]\n')
+    prod.write('port=8080\n')
+    
+    dev.write('[Database]\n')
+    dev.write('db_host=dev.mynetwork.com\n')
+    dev.write('db_name=my_database\n')
+    dev.write('\n[Server]\n')
+    dev.write('port=3000\n')
