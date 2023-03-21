@@ -1,0 +1,64 @@
+singlton class: no matter how many instances you created, it is one instance
+how the class is being instantiated, not how the class is being created. Note the difference !!!!!!!
+
+class Hundred:
+  _existing_instance=None
+  
+  def __new__(cls):
+    if not cls.__existing_instance:
+      print('creating new instance...')
+      new_instance=super().__new__(cls)
+      setattr(new_instance,'name','hundred')
+      setattr(new_instance,'value',100)
+      cls._existing_instance=new_instance
+    else:
+      print('instance exists already, using that one...')
+    return cls._existing_instance
+
+# overwrite inherited __call__ method
+class Singleton(type):
+  def __call__(cls,*args,**kwargs):
+    print(f'Request received to create an instance of class: {cls}...')
+    return super().__call__(*args, **kwargs) # delegate to parents
+    
+class Hundred(metaclass=Singlton):
+  value=100
+--->
+return Nothing, the print statement not run, because need to create an instance of the class, at that point, the call method gets called
+
+# to make it a singleton
+class Singleton(type):
+  def __call__(cls,*args,**kwargs):
+    print(f'Request received to create an instance of class: {cls}...')
+    if getattr(cls,'existing_instance',None) is None:
+      print('creating instance for the first time...')
+      setattr(cls,'existing_instance',super().__call__(*args,**kwargs))
+    else:
+      print('using existing instance...')
+    return cls.existing_instance
+    
+class Thousand(metaclass=Singleton):
+  value=100
+t1=Thousand() -> creating instance for the first time...
+t2=Thousand() -> using existing instance...
+
+*********** problem
+class HundredFold(Hundred):
+  value=100*100
+type(HundredFold) --> __main__.Singleton
+hf1=HundredFold()
+----> using exisitng instance... # inherited from the parent, which we don't want
+
+# need to track the exact type
+class Singleton(type):
+  instance={} ############################ for tracking purpose
+  def __call__(cls,*args,**kwargs):
+    print(f'Request received to create an instance of class: {cls}...')
+    existing_instance=Singleton.isntances.get(cls,None)
+    if existing_instance is None:
+      print('creating instance for the first time...')
+      Singleton.isntances[cls]=super().__call__(*args,**kwargs)) # create the instance
+    else:
+      print('using existing instance...')
+    return Singleton.instances[cls]
+    
