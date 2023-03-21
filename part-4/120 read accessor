@@ -1,0 +1,358 @@
+class Person:
+    pass
+    
+p = Person()
+
+try:
+    p.name
+except AttributeError as ex:
+    print('AttributeError', ex)
+---> AttributeError 'Person' object has no attribute 'name'    
+    
+class Person:
+    def __getattr__(self, name):
+        print(f'__getattribute__ did not find {name}')
+        return 'not found!'    
+        
+p = Person()
+p.name 
+--->
+__getattribute__ did not find name
+'not found!'
+******************************************************************************************************************************************************************
+You do have to be careful to avoid infinite recursion though 
+- remember that every attribute lookup that does not exist calls the __getattr__ method, so something like this is going to cause us problems:
+
+Suppose we want to implement functionality where if an attribute is not found we try to look up the corresponding "private" variable, 
+e.g. if attr is not found, maybe try to look up _attr:
+
+class Person:
+    def __getattr__(self, name):
+        print(f'Could not find {name}')
+        alt_name = '_' + name
+        if getattr(self, alt_name, None) is not None:
+            return getattr(self, alt_name)
+        else:
+            raise AttributeError(f'Could not find {name} or {alt_name}')
+p = Person()
+p.age
+---> 
+Could not find age
+Could not find _age
+Could not find __age
+Could not find ___age
+Could not find ____age
+Could not find _____age
+Could not find ______age
+....
+....
+The problem of course is the code getattr(self, alt_name, None).
+
+We have an attribute lookup for alt_name which does not exist, so __getattr__ gets called again. and again. and again...
+
+There's two ways we can fix this issue: reach directly into the instance dictionary, but attributes are not always stored in the instance dictionary, 
+so instead we should use the attribute lookup mechanism in the super() object:
+
+class Person:
+    def __getattr__(self, name):
+        alt_name = '_' + name
+        print(f'Could not find {name}, trying {alt_name}...')
+        try:
+            return super().__getattribute__(alt_name)
+        except AttributeError:
+            raise AttributeError(f'Could not find {name} or {alt_name}')
+            
+p = Person()
+try:
+    p.age
+except AttributeError as ex:
+    print(type(ex).__name__, ex)
+--->
+Could not find age, trying _age...
+AttributeError Could not find age or _age
+**********************************************************************************************************************************************************
+class Person:
+    def __init__(self, age):
+        self._age = age
+        
+    def __getattr__(self, name):
+        print(f'Could not find {name}')
+        alt_name = '_' + name
+        try:
+            return super().__getattribute__(alt_name)
+        except AttributeError:
+            raise AttributeError(f'Could not find {name} or {alt_name}')
+p = Person(100)
+p.age
+--->
+Could not find age
+100
+# Here you can see it succesfully looked up _age and returned that for us.
+
+Example 1
+Here we're going to create a class that behaves a little bit like defaultdict.
+If an attribute is requested that does not exist, we're going to set in in the instance, to some default value, and then return it.
+
+class DefaultClass:
+    def __init__(self, attribute_default=None):
+        self._attribute_default = attribute_default
+        
+    def __getattr__(self, name):
+        print(f'{name} not found. creating it and setting it to default...')
+        setattr(self, name, self._attribute_default) # this will be an issue later, whenever you talking about overriding attribute access, go use super()
+        return self._attribute_default
+        
+ d=DefaultClass('NotAvailable')
+ d.age
+ --->
+ age not found, creating it and setting it to default...
+ 'NotAvailable'
+ d.age=18
+ d.age
+ ---> 18
+ #### Now that we have this class defined, we could also inherit from it to provide this functionality to other classes:
+class Person(DefaultClass):
+    def __init__(self, name):
+        super().__init__('Unavailable')
+        self.name = name
+p = Person('Raymond')
+p.name ---> 'Raymond'
+p.age --->
+age not found. creating it and setting it to default...
+'Unavailable'
+
+**************************************************************************************************************************************************************
+Example 2
+Another use case might be logging the fact that a non-existent attribute was requested - sometimes useful in debugging complex applications and monitoring things.
+When we do that we need to make sure we raise an AttributeError from our __getattr__ method, 
+since we don't actually want to provide a value for the attribute (in this particular case):
+
+class AttributeNotFoundLogger:
+    def __getattr__(self, name):
+        err_msg = f"'{type(self).__name__}' object has no attribute '{name}'"
+        print(f'Log: {err_msg}')
+        raise AttributeError(err_msg)
+        
+class Person(AttributeNotFoundLogger):
+    def __init__(self, name):
+        self.name = name
+p = Person('Raymond')
+p.name --->
+'Raymond'
+
+try:
+    p.age
+except AttributeError as ex:
+    print(f'AttributeError raised: {ex}')
+Log: 'Person' object has no attribute 'age'
+AttributeError raised: 'Person' object has no attribute 'age'        
+        
+**************************************************************************************************************************************************************
+Example 3: Overriding __getattribute__
+As we discussed in the lecture, __getattribute__ is called for every attribute access on our object.
+We'll come back to more examples of this, but let's do a simple example, where we want to disallow accessing any attribute names that start with an underscore:
+
+class Person:
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+        
+    def __getattribute__(self, name):
+        if name.startswith('_'):
+            raise AttributeError(f'Forbidden access to {name}')
+        return super().__getattribute__(name) # cannot use: getattr(self, name), because it just call __getattribute__ method
+        
+p = Person('Alex', 19)
+try:
+    p._name
+except AttributeError as ex:
+    print(ex)
+---> Forbidden access to _name     
+
+We have a problem now, we don't have access to _name and no property for name. 
+We could try to reach into the instance dictionary (assuming the attribute was stored there):
+p.__dict__['_name'] --> AttributeError: Forbidden access to __dict__
+
+Oh-oh... We have another problem - we can't even get to __dict__. LOL.
+First let's fix the __dict__ issue by preventing access to attribute names that start with _ and not __:
+ 
+class Person:
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+        
+    def __getattribute__(self, name):
+        if name.startswith('_') and not name.startswith('__'):
+            raise AttributeError(f'Forbidden access to {name}')
+        return super().__getattribute__(name)
+        
+p = Person('Eric', 78)
+p.__dict__
+{'_name': 'Eric', '_age': 78}
+
+Now let's implement properties for name and age:
+
+class Person:
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+        
+    def __getattribute__(self, name):
+        if name.startswith('_') and not name.startswith('__'):
+            raise AttributeError(f'Forbidden access to {name}')
+        return super().__getattribute__(name)
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def age(self):
+        return self._age
+        
+In the properties, what did we do? We accessed self._name and self._age.
+
+How is Python going to look up those attributes? By using the __getattribute__ method - and we just stopped access to variables that start with a single underscore!        
+
+p = Person('Python', 42)
+try:
+    p.name
+except AttributeError as ex:
+    print(ex)
+Forbidden access to _name
+Somehow we need to bypass our custom implementation of __getattribute__. And we do that by delegating the attribute lookup to super() - that will use the standard lookup method (define in object in this case), and not our custom method.
+
+class Person:
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+        
+    def __getattribute__(self, name):
+        if name.startswith('_') and not name.startswith('__'):
+            raise AttributeError(f'Forbidden access to {name}')
+        return super().__getattribute__(name)
+    
+    @property
+    def name(self):
+        return super().__getattribute__('_name') ####################### by using super, we bypass using __getattribute__ method above
+    
+    @property
+    def age(self):
+        return super().__getattribute__('_age')    
+            
+***********************************************************************************************************************************************************
+Now let's mix in the functionality we had for DefaultClass by inheriting it.
+
+Here's what that class looked like:
+
+class DefaultClass:
+    def __init__(self, attribute_default=None):
+        self._attribute_default = attribute_default
+        
+    def __getattr__(self, name):
+        print(f'{name} not found. creating it and setting it to default...')
+        setattr(self, name, self._attribute_default)
+        return self._attribute_default
+        
+Now this is going to create some problems if we just use it. 
+Because we are trying to get self._attribute_default. Since our custom __getattribute__ forbids that, we'll have a problem. 
+So here again, we'll start by delegating back to super() to use the __getattribute__ from the parent:
+
+class DefaultClass:
+    def __init__(self, attribute_default=None):
+        self._attribute_default = attribute_default
+        
+    def __getattr__(self, name):
+        print(f'{name} not found. creating it and setting it to default...')
+        default_value = super().__getattribute__('_attribute_default')
+        setattr(self, name, default_value)
+        return default_value
+And now we can inherit DefaultClass:
+
+class Person(DefaultClass):
+    def __init__(self, name=None, age=None):
+        super().__init__('Not Available')
+        if name is not None:
+            self._name = name
+        if age is not None:
+            self._age = age
+        
+    def __getattribute__(self, name):
+        if name.startswith('_') and not name.startswith('__'):
+            raise AttributeError(f'Forbidden access to {name}')
+        return super().__getattribute__(name)
+    
+    @property
+    def name(self):
+        return super().__getattribute__('_name')
+    
+    @property
+    def age(self):
+        return super().__getattribute__('_age')
+p = Person('Python', 42)
+p.name, p.age
+('Python', 42)
+p.language
+language not found. creating it and setting it to default...
+'Not Available'
+p.__dict__
+{'_attribute_default': 'Not Available',
+ '_name': 'Python',
+ '_age': 42,
+ 'language': 'Not Available'}            
+
+***************************************************************************************************************************************************
+# now I have a class that's stopping me from accessing underscore properties, and if i try to ask for a property, if not exist, it will set for me
+***************************************************************************************************************************************************
+
+# what about class attributes (above is all about instance attributes)
+
+Overriding Class Attribute Accessors
+So far we've been overriding these accessors as instance methods in our class - this means we are dealing with instance attribute access.
+What about class attributes instead?
+Since __getattribute__ and __getattr__ are always instance methods, this means we need to define them in the metaclass in order to override our class attribute access.
+
+class MetaLogger(type):
+    def __getattribute__(self, name):
+        print('class __getattribute__ called...')
+        return super().__getattribute__(name)
+    
+    def __getattr__(self, name):
+        print('class __getattr__ called...')
+        return 'Not Found'
+class Account(metaclass=MetaLogger):
+    apr = 10
+Account.apr
+class __getattribute__ called...
+10
+Account.apy
+class __getattribute__ called...
+class __getattr__ called...
+'Not Found'
+Apart from the fact that we defined these methods in the metaclass, everything else works the same way.
+***********************************************************************************************************************************************************
+When we call our custom methods in a custom class, the method needs to be retrieved from the instance as well - so it uses the __getattribute__ and __getattr__ methods as well.
+
+class MyClass:
+    def __getattribute__(self, name):
+        print(f'__getattribute__ called... for {name}')
+        return super().__getattribute__(name)
+    
+    def __getattr__(self, name):
+        print(f'__getattr__ called... for {name}')
+        raise AttributeError(f'{name} not found')
+    
+    def say_hello(self):
+        return 'hello'
+m = MyClass()
+m.say_hello()
+__getattribute__ called... for say_hello
+'hello'
+m.other()
+__getattribute__ called... for other
+__getattr__ called... for other
+---> AttributeError: other not found
+
+##### order of calling: __getattribute__ ---> __getattr__ ---> AttributeError
+we modified how the dot operator works
+
