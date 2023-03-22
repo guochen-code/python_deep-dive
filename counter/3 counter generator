@@ -1,0 +1,13 @@
+def counter(n):
+    while True:
+        n=n+1
+        yield n
+        
+gen=counter(0)
+
+next(gen) ---> 1
+next(gen) ---> 2
+next(gen) ---> 3
+
+gen_1=counter(0)
+next(gen_1) ---> 1
