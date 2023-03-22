@@ -1,0 +1,203 @@
+pattern matching >> switch in other languages
+
+def respond(language):
+    match language:
+        case "Java":
+            return "Hmm, coffee!"
+        case "Python":
+            return "I'm not scared of snakes!"
+        case "Rust":
+            return "Don't drink too much water!"
+        case "Go":
+            return "Collect $200"
+        case _:
+            return "I'm sorry..."
+            
+respond("Python") ---> "I'm not scared of snakes!"
+respond("COBOL") ---> "I'm sorry..."
+
+Here we were able to define a "default" match pattern by using the underscore (_) as our pattern - this _ is called a wildcard.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+For example, you can have multiple pattern matching:
+def respond(language):
+    match language:
+        case "Java" | "Javascript":
+            return "Love those braces!"
+        case "Python":
+            return "I'm a lumberjack and I don't need no braces"
+        case _:
+            return "I have no clue!"
+
+respond("Java")
+'Love those braces!'
+respond("Javascript")
+'Love those braces!'
+respond("Python")
+"I'm a lumberjack and I don't need no braces"
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+symbols = {
+    "F": "\u2192", 
+    "B": "\u2190", 
+    "L": "\u2191", 
+    "R": "\u2193", 
+    "pick": "\u2923", 
+    "drop": "\u2925"
+}
+
+symbols
+{'F': '→', 'B': '←', 'L': '↑', 'R': '↓', 'pick': '⤣', 'drop': '⤥'}
+
+def op(command):
+    match command:
+        case "move F":
+            return symbols["F"]
+        case "move B":
+            return symbols["B"]
+        case "move L":
+            return symbols["L"]
+        case "move R":
+            return symbols["R"]
+        case "pick":
+            return symbols["pick"]
+        case "drop":
+            return symbols["drop"]
+        case _:
+            raise ValueError(f"{command} does not compute!")
+            
+op("move L")
+'↑'
+            
+We could use something called capturing matched sub-patterns to simply our code somewhat:
+def op(command):
+    match command:
+        case ["move", ("F" | "B" | "L" |"R") as direction]:
+            return symbols[direction]
+        case "pick":
+            return symbols["pick"]
+        case "drop":
+            return symvols["drop"]
+        case _:
+            raise ValueError(f"{command} does not compute!")
+
+----------------------------------------------------------------------------------------------------------------------------------
+This is kind of tedious, it would be nicer to write commands such as move F F L and move R L F instead.
+There are many ways we could solve this, but pattern matching on multiple values can be really useful here.
+
+def op(command):
+    match command:
+        case ['move', *directions]:
+            return tuple(symbols[direction] for direction in directions)
+        case "pick":
+            return symbols["pick"]
+        case "drop":
+            return symbols["drop"]
+        case _:
+            raise ValueError(f"{command} does not compute!")
+            
+[
+    op(["move", "F", "F", "L"]),
+    op("pick"),
+    op(["move", "R", "L", "F"]),
+    op("drop"),
+]
+--->
+[('→', '→', '↑'), '⤣', ('↓', '↑', '→'), '⤥']
+
+
+# But now we have a slight problem:
+try:
+    op(["move", "up"])
+except Exception as ex:
+    print(type(ex), ex)
+---> <class 'KeyError'> 'up'
+
+We would rather just get our custom ValueError. To do this we can place a guard on our case for the move command, 
+that will not only do the match but also test an additional condition:
+
+def op(command):
+    match command:
+        case ['move', *directions] if set(directions) < symbols.keys():   ############ a < b, means a is subset of b, set operation !!!!!!!!!!!
+            return tuple(symbols[direction] for direction in directions)
+        case "pick":
+            return symbols["pick"]
+        case "drop":
+            return symbols["drop"]
+        case _:
+            raise ValueError(f"{command} does not compute!")
+
+That if statement (the guard) will only let the case block execute if the match is true and that if expression evaludates to True:
+try:
+    op(["move", "up"])
+except Exception as ex:
+    print(type(ex), ex)
+---> <class 'ValueError'> ['move', 'up'] does not compute!
+
+***************************************************************************************************************************************************************
+
+The zip Function
+We use the built-in zip function all the time. As we know, the zip will stop iterating after the first of the iterables provided in the arguments is exhausted:
+
+l1 = ['a', 'b', 'c']
+l2 = [10, 20, 30, 40]
+
+list(zip(l1, l2)) ---> [('a', 10), ('b', 20), ('c', 30)]
+
+As you can see the last element of l2 is not included in the result since l1 only had three elements.
+We can also use the zip_longest function in the itertools module to iterate over the longest iterable, 
+providing some default value for any other iterable that has been exhausted:
+
+from itertools import zip_longest
+list(zip_longest(l1, l2, fillvalue='???'))
+[('a', 10), ('b', 20), ('c', 30), ('???', 40)]
+
+But what if we want to only zip iterables that have the same length? We would need to test the length of each iterable first 
+- but if those were iterators instead of iterables, 
+we will have exhausted the iterator, and zip would come back "empty":
+l1 = (i ** 2 for i in range(4))
+l2 = (i ** 3 for i in range(3))
+We could test to see if l1 and l2 are the same length:
+
+len(list(l1)) == len(list(l2))
+False
+But, if we now try to zip them:
+
+list(zip(l1, l2))
+[]
+
+In Python 3.10, the zip function now has a keyword-only parameter called strict that will just do the zip, 
+but throw an exception if one of the arguments get exhausted before the others:
+
+l1 = (i ** 2 for i in range(4))
+l2 = (i ** 3 for i in range(3))
+
+try:
+    list(zip(l1, l2, strict=True))
+except ValueError as ex:
+    print(ex)
+zip() argument 2 is shorter than argument 1
+And works just fine if the arguments all have the same length:
+
+l1 = (i ** 2 for i in range(4))
+l2 = (i ** 3 for i in range(4))
+l3 = (i ** 4 for i in range(4))
+
+list(zip(l1, l2, l3))
+[(0, 0, 0), (1, 1, 1), (4, 8, 16), (9, 27, 81)]
+
+*** summary:
+So why is this useful?
+
+In many cases, our code zips iterables that we expect to be of the same length. 
+To avoid bugs in our program, we should check that this condition is true, otherwise zip will silently just zip based on the shortest one. 
+But as we saw with iterators, that can be difficult to do without exhausting the very iterators we are trying to zip. (it can be done, it's just more code).
+
+So, if you are one of the lucky devs that gets to write Python 3.10 (or higher :-) ) code, 
+you can just use strict whenever you zip things together and expect that they are all of the same length. Much easier to do it this way 
+(and, as we discuss in Exception handling, falls into the category of "ask forgiveness later" which we saw was the preferred way (in general) to handle exceptions 
+in our apps, as opposed to the "look before you leap" approach we would have to use to test the argument lengths.
+
+
+
