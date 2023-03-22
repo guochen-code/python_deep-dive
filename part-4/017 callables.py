@@ -169,6 +169,76 @@ Hmm, that's weird - counter still shows zero. This is because we have to underst
 - we made inner.counter the value of counter at the time the decorator function was called - this is not the counter value that we keep updating!!
 
 
+from time import perf_counter
+from functools import wraps
+
+def profiler(fn):
+    _counter = 0
+    _total_elapsed = 0
+    _avg_time = 0
+    
+    @wraps(fn)
+    def inner(*args, **kwargs):
+        nonlocal _counter
+        nonlocal _total_elapsed
+        nonlocal _avg_time
+        _counter += 1
+        start = perf_counter()
+        result = fn(*args, **kwargs)
+        end = perf_counter()
+        _total_elapsed += (end - start)
+        return result
+    
+    # we need to give a way to our users to look at the
+    # counter and avg_time values - but we need to make sure
+    # it is using a cell reference!
+    def counter():
+        # this will now be a closure with a cell pointing to 
+        # _counter
+        return _counter
+    
+    def avg_time():
+        return _total_elapsed / _counter
+    
+    inner.counter = counter
+    inner.avg_time = avg_time
+    return inner
+  
+**********************************************************************************************************************************************
+OK, so that works, but it's a little convoluted. In this case a decorator class will be much easier to write and read!
+
+class profiler:
+  def __init__(self,fn):
+    self.counter=0
+    self.total_elapsed=0
+    self.fn=fn
+  
+  def __call__(sefl,*args,**kwargs):
+    self.counter+=1
+    start=perf_counter()
+    result=self.fn(*args,**kwargs)
+    end=perf_counter()
+    self.total_elapsed+=(end-start)
+    return result
+  
+  @property
+  def avg_time(self):                         ## not as attribute, but as calculated property
+    return self.total_elapsed/self.counter
+  
+  
+@Profiler
+def func_2():
+    sleep(random.random())
+func_2(), func_2(), func_2() ---> (None, None, None)
+func_2.counter, func_2.avg_time
+---> (3, 0.5231811150054758)
+
+*** summary:
+As you can see, it was much easier to implement this more complex decorator using a class and the __call__ method than using a purely function approach. 
+But of course, if the decorator is simple enough to implement using a functional approach, that's my preferred way of doing things!
+Just because I have a hammer does not mean everything is a nail!!
+  
+  
 
   
 
