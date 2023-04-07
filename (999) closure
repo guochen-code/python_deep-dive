@@ -1,0 +1,24 @@
+what is closure?
+closure is inner function + free variables
+
+def outer():
+  x='python'
+  def inner():
+    print(x)
+  return inner            # when we return inner, we are actually returning the closure !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+here, closure = function inner() + x
+
+why x is not gone when function outer finished calling??????
+here the value of x is shared between two scopes:
+- outer
+- closure
+the label x is in two different scopes but always reference the same "value"
+
+python does this by creating a cell as a intermediary object
+outer.x & inner.x ---> intermediary object ---> string: python
+in effect, both variables x (in outer and inner), point to the same cell
+
+outer.x is gone, inner.x is still here
+
+fn = outer()    fn ---> inner + extended scope x
