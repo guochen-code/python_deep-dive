@@ -19,3 +19,37 @@ then can use @decorator
 (3) running inner
 (4) running my func
 ********************************
+
+we cannot put parameters as arguments in our decorator function.
+we can put parameters in a higher level function that creates the decorator function
+
+nested closures to the resuce!
+
+def outer(reps):
+  def timed(fn):
+    from time import perf_counter
+    
+    def inner(*args,**kwargs):
+      total_elapsed=0
+      for i in range(reps):
+        start=perf_counter()
+        result=fn(*args,**kwargs)
+        total_elapsed+=(perf_counter()-start)
+      avg_elapsed=total_elapsed / reps
+      print(avg_elapsed)
+      return result
+    return inner
+  
+  return timed
+  
+
+my_func=outer(10)(my_func)
+---->
+@outer(10)
+def my_func():
+  ....
+  
+  
+  
+  
+  
