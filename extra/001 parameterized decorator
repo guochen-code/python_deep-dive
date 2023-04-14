@@ -1,0 +1,111 @@
+def decorator_factor(n):
+    def decorator_func(fn):
+        counter=0
+        def inner(*args,**kwargs):
+            nonlocal counter
+            counter+=1
+            print('***counter:',counter)
+            if counter<=n:
+                result=fn()
+                return result                   # return here!!!
+            else:
+                print('already 5 times.....')
+        return inner
+    return decorator_func    
+    
+# note: if in a loop has to rerun from here, otherwise in next iteration, counter will start from 4 instead of 0    
+n=3
+@decorator_factor(n)
+def get_table():
+    return random.choice([200,500])    
+    
+for i in range(n):
+    result=get_table()
+    print(result)
+    if result == 200:
+        break    
+
+--->
+'''
+***counter: 1
+500
+***counter: 2
+500
+***counter: 3
+500
+'''
+        
+result       
+--->
+500
+
+
+
+****************************************************************
+
+def decorator_factor(n):
+    def decorator_func(fn):
+        counter=0
+        def inner(*args,**kwargs):
+            nonlocal counter
+            while counter < n:
+                print('counter:',counter)
+                result=fn()
+                print('result:', result)
+                if result == 200:
+                    counter=0
+                    return result   # return here!!!
+                    counter=0
+                counter+=1   
+            counter=0           ########################################### important
+        return inner 
+        counter=0               ########################################## no use, can be removed
+    return decorator_func
+    
+    
+n=3
+@decorator_factor(n)
+def get_table():
+    return random.choice([200,500])
+    
+result=get_table()    # in this way, can only rerun this one line
+    
+# check result is none or not to continue    
+****************************************************************************************    
+
+def decorator_factor(n):
+    def decorator_func(fn):
+        counter=0
+        def inner(*args,**kwargs):
+            nonlocal counter
+            while counter < n:              ##### after n=3, never enter into this while loop again, so no result=fn() executed
+                print('counter:',counter)
+                result=fn()
+                print('result:', result)
+                if result == 200:
+                    counter=0
+                    return result   # return here!!!
+                    counter=0
+                counter+=1   
+            return result
+        return inner
+        counter=0
+    return decorator_func
+
+
+'''
+---------------------------------------------------------------------------
+UnboundLocalError                         Traceback (most recent call last)
+~\AppData\Local\Temp\ipykernel_4748\493174038.py in <module>
+----> 1 result=get_table()
+
+~\AppData\Local\Temp\ipykernel_4748\2546796265.py in inner(*args, **kwargs)
+     13                     counter=0
+     14                 counter+=1
+---> 15             return result
+     16         return inner
+     17         counter=0
+
+UnboundLocalError: local variable 'result' referenced before assignment
+'''
+
