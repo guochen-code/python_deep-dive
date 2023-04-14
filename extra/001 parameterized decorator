@@ -40,8 +40,7 @@ result
 500
 
 
-
-****************************************************************
+**************************************************************** don't like the rerun above, how to fix
 
 def decorator_factor(n):
     def decorator_func(fn):
@@ -68,7 +67,7 @@ n=3
 def get_table():
     return random.choice([200,500])
     
-result=get_table()    # in this way, can only rerun this one line
+result=get_table()    ####################################### in this way, can only rerun this one line !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
 # check result is none or not to continue    
 ****************************************************************************************    
