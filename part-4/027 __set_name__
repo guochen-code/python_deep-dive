@@ -1,0 +1,71 @@
+Starting in Python 3.6, the __set_name__ method is an additional method defined in the descriptor protocol.
+
+__set_name__ was called when the Person class was created. This is the only time it gets called
+
+The main advantage of this is that we can capture the property name:
+
+class ValidString:
+    def __set_name__(self, owner_class, property_name):
+        print(f'__set_name__ called: owner={owner_class}, prop={property_name}')
+        self.property_name = property_name
+        
+    def __get__(self, instance, owner_class):
+        if instance is None:
+            return self
+        else:
+            print(f'__get__ called for property {self.property_name} '
+                  f'of instance {instance}')
+                  
+class Person:
+    first_name = ValidString()
+    last_name = ValidString()
+--->    
+__set_name__ called: owner=<class '__main__.Person'>, prop=first_name
+__set_name__ called: owner=<class '__main__.Person'>, prop=last_name    
+
+
+class ValidString():
+    def __init__(self, min_length):
+        self.min_length = min_length
+        
+    def __set_name__(self, owner_class, property_name):
+        self.property_name = property_name
+
+    def __set__(self, instance, value):
+        if not isinstance(value, str):
+            raise ValueError(f'{self.property_name} must be a string.')
+        if len(value) < self.min_length:
+            raise ValueError(f'{self.property_name} must be at least '
+                             f'{self.min_length} characters'
+                            )
+        key = '_' + self.property_name
+        setattr(instance, key, value)
+        
+    def __get__(self, instance, owner_class):
+        if instance is None:
+            return self
+        else:
+            key = '_' + self.property_name
+            return getattr(instance, key, None)
+            
+we still have the issue of potentially overwriting an existing instance attribute. user may use '_' + self.property_name in their code:
+p = Person()
+p._first_name = 'some data I need to store'
+p.__dict__ ---> {'_first_name': 'some data I need to store'}
+p.first_name = 'Alex' 
+p.__dict__ ---> {'_first_name': 'Alex'}
+# So that wiped away our data - this is not good, so we need to do something about it.
+***************************************************************************************************************************************************
+How about storing the value in the instance using the exact same name?
+Think back to how instance attributes shadow class attributes:
+
+
+So as you can see, the descriptor is a class attribute. So if we store the value under the same name in the instance, 
+are we not going to run into this shadowing issue where the attribute will now use the attribute in the instance rather than using the class descriptor attribute?
+
+And the answer is it depends!
+Data vs non-data descriptors - that distinction is important, and we'll look at this in the next lectures.
+
+
+
+
