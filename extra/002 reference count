@@ -1,0 +1,11 @@
+function we can use to determine the reference count of an object by id:
+
+import ctypes
+
+def ref_count(address):
+    return ctypes.c_long.from_address(address).value
+    
+# Note that this counts the strong references to that object.
+
+    
+    
