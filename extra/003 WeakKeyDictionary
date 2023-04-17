@@ -1,0 +1,64 @@
+Basically, this is exactly the same as what we were doing before, but instead of using a standard dictionary (that potentially causes memory leaks), 
+we'll use a WeakKeyDictionary. Recall what we had before:
+
+class IntegerValue:
+    def __init__(self):
+        self.values = {}
+        
+    def __set__(self, instance, value):
+        self.values[instance] = int(value)
+        
+    def __get__(self, instance, owner_class):
+        if instance is None:
+            return self
+        else:
+            return self.values.get(instance)
+
+# Now, we are going to refactor this to use the weak key dictionary:
+
+import weakref
+lass IntegerValue:
+    def __init__(self):
+        self.values = weakref.WeakKeyDictionary()
+        
+    def __set__(self, instance, value):
+        self.values[instance] = int(value)
+        
+    def __get__(self, instance, owner_class):
+        if instance is None:
+            return self
+        else:
+            return self.values.get(instance)
+            
+# And that's all there is to it. We now have weak references instead of strong references in our dictionary, 
+and the dictionary cleans up after itself (removes "dead" entries) when the reference object has been destroyed by the GC            
+            
+class Point:
+    x = IntegerValue()
+    
+p = Point()
+print(hex(id(p))) ---> 0x7fa760414400
+p.x = 100.1
+p.x -> 100
+Point.x.values.keyrefs() -> [<weakref at 0x7fa76041d048; to 'Point' at 0x7fa760414400>]
+del p
+Point.x.values.keyrefs() -> []
+ 
+*** summary:
+So this is almost a perfect general solution:
+
+--- We do not need to store the data in the instances themseves (so we can handle objects whose class uses __slots__)
+--- We are protected from memory leaks
+But this only works for hashable objects.
+
+**************************************************************************************************************************************************************
+So, now let's try to address this hashability issue.
+
+Since we cannot use the object itself as the key in a dictionary (weak or otherwise), 
+we could try using the id of the object (which is an int) as the key in a standard dictionary:
+
+            
+            
+            
+            
+            
