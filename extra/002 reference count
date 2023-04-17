@@ -7,5 +7,120 @@ def ref_count(address):
     
 # Note that this counts the strong references to that object.
 
+************************************************************************************** weak reference
+import weakref
+
     
+class Person:
+    def __init__(self, name):
+        self.name = name
+        
+    def __repr__(self):
+        return f'Person(name={self.name})'
+        
+p1 = Person('Guido')
+
+weak1 = weakref.ref(p1)
+
+weak1 is p1
+-> False
+
+weak1() is p1
+-> True
+print(weak1())
+-> Person(name=Guido)
+
+**** Another word of caution, if we do this:
+p3 = weak1() # p3 is now a strong reference to whatever object weak1() returned! In this case our Guido Person:
+p1 is p3 -> True
+
+
+*** We can see how many weak references exist from some object by using the getweakrefcount function in the weakref module:
+weakref.getweakrefcount(p1), ref_count(p1_id)
+
+Another way of getting the strong ref count is in the sys module:
+import sys
+sys.getrefcount(p1)
+But you'll notice one thing, the ref count is increased by 1 - that's because we have to pass the object itself as an extra argument, 
+so that's an extra strong reference! (so basically always subtract 1 from that ref count to get the true ref count)
+
+*******
+after our strong ref count went down to 0, so the garbage collector destroyed the object.
+So what happened to our weak reference?
+weak1 -> <weakref at 0x7fbae83667c8; dead> # The weak reference object still exists, but the object it is pointing to is dead.
+obj = weak1()
+obj is None -> True
+
+*******
+As you can see, having a weak reference did not stop our object from being destroyed once all the strong references were gone.
+Note that not every object in Python supports weak references. Many of the built-in types do not:
+
+l = [1, 2, 3]
+try:
+    w = weakref.ref(l)
+except TypeError as ex:
+    print(ex)
+---> cannot create weak reference to 'list' object
+cannot create weak reference to 'dict' object
+cannot create weak reference to 'int' object
+cannot create weak reference to 'str' object
+
+**************************************************************************************************************************************** specialized dictionary type
+For our data descriptors, we want to use the instance objects as keys in our dictionary. 
+But as we saw earlier, storing the object itself as the key can lead to memory leaks. 
+So instead, we are going to store weak references to the object in the dictionary.
+
+We could use our own dictionary, but weakref also provides a specialized dictionary type, that will store a weak reference to the object being used as the key:
+p1 = Person('Guido')
+d = weakref.WeakKeyDictionary()
+ref_count(id(p1)) -> 1
+weakref.getweakrefcount(p1) -> 0
+d[p1] = 'Guido'
+ref_count(id(p1)), weakref.getweakrefcount(p1) -> (1,1)
+
+
+del p1
+list(d.keyrefs()) -> []
+It was automatically removed when the object it was pointing to (weakly) was destroyed by the garbage collector!
+Now be careful, you can only use keys in the WeakKeyDictionary that Python can create weak references to:
+So this will not work:
+
+try:
+    d['python'] = 'test'
+except TypeError as ex:
+    print(ex)
+
+-> cannot create weak reference to 'str' object
+
+**************************************************************************************************************************************** unhashable
+Also, even though we are using a weak reference as a key in the dictionary, the object must still be hashable.
+
+class Person:
+    def __init__(self, name):
+        self.name = name
+        
+    def __eq__(self, other):
+        return isinstance(other, Person) and self.name == other.name
+# Now Person is no longer hashable:
+p1 = Person('Guido')
+p2 = Person('Guido')
+
+try:
+    hash(p1)
+except TypeError as ex:
+    print(ex)
+---> unhashable type: 'Person'
     
+try:
+    d[p1] = 'Guido'
+except TypeError as ex:
+    print(ex)    
+---> unhashable type: 'Person'
+
+
+
+
+ 
+
+
+        
