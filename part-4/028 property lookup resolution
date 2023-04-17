@@ -1,0 +1,106 @@
+As we saw in the last set of lectures, something odd is happening when our class uses a data descriptor, and instances contain the same attribute name in the instance dictionary.
+Contrary to what we expected, the descriptor was still used.
+This boils down to data vs non-data descriptors. Python has a default way of where it looks for attributes depending on whether the descriptor is a data-descriptor or not.
+As I explain the lecture video, for data descriptors Python will choose to use the descriptor attribute (in the class), even if the same symbol is found in the instance dictionary.
+
+class IntegerValue:
+    def __set__(self, instance, value):
+        print('__set__ called...')
+        
+    def __get__(self, instance, owner_class):
+        print('__get__ called...')
+
+class Point:
+    x = IntegerValue()
+    
+p = Point()
+p.x = 100 -> __set__ called...
+p.x -> __get__ called...
+p.__dict__ -> {}
+p.__dict__['x'] = 'hello'
+p.__dict__ -> {'x': 'hello'}
+# And now let's get the value:
+p.x -> __get__ called...
+
+******************************************************************************************************************************************************************
+The behavior for a non-data descriptor is different, and the shadowing effect is present:
+
+from datetime import datetime
+
+class TimeUTC:
+    def __get__(self, instance, owner_class):
+        print('__get__ called...')
+        return datetime.utcnow().isoformat()
+        
+class Logger:
+    current_time = TimeUTC()     
+    
+l = Logger()
+l.current_time -> __get__ called...   '2019-07-13T20:47:59.473945'
+l.__dict__['current_time'] = 'this is not a timestamp'
+l.current_time -> 'this is not a timestamp'
+# we get the value stored in the instance dictionary, not the descriptor's __get__ method.
+**********************************************************************************************************************************************************************
+What this means is that for data descriptors, where we usually need instance-based storage, we can actually use the property name itself to store the value in the instance under the same name. 
+It will not shadow the class attribute (the descriptor instance), and it has no risk of overwriting any existing instance attributes our class may have!
+
+Of course, this assume that the class does not use slots, or at least specifies __dict__ as one of the slots if it does.
+
+**********************************************************************************************************************************************************************
+Note that I am not using attributes (either dot notation or getattr/setattr) when setting and getting the values from the instance __dict__. 
+If I did, it would actually be calling the descriptors __get__ and __set__ methods, resulting in an infinite recursion!!
+
+class ValidString:
+    def __init__(self, min_length):
+        self.min_length = min_length
+        
+    def __set_name__(self, owner_class, prop_name):
+        self.prop_name = prop_name
+        
+    def __set__(self, instance, value):
+        if not isinstance(value, str):
+            raise ValueError(f'{self.prop_name} must be a string.')
+        if len(value) < self.min_length:
+            raise ValueError(f'{self.prop_name} must be '
+                             f'at least {self.min_length} characters.'
+                            )
+        instance.__dict__[self.prop_name] = value
+        
+    def __get__(self, instance, owner_class):
+        if instance is None:
+            return self
+        else:
+            return instance.__dict__.get(self.prop_name, None)
+
+
+******* wrong version:
+class ValidString:
+    def __init__(self, min_length):
+        self.min_length = min_length
+        
+    def __set_name__(self, owner_class, prop_name):
+        self.prop_name = prop_name
+        
+    def __set__(self, instance, value):
+        print('calling __set__ ...')
+        if not isinstance(value, str):
+            raise ValueError(f'{self.prop_name} must be a string.')
+        if len(value) < self.min_length:
+            raise ValueError(f'{self.prop_name} must be '
+                             f'at least {self.min_length} characters.'
+                            )
+        setattr(instance, self.prop_name, value)
+        
+    def __get__(self, instance, owner_class):
+        if instance is None:
+            return self
+        else:
+            return instance.__dict__.get(self.prop_name, None)
+    
+class Person:
+    name = ValidString(1)
+p = Person()
+p.name = 'Alex' ---> RecursionError: maximum recursion depth exceeded in comparison
+
+    
+    
