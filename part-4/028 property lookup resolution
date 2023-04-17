@@ -16,9 +16,9 @@ class Point:
 p = Point()
 p.x = 100 -> __set__ called...
 p.x -> __get__ called...
-p.__dict__ -> {}
+p.__dict__ -> {}                      ###### x is class property, so it is not in __dict__
 p.__dict__['x'] = 'hello'
-p.__dict__ -> {'x': 'hello'}
+p.__dict__ -> {'x': 'hello'}          ###### same name x is instance attributem it is in __dict__
 # And now let's get the value:
 p.x -> __get__ called...
 
