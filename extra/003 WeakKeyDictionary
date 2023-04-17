@@ -19,7 +19,7 @@ class IntegerValue:
 import weakref
 lass IntegerValue:
     def __init__(self):
-        self.values = weakref.WeakKeyDictionary()
+        self.values = weakref.WeakKeyDictionary()            # only change!
         
     def __set__(self, instance, value):
         self.values[instance] = int(value)
@@ -55,7 +55,7 @@ But this only works for hashable objects.
 So, now let's try to address this hashability issue.
 
 Since we cannot use the object itself as the key in a dictionary (weak or otherwise), 
-we could try using the id of the object (which is an int) as the key in a standard dictionary:
+we could try using the id of the object (which is an int) as the key in a standard dictionary (rather than a weak key dictionary):
 
             
             
