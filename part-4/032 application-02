@@ -1,1 +1,232 @@
+sequence type is very important, because it is indexable
 
+import collections
+isinstance([1, 2, 3], collections.abc.Sequence) ---> True
+isinstance([1, 2, 3], collections.abc.MutableSequence) ---> True
+isinstance((1, 2, 3), collections.abc.Sequence) ---> True
+isinstance((1, 2, 3), collections.abc.MutableSequence) ---> False
+
+# let's create a validator that checks that we have a sequence (mutable or immutable, does not matter) of Point2D objects.
+class Point2DSequence:
+    def __init__(self, min_length=None, max_length=None):
+        self.min_length = min_length
+        self.max_length = max_length
+        
+    def __set_name__(self, cls, name):
+        self.name = name
+        
+    def __set__(self, instance, value):
+        if not isinstance(value, collections.abc.Sequence):
+            raise ValueError(f'{self.name} must be a sequence type.')
+        if self.min_length is not None and len(value) < self.min_length:
+            raise ValueError(f'{self.name} must contain at least '
+                             f'{self.min_length} elements'
+                            )
+        if self.max_length is not None and len(value) > self.max_length:
+            raise ValueError(f'{self.name} cannot contain more than  '
+                             f'{self.max_length} elements'
+                            )
+        for index, item in enumerate(value):
+            if not isinstance(item, Point2D):
+                raise ValueError(f'Item at index {index} is not a Point2D instance.')
+                
+        # value passes checks - want to store it as a mutable sequence so we can 
+        # append to it later
+        instance.__dict__[self.name] = list(value)
+        
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        else:
+            if self.name not in instance.__dict__:
+                # current point list has not been defined,
+                # so let's create an empty list
+                instance.__dict__[self.name] = []
+            return instance.__dict__.get(self.name)
+
+class Polygon:
+    vertices = Point2DSequence(min_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+
+**********************************************************************************************************************************************************************************
+OK, so, for completeness, let's write a method that we can use to append new points to the vertices list (that's why we made it a mutable sequence type!)
+
+class Polygon:
+    vertices = Point2DSequence(min_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+        
+    def append(self, pt):
+        if not isinstance(pt, Point2D):
+            raise ValueError('Can only append Point2D instances.')
+        max_length = type(self).vertices.max_length
+        if max_length is not None and len(self.vertices) >= max_length:
+            # cannot add more points!
+            raise ValueError(f'Vertices length is at max ({max_length})')
+        self.vertices.append(pt)
+
+Now we could set a max_length directly when we define the Polygon class:
+
+class Polygon:
+    vertices = Point2DSequence(min_length=3, max_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+        
+    def append(self, pt):
+        if not isinstance(pt, Point2D):
+            raise ValueError('Can only append Point2D instances.')
+        max_length = type(self).vertices.max_length
+        if max_length is not None and len(self.vertices) >= max_length:
+            # cannot add more points!
+            raise ValueError(f'Vertices length is at max ({max_length})')
+        self.vertices.append(pt)
+***********************************************************************************************************************************************************************************
+First let's go back to our original Polygon definition:
+class Polygon:
+    vertices = Point2DSequence(min_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+        
+    def append(self, pt):
+        if not isinstance(pt, Point2D):
+            raise ValueError('Can only append Point2D instances.')
+        max_length = type(self).vertices.max_length
+        if max_length is not None and len(self.vertices) >= max_length:
+            # cannot add more points!
+            raise ValueError(f'Vertices length is at max ({max_length})')
+        self.vertices.append(pt)
+                
+
+# let's use inheritance to create special Polygon types!                
+class Triangle(Polygon):
+    vertices = Point2DSequence(min_length=3, max_length=3)
+            
+class Square(Polygon):
+    vertices = Point2DSequence(min_length=4, max_length=4)            
+
+***********************************************************************************************************************************************************************************
+We could actually improve this even more by making our Polygon class an actual sequence type. To do that we only need to implement a few special methods:
+class Polygon:
+    vertices = Point2DSequence(min_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+        
+    def append(self, pt):
+        if not isinstance(pt, Point2D):
+            raise ValueError('Can only append Point2D instances.')
+        max_length = type(self).vertices.max_length
+        if max_length is not None and len(self.vertices) >= max_length:
+            # cannot add more points!
+            raise ValueError(f'Vertices length is at max ({max_length})')
+        self.vertices.append(pt)
+                
+    def __len__(self):
+        return len(self.vertices)
+        
+    def __getitem__(self, idx):
+        return self.vertices[idx]
+        
+We could even implement in-place addition and containment:
+
+class Polygon:
+    vertices = Point2DSequence(min_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+        
+    def append(self, pt):
+        if not isinstance(pt, Point2D):
+            raise ValueError('Can only append Point2D instances.')
+        max_length = type(self).vertices.max_length
+        if max_length is not None and len(self.vertices) >= max_length:
+            # cannot add more points!
+            raise ValueError(f'Vertices length is at max ({max_length})')
+        self.vertices.append(pt)
+                
+    def __len__(self):
+        return len(self.vertices)
+        
+    def __getitem__(self, idx):
+        return self.vertices[idx]
+        
+    def __iadd__(self, pt):
+        self.append(pt)
+        return self
+    
+    def __contains__(self, pt):
+        return pt in self.vertices    ############## this uses identity comparison, will cause a problem below
+        
+ careful
+ '''
+p = Polygon(Point2D(0,0), Point2D(1,0), Point2D(1,1))
+list(p) -> [Point2D(x=0, y=0), Point2D(x=1, y=0), Point2D(x=1, y=1)]
+p += Point2D(10, 10)
+list(p) -> [Point2D(x=0, y=0), Point2D(x=1, y=0), Point2D(x=1, y=1), Point2D(x=10, y=10)]
+# What about containment?
+Point2D(0, 0) in p -> False
+p[0] in p -> True # not the same object as above
+
+Why False? The point (0,0) is in the vertices list...
+Well, we didn't override the __eq__ method in our Point2D class, so it's using the implementation in object, which uses object identity.
+We can easily fix that:
+'''
+
+class Point2D:
+    x = Int(min_value=0, max_value=800)
+    y = Int(min_value=0, max_value=400)
+    
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        
+    def __repr__(self):
+        return f'Point2D(x={self.x}, y={self.y})'
+    
+    def __str__(self):
+        return f'({self.x}, {self.y})'
+    
+    def __eq__(self, other):
+        return isinstance(other, Point2D) and self.x == other.x and self.y == other.y
+    ################ if stop here, point2D can never be used in a dictionary, because it is no longer hashable    
+    ################ usually when we define __eq__, we also define __hash__ method
+    def __hash__(self): 
+        return hash((self.x, self.y))
+        
+class Polygon:
+    vertices = Point2DSequence(min_length=3)
+    
+    def __init__(self, *vertices):
+        self.vertices = vertices
+        
+    def append(self, pt):
+        if not isinstance(pt, Point2D):
+            raise ValueError('Can only append Point2D instances.')
+        max_length = type(self).vertices.max_length
+        if max_length is not None and len(self.vertices) >= max_length:
+            # cannot add more points!
+            raise ValueError(f'Vertices length is at max ({max_length})')
+        self.vertices.append(pt)
+                
+    def __len__(self):
+        return len(self.vertices)
+        
+    def __getitem__(self, idx):
+        return self.vertices[idx]
+        
+    def __iadd__(self, pt):
+        self.append(pt)
+        return self
+    
+    def __contains__(self, pt):
+        return pt in self.vertices
+        
+p = Polygon(Point2D(0,0), Point2D(1,0), Point2D(1,1))
+Point2D(0,0) in p ---> True
+
+        
