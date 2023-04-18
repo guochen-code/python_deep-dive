@@ -1,0 +1,82 @@
+from numbers import Integral
+
+class Person:
+    @property
+    def age(self):
+        return getattr(self, '_age', None)
+    
+    @age.setter
+    def age(self, value):
+        if not isinstance(value, Integral):
+            raise ValueError('age: must be an integer.')
+        if value < 0:
+            raise ValueError('age: must be a non-negative integer.')
+        self._age = value
+        
+p.age = 10
+p.age, p.__dict__
+---> (10, {'_age': 10})
+# And notice how the instance dictionary does not contain age, even though we have that instance age attribute
+**********************************************************************************************************************************************************
+Next, let's rewrite this using a property class instead of the decorators:
+
+class Person:
+    def get_age(self):
+        return getattr(self, '_age', None)
+    
+    def set_age(self, value):
+        if not isinstance(value, Integral):
+            raise ValueError('age: must be an integer.')
+        if value < 0:
+            raise ValueError('age: must be a non-negative integer.')
+        self._age = value
+        
+    age = property(fget=get_age, fset=set_age)
+    
+**********************************************************************************************************************************************************
+In this case, our property has both the __get__ and __set__ methods so we ended up with a data descriptor.
+Even if we only defined a read-only property, we would still end up with a data descriptor:
+
+from datetime import datetime
+
+class TimeUTC:
+    @property
+    def current_time(self):
+        return datetime.utcnow().isoformat()
+        
+t = TimeUTC()
+t.current_time ---> '2019-07-13T20:48:18.993428'
+
+prop = TimeUTC.current_time
+hasattr(prop, '__get__') ---> True
+hasattr(prop, '__set__') ---> True
+But the internal implemetation of the __set__ method would refuse to set a value:
+try:
+    t.current_time = datetime.utcnow().isoformat()
+except AttributeError as ex:
+    print(ex)
+---> can't set attribute
+# not because __set__ method does not exist, because property has not fset defined..............trying to call fset method in our class............
+So, if properties are implemented using data descriptors - this means that instance attributes with the same name will not shadow the descriptor
+**********************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
