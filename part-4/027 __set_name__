@@ -1,8 +1,22 @@
+previously, we are using a data dictionary inside the descriptor itself,
+here we want to go back and use instance and use its dictionary to store the data
+************************************************************************************************************************************************************************************
 Starting in Python 3.6, the __set_name__ method is an additional method defined in the descriptor protocol.
 
 __set_name__ was called when the Person class was created. This is the only time it gets called
 
 The main advantage of this is that we can capture the property name:
+
+#############################################################################################################
+here is a pretty typical application of using custom descriptors -> again, key here is re-usability
+suppose we have some attributes in a non-slotted class that need to be validated each time they are set
+-> get property name from __set__name__
+-> __set__
+    -> validate data
+    -> if ok, store data in instance dictionary, under the same name
+this way we are not going to overwrite our users other potential names
+wait a minute, does instance dictionary not shadow the class attributes????????????????????????????????? it dependes!!!!!!!
+#############################################################################################################
 
 class ValidString:
     def __set_name__(self, owner_class, property_name):
