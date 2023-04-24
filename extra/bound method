@@ -14,7 +14,10 @@ solution:
 we can implement the __get__ method in our class, to turn it into a (non-data) descriptor, just like a function does, and we just need to return a bound method.
 We can use types.MethodType. the first argument is the callable we want to bind, and the second argument is the instance we want to bind it to.
 
-
+********************************
+non-data: only implement __get__
+data: also implement __set__
+*******************************
 
 example:
 from types import MethodType
