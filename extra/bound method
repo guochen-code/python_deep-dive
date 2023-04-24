@@ -1,0 +1,47 @@
+problem statement:
+after decorate a method in a class, create an instance of that class, and when you run instance.method()
+got TypeError: method() missing 1 required positional argument: 'self'
+
+root cause:
+now that it has been decorated - it is an instance of a class, not a function!
+
+how to turn function into method?
+The descriptor protocol... Functions implement a __get__ method, and that is ultimately used to create the bound method.
+Our class does not implement the __get__ method, so that callable remain a plain callable, not a bound method, and that's why our implementation is broken.
+
+
+solution:
+we can implement the __get__ method in our class, to turn it into a (non-data) descriptor, just like a function does, and we just need to return a bound method.
+We can use types.MethodType. the first argument is the callable we want to bind, and the second argument is the instance we want to bind it to.
+
+
+
+example:
+from types import MethodType
+
+class Logger:
+    def __init__(self, fn):
+        self.fn = fn
+        
+    def __call__(self, *args, **kwargs):
+        print(f'Log: {self.fn.__name__} called.')
+        return self.fn(*args, **kwargs)
+    
+    def __get__(self, instance, owner_class):
+        print(f'__get__ called: self={self}, instance={instance}')
+        if instance is None:
+            print('\treturning self unbound...')
+            return self
+        else:
+            # self is callable, since it implements __call__
+            print('\treturning self as a method bound to instance')
+            return MethodType(self, instance)
+            
+class Person:
+    def __init__(self, name):
+        self.name = name
+        
+    @Logger
+    def say_hello(self):
+        return f'{self.name} says hello!'            
+            
