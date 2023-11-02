@@ -29,6 +29,7 @@ init called... 10 20
 ********** preferred way
  the point is inheriting from some other class, that also did not override on new
  if I call object here, it will just call objects new directly, it would not call the parent class's new method, this is not what i want
+(The point is if the parent class of Point class is not object, it might be another class and you want use the __new__ from this class, rather than from object class)
 
 class Point:
   def __new__(cls,x,y):
